@@ -1,2 +1,3 @@
 # Computer_Network_Security
-CNS homework 2020/2021
+
+This repo will contain the homework of CNS course in the A.A. 2020/2021
