@@ -21,9 +21,9 @@ def subByte(byte):
         0xE1, 0xF8, 0x98, 0x11, 0x69, 0xD9, 0x8E, 0x94, 0x9B, 0x1E, 0x87, 0xE9, 0xCE, 0x55, 0x28, 0xDF,
         0x8C, 0xA1, 0x89, 0x0D, 0xBF, 0xE6, 0x42, 0x68, 0x41, 0x99, 0x2D, 0x0F, 0xB0, 0x54, 0xBB, 0x16
     )
-    print(int(byte.hex(),16))
-    print(Sbox[int(byte.hex(),16)])
-    return Sbox[int(byte.hex(),16)]
+    #print(int(byte.hex(),16))
+    #print(Sbox[int(byte.hex(),16)])
+    return Sbox[int(byte.hex(),16)]   #modify if you use int instead of byte for byte representation
 
 
 def shiftRow(row, iter):
@@ -36,10 +36,27 @@ def shiftRow(row, iter):
     return rowNew
 
 
+def xtime(element):
+    if element & 0x80:
+        element << 1
+        element ^ 0x1B
+        print("true")
+    else:
+        element << 1
+    return element
+
+
+#def mixColumns():
+
+
+
 # Press the green button in the gutter to run the script.
 if __name__ == '__main__':
-    subByte(b"\xc2")
-    state = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15]
+    prova = subByte(b"\xc2")
+    xtime(prova)
+    xtime(subByte(b"\x04"))
+    #xtime(b"\xc2")
+    """state = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15]
     row = [0] * 4
     for i in range(1, 4):
         add = 4
@@ -52,3 +69,4 @@ if __name__ == '__main__':
             print(x)
         print()
         print()
+    """
