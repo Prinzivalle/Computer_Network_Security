@@ -2,7 +2,7 @@
 # Press Double Shift to search everywhere for classes, files, tool windows, actions, and settings.
 
 
-def byte_substitution(byte):
+def subByte(byte):
     Sbox = (
         0x63, 0x7C, 0x77, 0x7B, 0xF2, 0x6B, 0x6F, 0xC5, 0x30, 0x01, 0x67, 0x2B, 0xFE, 0xD7, 0xAB, 0x76,
         0xCA, 0x82, 0xC9, 0x7D, 0xFA, 0x59, 0x47, 0xF0, 0xAD, 0xD4, 0xA2, 0xAF, 0x9C, 0xA4, 0x72, 0xC0,
@@ -27,20 +27,18 @@ def byte_substitution(byte):
 
 
 def shiftRow(row, iter):
-    temp = row[0]
-    for i in range(5-iter):
-        if(i+iter > 3):
-            row[i] = row[i+iter-4]
+    rowNew = [0]*4
+    for i in range(4):
+        if i+iter > 3:
+            rowNew[i] = row[i+iter-4]
         else:
-            temp2 = row[i]
-            row[i] = row[i+iter]
-            row[i+iter] = temp2
-    row[4-iter] = temp
-    return row
+            rowNew[i] = row[i+iter]
+    return rowNew
+
 
 # Press the green button in the gutter to run the script.
 if __name__ == '__main__':
-    byte_substitution(b"\xc2")
+    subByte(b"\xc2")
     state = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15]
     row = [0] * 4
     for i in range(1, 4):
