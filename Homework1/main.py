@@ -62,14 +62,38 @@ def xtime(element):
     return element
 
 
-# TODO input the state and outputs the state
-def mixColumns(column):
+# working TODO remove prints
+def mixcolumns(state):
+    column = [0] * 4
+    for i in range(4):
+        add = 4
+        for j in range(4):
+            column[j] = state[i * add + j]
+            print(column[j])
+        xorAll = column[0] ^ column[1] ^ column[2] ^ column[3]
+        temp = column[0]
+        column[0] = column[0] ^ xtime(column[0] ^ column[1]) ^ xorAll
+        column[1] = column[1] ^ xtime(column[1] ^ column[2]) ^ xorAll
+        column[2] = column[2] ^ xtime(column[2] ^ column[3]) ^ xorAll
+        column[3] = column[3] ^ xtime(column[3] ^ temp) ^ xorAll
+        print()
+        print(column)
+        for j in range(4):
+            state[i * add + j] = column[j]
+        print()
+        print()
+    return state
+
+# TODO delete it since we don't need it
+def mixColumnsSingle(column):
     xorAll = column[0] ^ column[1] ^ column[2] ^ column[3]
     temp = column[0]
     column[0] = column[0] ^ xtime(column[0] ^ column[1]) ^ xorAll
     column[1] = column[1] ^ xtime(column[1] ^ column[2]) ^ xorAll
     column[2] = column[2] ^ xtime(column[2] ^ column[3]) ^ xorAll
     column[3] = column[3] ^ xtime(column[3] ^ temp) ^ xorAll
+    print(column)
+    return 0
 
 
 def roundKey():
@@ -89,7 +113,11 @@ if __name__ == '__main__':
     # xtime(subByte(b"\x04"))
     # xtime(b"\xc2")
     state = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15]
+    """
+    print(state)
+    state = subByte(state)"""
     state = shiftRow(state)
     print(state)
-    state = subByte(state)
+    state = mixcolumns(state)
     print(state)
+    #mixColumnsSingle([12,9,10,11])
