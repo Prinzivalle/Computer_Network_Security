@@ -276,7 +276,7 @@ if __name__ == '__main__':
         # key addition
         subkey = roundKey(subkey, rounds)
         state = keyAddition(state, subkey)
-        print(subkey)
+        #print(subkey)
 
         # update rounds
         rounds += 1
@@ -293,8 +293,8 @@ if __name__ == '__main__':
     # print the cyphertext
     print()
     print(state)
-    print(subkey)
-    print(rounds)
+    #print(subkey)
+    #print(rounds)
     print()
 
     #############   DECRYPTION
@@ -302,12 +302,12 @@ if __name__ == '__main__':
     rounds = 0
     ##### first round
     # compute last subkey
-    subkey = key
-    for i in range(11):
+    subkey = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15]
+    for i in range(10):
         subkey = roundKey(subkey, rounds)
         rounds += 1
-        print(subkey)
-
+        #print(rounds)
+        #print(subkey)
     state = keyAddition(state, subkey)
     # revert shift row
     state = shiftRowInv(state)
@@ -319,10 +319,11 @@ if __name__ == '__main__':
     ##### intermediate iterations
     for i in range(1, 10):
         # compute subkey
-        subkey = key
+        subkey = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15]
         for j in range(11 - i):
             #print(rounds)
             subkey = roundKey(subkey, rounds)
+            #print(subkey)
             rounds += 1
         state = keyAddition(state, subkey)
         # revert mix columns
@@ -336,7 +337,7 @@ if __name__ == '__main__':
 
     ##### last iteration
     # revert key addition
-    subkey = key
+    subkey = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15]
     subkey = roundKey(subkey, 0)
     state = keyAddition(state, subkey)
     # revert mix columns
@@ -346,9 +347,10 @@ if __name__ == '__main__':
     # revert byte substitution
     state = subByteInv(state)
     # revert key addition
-    subkey = key
+    subkey = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15]
     state = keyAddition(state, subkey)
 
     # print the plaintext
+    print()
     print(state)
 
