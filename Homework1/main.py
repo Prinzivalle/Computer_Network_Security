@@ -1,7 +1,7 @@
 # Press Shift+F10 to execute it or replace it with your code.
 # Press Double Shift to search everywhere for classes, files, tool windows, actions, and settings.
 
-
+# TODO input the state and outputs the state
 def subByte(byte):
     Sbox = (
         0x63, 0x7C, 0x77, 0x7B, 0xF2, 0x6B, 0x6F, 0xC5, 0x30, 0x01, 0x67, 0x2B, 0xFE, 0xD7, 0xAB, 0x76,
@@ -21,19 +21,32 @@ def subByte(byte):
         0xE1, 0xF8, 0x98, 0x11, 0x69, 0xD9, 0x8E, 0x94, 0x9B, 0x1E, 0x87, 0xE9, 0xCE, 0x55, 0x28, 0xDF,
         0x8C, 0xA1, 0x89, 0x0D, 0xBF, 0xE6, 0x42, 0x68, 0x41, 0x99, 0x2D, 0x0F, 0xB0, 0x54, 0xBB, 0x16
     )
-    #print(int(byte.hex(),16))
-    #print(Sbox[int(byte.hex(),16)])
-    return Sbox[int(byte.hex(),16)]   #modify if you use int instead of byte for byte representation
+    # print(int(byte.hex(),16))
+    # print(Sbox[int(byte.hex(),16)])
+    return Sbox[int(byte.hex(), 16)]  # modify if you use int instead of byte for byte representation
 
 
-def shiftRow(row, iter):
-    rowNew = [0]*4
-    for i in range(4):
-        if i+iter > 3:
-            rowNew[i] = row[i+iter-4]
-        else:
-            rowNew[i] = row[i+iter]
-    return rowNew
+# working TODO remove prints
+def shiftRow(state):
+    row = [0] * 4
+    for i in range(1, 4):
+        add = 4
+        for j in range(4):
+            row[j] = state[i + j * add]
+            print(row[j])
+        for k in range(i):
+            temp = row[0]
+            row[0] = row[1]
+            row[1] = row[2]
+            row[2] = row[3]
+            row[3] = temp
+        print()
+        print(row)
+        for j in range(4):
+            state[i + j * add] = row[j]
+        print()
+        print()
+    return state
 
 
 def xtime(element):
@@ -46,6 +59,7 @@ def xtime(element):
     return element
 
 
+# TODO input the state and outputs the state
 def mixColumns(column):
     xorAll = column[0] ^ column[1] ^ column[2] ^ column[3]
     temp = column[0]
@@ -55,23 +69,22 @@ def mixColumns(column):
     column[3] = column[3] ^ xtime(column[3] ^ temp) ^ xorAll
 
 
+def roundKey():
+    return 0
+
+
+def keyAddition(state, subkey):
+    for i in range(16):
+        state[i] ^= subkey[i]
+    return state
+
+
 # Press the green button in the gutter to run the script.
 if __name__ == '__main__':
     prova = subByte(b"\xc2")
     xtime(prova)
     xtime(subByte(b"\x04"))
-    #xtime(b"\xc2")
-    """state = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15]
-    row = [0] * 4
-    for i in range(1, 4):
-        add = 4
-        for j in range(4):
-            row[j] = state[i+j*add]
-            print(row[j])
-        row = shiftRow(row, i)
-        print()
-        for x in row:
-            print(x)
-        print()
-        print()
-    """
+    # xtime(b"\xc2")
+    state = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15]
+    state = shiftRow(state)
+    print(state)
