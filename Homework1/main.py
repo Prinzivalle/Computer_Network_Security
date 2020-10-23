@@ -46,8 +46,13 @@ def xtime(element):
     return element
 
 
-#def mixColumns():
-
+def mixColumns(column):
+    xorAll = column[0] ^ column[1] ^ column[2] ^ column[3]
+    temp = column[0]
+    column[0] = column[0] ^ xtime(column[0] ^ column[1]) ^ xorAll
+    column[1] = column[1] ^ xtime(column[1] ^ column[2]) ^ xorAll
+    column[2] = column[2] ^ xtime(column[2] ^ column[3]) ^ xorAll
+    column[3] = column[3] ^ xtime(column[3] ^ temp) ^ xorAll
 
 
 # Press the green button in the gutter to run the script.
