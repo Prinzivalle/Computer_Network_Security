@@ -254,6 +254,10 @@ def subByteInv(state):
 def block2int(block):
     return [int(key[i*2:i*2+2]) for i in range(16)]
 
+def int2block(list):
+    # return ''.join(list)
+    return ' '.join(str(i) for i in list)
+
 ###################     MAIN    #####################
 
 #shorter version
@@ -425,6 +429,8 @@ if __name__ == '__main__':
     #key = "00010203040506070809101112131415"
     #print([key[i*2:i*2+2] for i in range(16)])
     #print([int(key[i*2:i*2+2]) for i in range(16)])
+    #print(' '.join(str(i) for i in [int(key[i*2:i*2+2]) for i in range(16)]))
+    #print(''.join(str([int(key[i*2:i*2+2]) for i in range(16)])))
 
     state = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15]
     #key = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15]
