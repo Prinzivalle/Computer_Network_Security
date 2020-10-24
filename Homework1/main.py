@@ -249,6 +249,11 @@ def subByteInv(state):
         state[i] = subByteSingleInv(state[i])
     return state
 
+###################     INPUT MANIPULATION    #####################
+
+def block2int(block):
+    return [int(key[i*2:i*2+2]) for i in range(16)]
+
 ###################     MAIN    #####################
 
 #shorter version
@@ -417,8 +422,13 @@ def subByteInv(state):
     """
 
 if __name__ == '__main__':
+    #key = "00010203040506070809101112131415"
+    #print([key[i*2:i*2+2] for i in range(16)])
+    #print([int(key[i*2:i*2+2]) for i in range(16)])
+
     state = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15]
-    key = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15]
+    #key = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15]
+    key = [16, 22, 53, 10, 89, 100, 69, 13, 36, 54, 67, 91, 12, 1, 78, 51]
     print(state)
     # mixColumnsSingle([12,9,10,11])
 
@@ -468,7 +478,6 @@ if __name__ == '__main__':
     # print the cyphertext
     print()
     print(state)
-    print(key)
     print()
 
     #############   DECRYPTION
@@ -523,6 +532,6 @@ if __name__ == '__main__':
     state = keyAddition(state, subkey)
 
     # print the plaintext
-    print()
+    #print()
     print(state)
 
