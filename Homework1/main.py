@@ -261,41 +261,33 @@ def text2blocks(text):
 
     # preallocate blocks as number of bytes of text
     length = int(len(text)/32)
-    #print(length)
     blocks = ["00000000000000000000000000000000"] * (length + 1)
-    #print(blocks)
 
     # split text into blocks of 16 bytes
     for i in range(length + 1):
         blocks[i] = text[i*32:i*32+32]
 
-
+    # add padding PKCS#7
     count = int(len(blocks[-1])/2)
-    #print(blocks[-1])
-    #print(len(blocks[-1]))
-    #print(count)
-    """for i in range(16):
-    	if blocks[-1][30-2*i:32-2*i] == "00":
-            count += 1
-	"""
     if count == 16:
     	blocks.append([16161616161616161616161616161616])
-    	#print("count = 16")
     else:
     	for i in range(16 - count):
     		string = list(blocks[-1])
     		if (16 - count) < 10:
-    			#print("16 - count < 10")
     			string[2*count + 2*i:2*count + 2*i + 2] = "0" + str(16 - count)
     		else:
-    			#print("16 - count > 10")
-    			#string[30-2*i:32-2*i] = str(16 - count)
     			string[2*count + 2*i:2*count + 2*i + 2] = str(16 - count)
-    		blocks[-1] = "".join(string)
-    		#blocks[-1][30-2*i:32-2*i] = "0" + str(count)
-    
+    		blocks[-1] = "".join(string)    
 
     return blocks
+
+def blocks2text(blocks):
+
+
+
+
+	return text
 
 ###################     MAIN    #####################
 
