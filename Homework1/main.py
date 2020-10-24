@@ -57,15 +57,15 @@ def shiftRow(state):
         #print()
     return state
 
-# working with int
+# working with int VERIFIED
 def xtime(element):
     if element & 0x80:
-        element << 1
-        element ^ 0x1B
+        element = element << 1
+        element ^= 0x1B
         #print("true")
     else:
-        element << 1
-    return element
+        element = element << 1
+    return element & 0xFF
 
 
 # working TODO remove prints
@@ -76,6 +76,7 @@ def mixcolumns(state):
         for j in range(4):
             column[j] = state[i * add + j]
             #print(column[j])
+        print(column)
         xorAll = column[0] ^ column[1] ^ column[2] ^ column[3]
         temp = column[0]
         column[0] = column[0] ^ xtime(column[0] ^ column[1]) ^ xorAll
@@ -216,7 +217,7 @@ def subByteSingleInv(byte):
 # working TODO verify since now it works with int and remove comments
 def subByteInv(state):
     for i in range(16):
-        state[i] = subByteSingle(state[i])
+        state[i] = subByteSingleInv(state[i])
     # print(int(byte.hex(),16))
     # print(Sbox[int(byte.hex(),16)])
     #return Sbox[int(byte.hex(), 16)]  # modify if you use int instead of byte for byte representation
@@ -224,14 +225,27 @@ def subByteInv(state):
 
 ###################     MAIN    #####################
 
-# Press the green button in the gutter to run the script.
+#shorter version
 if __name__ == '__main__':
+    state = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15]
+    #print(shiftRow(state))
+    #print(subByteSingle(16))
+    #print(shiftRowInv([0, 5, 10, 15, 4, 9, 14, 3, 8, 13, 2, 7, 12, 1, 6, 11]))
+    #print(mixcolumns([0, 5, 10, 15, 4, 9, 14, 3, 8, 13, 2, 7, 12, 1, 6, 11]))
+    print()
+    #key = "00112233445566778899aabbccddeeff"
+    key= "00010203040506070809101112131415"
+    print([[int(key[i * 8 + j * 2:i * 8 + j * 2 + 2], 16) for j in range(4)]
+     for i in range(4)])
+    print()
+    #print(xtime(150))
+    #print(xtime(16))
     #prova = subByte(b"\xc2")
     #xtime(prova)
     # xtime(subByte(b"\x04"))
     # xtime(b"\xc2")
     state = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15]
-    key = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15]
+    key = [16, 17, 18, 19, 20, 21, 22, 23, 24, 24, 26, 27, 28, 29, 30, 31]
     print(state)
     """state = subByte(state)
     print(state)
@@ -251,16 +265,20 @@ if __name__ == '__main__':
     rounds = 0
     ##### first round
     # first round key is simply the original key
-    subkey = key
+    subkey = [16, 22, 53, 10, 89, 100, 69, 13, 36, 54, 67, 91, 12, 1, 78, 51]
     state = keyAddition(state, subkey)
+    print(state)
     # byte substitution
     state = subByte(state)
+    print(state)
     # shift row
     state = shiftRow(state)
+    print(state)
     # mix columns
     state = mixcolumns(state)
+    print(state)
     # key addition
-    subkey = roundKey(subkey, rounds)
+    """subkey = roundKey(subkey, rounds)
     state = keyAddition(state, subkey)
     # update rounds
     rounds += 1
@@ -289,7 +307,7 @@ if __name__ == '__main__':
     # key addition
     subkey = roundKey(subkey, rounds)
     state = keyAddition(state, subkey)
-
+"""
     # print the cyphertext
     print()
     print(state)
@@ -299,7 +317,7 @@ if __name__ == '__main__':
 
     #############   DECRYPTION
 
-    rounds = 0
+    """rounds = 0
     ##### first round
     # compute last subkey
     subkey = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15]
@@ -341,16 +359,135 @@ if __name__ == '__main__':
     subkey = roundKey(subkey, 0)
     state = keyAddition(state, subkey)
     # revert mix columns
+    """
     state = mixcolumnsInv(state)
     # revert shift row
     state = shiftRowInv(state)
     # revert byte substitution
     state = subByteInv(state)
     # revert key addition
-    subkey = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15]
+    subkey = [16, 22, 53, 10, 89, 100, 69, 13, 36, 54, 67, 91, 12, 1, 78, 51]
     state = keyAddition(state, subkey)
 
     # print the plaintext
     print()
     print(state)
+
+    """if __name__ == '__main__':
+        # prova = subByte(b"\xc2")
+        # xtime(prova)
+        # xtime(subByte(b"\x04"))
+        # xtime(b"\xc2")
+        state = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15]
+        key = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15]
+        print(state)
+        # mixColumnsSingle([12,9,10,11])
+
+        #############   ENCRYPTION
+
+        rounds = 0
+        ##### first round
+        # first round key is simply the original key
+        subkey = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15]
+        state = keyAddition(state, subkey)
+        # byte substitution
+        state = subByte(state)
+        # shift row
+        state = shiftRow(state)
+        # mix columns
+        state = mixcolumns(state)
+        # key addition
+        subkey = roundKey(subkey, rounds)
+        state = keyAddition(state, subkey)
+        # update rounds
+        rounds += 1
+
+        ##### intermediate iterations
+        for i in range(1, 10):
+            # byte substitution
+            state = subByte(state)
+            # shift row
+            state = shiftRow(state)
+            # mix columns
+            state = mixcolumns(state)
+            # key addition
+            subkey = roundKey(subkey, rounds)
+            state = keyAddition(state, subkey)
+            # print(subkey)
+
+            # update rounds
+            rounds += 1
+
+        ##### last iteration
+        # byte substitution
+        state = subByte(state)
+        # shift row
+        state = shiftRow(state)
+        # key addition
+        subkey = roundKey(subkey, rounds)
+        state = keyAddition(state, subkey)
+
+        # print the cyphertext
+        print()
+        print(state)
+        # print(subkey)
+        # print(rounds)
+        print()
+
+        #############   DECRYPTION
+
+        rounds = 0
+        ##### first round
+        # compute last subkey
+        subkey = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15]
+        for i in range(10):
+            subkey = roundKey(subkey, rounds)
+            rounds += 1
+            # print(rounds)
+            # print(subkey)
+        state = keyAddition(state, subkey)
+        # revert shift row
+        state = shiftRowInv(state)
+        # revert byte substitution
+        state = subByteInv(state)
+        # update rounds
+        rounds = 0
+
+        ##### intermediate iterations
+        for i in range(1, 10):
+            # compute subkey
+            subkey = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15]
+            for j in range(11 - i):
+                # print(rounds)
+                subkey = roundKey(subkey, rounds)
+                # print(subkey)
+                rounds += 1
+            state = keyAddition(state, subkey)
+            # revert mix columns
+            state = mixcolumnsInv(state)
+            # revert shift row
+            state = shiftRowInv(state)
+            # revert byte substitution
+            state = subByteInv(state)
+            # update rounds
+            rounds = 0
+
+        ##### last iteration
+        # revert key addition
+        subkey = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15]
+        subkey = roundKey(subkey, 0)
+        state = keyAddition(state, subkey)
+        # revert mix columns
+        state = mixcolumnsInv(state)
+        # revert shift row
+        state = shiftRowInv(state)
+        # revert byte substitution
+        state = subByteInv(state)
+        # revert key addition
+        subkey = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15]
+        state = keyAddition(state, subkey)
+
+        # print the plaintext
+        print()
+        print(state)"""
 
