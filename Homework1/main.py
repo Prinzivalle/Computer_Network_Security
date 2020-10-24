@@ -76,7 +76,7 @@ def mixcolumns(state):
         for j in range(4):
             column[j] = state[i * add + j]
             #print(column[j])
-        print(column)
+        #print(column)
         xorAll = column[0] ^ column[1] ^ column[2] ^ column[3]
         temp = column[0]
         column[0] = column[0] ^ xtime(column[0] ^ column[1]) ^ xorAll
@@ -86,6 +86,7 @@ def mixcolumns(state):
         #print()
         #print(column)
         for j in range(4):
+            #state[i + j * add] = column[j]
             state[i * add + j] = column[j]
         #print()
         #print()
@@ -99,7 +100,7 @@ def mixColumnsSingle(column):
     column[1] = column[1] ^ xtime(column[1] ^ column[2]) ^ xorAll
     column[2] = column[2] ^ xtime(column[2] ^ column[3]) ^ xorAll
     column[3] = column[3] ^ xtime(column[3] ^ temp) ^ xorAll
-    print(column)
+    #print(column)
     return column
 
 # working
@@ -155,6 +156,7 @@ def mixcolumnsInv(state):
         add = 4
         for j in range(4):
             column[j] = state[i * add + j]
+            #column[j] = state[i + j * add]
             #print(column[j])
         u = xtime(xtime(column[0] ^ column[2]))
         v = xtime(xtime(column[1] ^ column[3]))
@@ -162,13 +164,40 @@ def mixcolumnsInv(state):
         column[1] = column[1] ^ v
         column[2] = column[2] ^ u
         column[3] = column[3] ^ v
+
+        xorAll = column[0] ^ column[1] ^ column[2] ^ column[3]
+        temp = column[0]
+        column[0] = column[0] ^ xtime(column[0] ^ column[1]) ^ xorAll
+        column[1] = column[1] ^ xtime(column[1] ^ column[2]) ^ xorAll
+        column[2] = column[2] ^ xtime(column[2] ^ column[3]) ^ xorAll
+        column[3] = column[3] ^ xtime(column[3] ^ temp) ^ xorAll
         #print()
         #print(column)
         for j in range(4):
+            #state[i + j * add] = column[j]
             state[i * add + j] = column[j]
         #print()
         #print()
     return state
+
+
+# TODO delete it since we don't need it
+def mixColumnsSingleInv(column):
+    u = xtime(xtime(column[0] ^ column[2]))
+    v = xtime(xtime(column[1] ^ column[3]))
+    column[0] = column[0] ^ u
+    column[1] = column[1] ^ v
+    column[2] = column[2] ^ u
+    column[3] = column[3] ^ v
+
+    xorAll = column[0] ^ column[1] ^ column[2] ^ column[3]
+    temp = column[0]
+    column[0] = column[0] ^ xtime(column[0] ^ column[1]) ^ xorAll
+    column[1] = column[1] ^ xtime(column[1] ^ column[2]) ^ xorAll
+    column[2] = column[2] ^ xtime(column[2] ^ column[3]) ^ xorAll
+    column[3] = column[3] ^ xtime(column[3] ^ temp) ^ xorAll
+    return column
+
 
 # working TODO remove prints
 def shiftRowInv(state):
@@ -231,12 +260,20 @@ if __name__ == '__main__':
     #print(shiftRow(state))
     #print(subByteSingle(16))
     #print(shiftRowInv([0, 5, 10, 15, 4, 9, 14, 3, 8, 13, 2, 7, 12, 1, 6, 11]))
-    #print(mixcolumns([0, 5, 10, 15, 4, 9, 14, 3, 8, 13, 2, 7, 12, 1, 6, 11]))
-    print()
+    #print(mixcolumns([219, 19, 83, 69, 4, 9, 14, 3, 8, 13, 2, 7, 12, 1, 6, 11]))
+    #print()
     #key = "00112233445566778899aabbccddeeff"
-    key= "00010203040506070809101112131415"
+    """key= "00010203040506070809101112131415"
     print([[int(key[i * 8 + j * 2:i * 8 + j * 2 + 2], 16) for j in range(4)]
-     for i in range(4)])
+     for i in range(4)])"""
+    """
+    print(mixColumnsSingleInv(mixColumnsSingle([219, 19, 83, 69])))
+    print(mixColumnsSingleInv(mixColumnsSingle([242, 10, 34, 92])))
+    print(mixColumnsSingleInv(mixColumnsSingle([1, 1, 1, 1])))
+    print(mixColumnsSingleInv(mixColumnsSingle([198, 198, 198, 198])))
+    print(mixColumnsSingleInv(mixColumnsSingle([212, 212, 212, 213])))
+    print(mixColumnsSingleInv(mixColumnsSingle([45, 38, 49, 76])))
+"""
     print()
     #print(xtime(150))
     #print(xtime(16))
@@ -244,7 +281,8 @@ if __name__ == '__main__':
     #xtime(prova)
     # xtime(subByte(b"\x04"))
     # xtime(b"\xc2")
-    state = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15]
+    #state = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15]
+    state = [219, 1, 2, 3, 4, 19, 6, 7, 8, 9, 83, 11, 12, 13, 14, 69]
     key = [16, 17, 18, 19, 20, 21, 22, 23, 24, 24, 26, 27, 28, 29, 30, 31]
     print(state)
     """state = subByte(state)
@@ -267,18 +305,18 @@ if __name__ == '__main__':
     # first round key is simply the original key
     subkey = [16, 22, 53, 10, 89, 100, 69, 13, 36, 54, 67, 91, 12, 1, 78, 51]
     state = keyAddition(state, subkey)
-    print(state)
+    #print(state)
     # byte substitution
     state = subByte(state)
-    print(state)
+    #print(state)
     # shift row
     state = shiftRow(state)
-    print(state)
+    #print(state)
     # mix columns
     state = mixcolumns(state)
-    print(state)
+    #print(state)
     # key addition
-    """subkey = roundKey(subkey, rounds)
+    subkey = roundKey(subkey, rounds)
     state = keyAddition(state, subkey)
     # update rounds
     rounds += 1
@@ -307,7 +345,7 @@ if __name__ == '__main__':
     # key addition
     subkey = roundKey(subkey, rounds)
     state = keyAddition(state, subkey)
-"""
+
     # print the cyphertext
     print()
     print(state)
@@ -317,10 +355,10 @@ if __name__ == '__main__':
 
     #############   DECRYPTION
 
-    """rounds = 0
+    rounds = 0
     ##### first round
     # compute last subkey
-    subkey = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15]
+    subkey = [16, 22, 53, 10, 89, 100, 69, 13, 36, 54, 67, 91, 12, 1, 78, 51]
     for i in range(10):
         subkey = roundKey(subkey, rounds)
         rounds += 1
@@ -337,7 +375,7 @@ if __name__ == '__main__':
     ##### intermediate iterations
     for i in range(1, 10):
         # compute subkey
-        subkey = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15]
+        subkey = [16, 22, 53, 10, 89, 100, 69, 13, 36, 54, 67, 91, 12, 1, 78, 51]
         for j in range(11 - i):
             #print(rounds)
             subkey = roundKey(subkey, rounds)
@@ -355,11 +393,11 @@ if __name__ == '__main__':
 
     ##### last iteration
     # revert key addition
-    subkey = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15]
+    subkey = [16, 22, 53, 10, 89, 100, 69, 13, 36, 54, 67, 91, 12, 1, 78, 51]
     subkey = roundKey(subkey, 0)
     state = keyAddition(state, subkey)
     # revert mix columns
-    """
+
     state = mixcolumnsInv(state)
     # revert shift row
     state = shiftRowInv(state)
