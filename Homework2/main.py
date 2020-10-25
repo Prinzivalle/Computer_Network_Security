@@ -487,16 +487,18 @@ def CBC(plaintext, key, IV):
 
     # first block encryption
     blockInt = block2int(blocks[0])
-    for i in range(16):
-        blockInt[i] = plaintext[i] ^ IV[i]
+    IVint = block2int(IV)
+    for j in range(16):
+        blockInt[j] ^= IVint[j]
     blockInt = encrypt(blockInt, key)
     blocks[0] = int2block(blockInt)
 
     # following blocs encryption
     for i in range(1, len(blocks)):
         blockInt = block2int(blocks[i])
+        blockIntprev = block2int(blocks[i-1].replace(" ", ""))
         for j in range(16):
-            blockInt[j] = plaintext[j] ^ IV[j] #TODO
+            blockInt[j] ^= blockIntprev[j]
         blockInt = encrypt(blockInt, key)
         blocks[i] = int2block(blockInt)
 
@@ -510,22 +512,27 @@ def CBCinv(ciphertext, key, IV):
     # get 16 bytes blocks from text
     blocks = text2blocks(ciphertext)
 
+    # get 16 bytes blocks from text, to be used in xor
+    text = text2blocks(ciphertext)
+
     # transform key into int
     key = block2int(key)
 
     # decrypt first block
     blockInt = block2int(blocks[0])
     blockInt = decrypt(blockInt, key)
+    IVint = block2int(IV)
     for j in range(16):
-        blockInt[j] = ciphertext[j] ^ IV[j] #TODO
+        blockInt[j] ^= IVint[j]
     blocks[0] = int2block(blockInt)
 
     # decrypt following blocks
     for i in range(1, len(blocks)):
         blockInt = block2int(blocks[i])
         blockInt = decrypt(blockInt, key)
+        textInt = block2int(text[i-1])
         for j in range(16):
-            blockInt[j] = ciphertext[j] ^ IV[j]
+            blockInt[j] ^= textInt[j]
         blocks[i] = int2block(blockInt)
 
     # get ciphertext from encrypted blocks
