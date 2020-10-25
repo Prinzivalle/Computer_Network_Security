@@ -540,6 +540,72 @@ def CBCinv(ciphertext, key, IV):
 
     return plaintext
 
+def CFB(plaintext, key, IV):
+
+    # get 16 bytes blocks from text
+    blocks = text2blocksPadding(plaintext)
+
+    # transform key into int
+    key = block2int(key)
+
+    # first block encryption
+    blockInt = block2int(blocks[0])
+    IVint = block2int(IV)
+    crypt = encrypt(IVint, key)
+    for j in range(16):
+        blockInt[j] ^= crypt[j]
+    blocks[0] = int2block(blockInt)
+
+    # following blocs encryption
+    for i in range(1, len(blocks)):
+        blockInt = block2int(blocks[i])
+        blockIntprev = block2int(blocks[i - 1].replace(" ", ""))
+        crypt = encrypt(blockIntprev, key)
+        for j in range(16):
+            blockInt[j] ^= crypt[j]
+        blocks[i] = int2block(blockInt)
+
+    # get ciphertext from encrypted blocks
+    ciphertext = blocks2text(blocks)
+
+    return ciphertext
+
+def CFBinv(ciphertext, key, IV):
+
+    # get 16 bytes blocks from text
+    blocks = text2blocks(ciphertext)
+
+    # get 16 bytes blocks from text, to be used in xor
+    text = text2blocks(ciphertext)
+
+    # transform key into int
+    key = block2int(key)
+
+    # first block encryption
+    blockInt = block2int(blocks[0])
+    IVint = block2int(IV)
+    crypt = encrypt(IVint, key)
+    for j in range(16):
+        blockInt[j] ^= crypt[j]
+    blocks[0] = int2block(blockInt)
+
+    # following blocs encryption
+    for i in range(1, len(blocks)):
+        blockInt = block2int(blocks[i])
+        textInt = block2int(text[i-1])
+        crypt = encrypt(textInt, key)
+        for j in range(16):
+            blockInt[j] ^= crypt[j]
+        blocks[i] = int2block(blockInt)
+
+    # get ciphertext from encrypted blocks
+    plaintext = blocks2textPadding(blocks)
+
+    return plaintext
+
+
+
+
 ###################     MAIN    #####################
 
 if __name__ == '__main__':
@@ -590,5 +656,11 @@ if __name__ == '__main__':
         "2b7e151628aed2a6abf7158809cf4f3c", "5468617473206D79204B756E67204675")
     print(ciphertext)
     print(CBCinv(ciphertext, "2b7e151628aed2a6abf7158809cf4f3c", "5468617473206D79204B756E67204675"))
+
+    ciphertext = CFB(
+        "6bc1bee22e409f96e93d7e117393172aae2d8a571e03ac9c9eb76fac45af8e5130c81c46a35ce411e5fbc1191a0a52eff69f2445df4f9b17ad2b417be66c37",
+        "2b7e151628aed2a6abf7158809cf4f3c", "5468617473206D79204B756E67204675")
+    print(ciphertext)
+    print(CFBinv(ciphertext, "2b7e151628aed2a6abf7158809cf4f3c", "5468617473206D79204B756E67204675"))
 
     #print(str("%0.2X" % 72))
