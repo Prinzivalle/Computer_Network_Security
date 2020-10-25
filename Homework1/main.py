@@ -124,17 +124,9 @@ def roundKey(subkey, round):
     word1 = [subkey[4], subkey[5], subkey[6], subkey[7]]
     word2 = [subkey[8], subkey[9], subkey[10], subkey[11]]
     word3 = [subkey[12], subkey[13], subkey[14], subkey[15]]
-    """print(' '.join(str("%0.2X" % i) for i in word0))
-    print(' '.join(str("%0.2X" % i) for i in word1))
-    print(' '.join(str("%0.2X" % i) for i in word2))
-    print(' '.join(str("%0.2X" % i) for i in word3))
-    print()"""
-
 
     # g function computation
     gRound = gFunction(list(word3), round)
-    """print()
-    print(' '.join(str("%0.2X" % i) for i in gRound))"""
 
     # xor implemetation
     for i in range(4):
@@ -142,12 +134,6 @@ def roundKey(subkey, round):
         word1[i] ^= word0[i]
         word2[i] ^= word1[i]
         word3[i] ^= word2[i]
-
-    """print()
-    print(' '.join(str("%0.2X" % i) for i in word0))
-    print(' '.join(str("%0.2X" % i) for i in word1))
-    print(' '.join(str("%0.2X" % i) for i in word2))
-    print(' '.join(str("%0.2X" % i) for i in word3))"""
 
     # rebuild key from word
     for i in range(4):
@@ -343,173 +329,7 @@ def blocks2textPadding(blocks):
     # generate string from textlist
     return "".join(textList)
 
-###################     MAIN    #####################
-
-# shorter version
-"""if __name__ == '__main__':
-    state = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15]
-    #print(shiftRow(state))
-    #print(subByteSingle(16))
-    #print(shiftRowInv([0, 5, 10, 15, 4, 9, 14, 3, 8, 13, 2, 7, 12, 1, 6, 11]))
-    #print(mixcolumns([219, 19, 83, 69, 4, 9, 14, 3, 8, 13, 2, 7, 12, 1, 6, 11]))
-    #print()
-    #key = "00112233445566778899aabbccddeeff"
-    key= "00010203040506070809101112131415"
-    print([[int(key[i * 8 + j * 2:i * 8 + j * 2 + 2], 16) for j in range(4)]
-     for i in range(4)])
-    
-    print(mixColumnsSingleInv(mixColumnsSingle([219, 19, 83, 69])))
-    print(mixColumnsSingleInv(mixColumnsSingle([242, 10, 34, 92])))
-    print(mixColumnsSingleInv(mixColumnsSingle([1, 1, 1, 1])))
-    print(mixColumnsSingleInv(mixColumnsSingle([198, 198, 198, 198])))
-    print(mixColumnsSingleInv(mixColumnsSingle([212, 212, 212, 213])))
-    print(mixColumnsSingleInv(mixColumnsSingle([45, 38, 49, 76])))
-
-    print()
-    #print(xtime(150))
-    #print(xtime(16))
-    #prova = subByte(b"\xc2")
-    #xtime(prova)
-    # xtime(subByte(b"\x04"))
-    # xtime(b"\xc2")
-    #state = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15]
-    state = [219, 1, 2, 3, 4, 19, 6, 7, 8, 9, 83, 11, 12, 13, 14, 69]
-    key = [16, 17, 18, 19, 20, 21, 22, 23, 24, 24, 26, 27, 28, 29, 30, 31]
-    print(state)
-    print()
-    state = subByte(state)
-    print(state)
-    roundKey(state, 0)
-    print(state)
-    word = [0, 1, 2, 3]
-    word = gFunction(word,5)
-    print(word)
-    state = shiftRow(state)
-    print(state)
-    state = mixcolumns(state)
-    print(state)
-    #mixColumnsSingle([12,9,10,11])
-
-    #############   ENCRYPTION
-
-    rounds = 0
-    ##### first round
-    # first round key is simply the original key
-    subkey = [16, 22, 53, 10, 89, 100, 69, 13, 36, 54, 67, 91, 12, 1, 78, 51]
-    state = keyAddition(state, subkey)
-    #print(state)
-    # byte substitution
-    state = subByte(state)
-    #print(state)
-    # shift row
-    state = shiftRow(state)
-    #print(state)
-    # mix columns
-    state = mixcolumns(state)
-    #print(state)
-    # key addition
-    subkey = roundKey(subkey, rounds)
-    print(subkey)
-    state = keyAddition(state, subkey)
-    # update rounds
-    rounds += 1
-
-    ##### intermediate iterations
-    for i in range(1, 10):
-        # byte substitution
-        state = subByte(state)
-        # shift row
-        state = shiftRow(state)
-        # mix columns
-        state = mixcolumns(state)
-        # key addition
-        subkey = roundKey(subkey, rounds)
-        print(subkey)
-        state = keyAddition(state, subkey)
-        #print(subkey)
-
-        # update rounds
-        rounds += 1
-
-    ##### last iteration
-    # byte substitution
-    state = subByte(state)
-    # shift row
-    state = shiftRow(state)
-    # key addition
-    subkey = roundKey(subkey, rounds)
-    print(subkey)
-    state = keyAddition(state, subkey)
-
-    # print the cyphertext
-    print()
-    print(state)
-    #print(subkey)
-    #print(rounds)
-    print()
-
-    #############   DECRYPTION
-
-    rounds = 0
-    ##### first round
-    # compute last subkey
-    subkey = [16, 22, 53, 10, 89, 100, 69, 13, 36, 54, 67, 91, 12, 1, 78, 51]
-    for i in range(11):
-        subkey = roundKey(subkey, rounds)
-        rounds += 1
-        #print(rounds)
-        #print(subkey)
-    print(subkey)
-    state = keyAddition(state, subkey)
-    # revert shift row
-    state = shiftRowInv(state)
-    # revert byte substitution
-    state = subByteInv(state)
-    # update rounds
-    rounds = 0
-
-    ##### intermediate iterations
-    for i in range(1, 10):
-        # compute subkey
-        subkey = [16, 22, 53, 10, 89, 100, 69, 13, 36, 54, 67, 91, 12, 1, 78, 51]
-        for j in range(11 - i):
-            #print(rounds)
-            subkey = roundKey(subkey, rounds)
-            #print(subkey)
-            rounds += 1
-        print(subkey)
-        state = keyAddition(state, subkey)
-        # revert mix columns
-        state = mixcolumnsInv(state)
-        # revert shift row
-        state = shiftRowInv(state)
-        # revert byte substitution
-        state = subByteInv(state)
-        # update rounds
-        rounds = 0
-
-    ##### last iteration
-    # revert key addition
-    subkey = [16, 22, 53, 10, 89, 100, 69, 13, 36, 54, 67, 91, 12, 1, 78, 51]
-    subkey = roundKey(subkey, 0)
-    print(subkey)
-    state = keyAddition(state, subkey)
-    # revert mix columns
-
-    state = mixcolumnsInv(state)
-    # revert shift row
-    state = shiftRowInv(state)
-    # revert byte substitution
-    state = subByteInv(state)
-    # revert key addition
-    subkey = [16, 22, 53, 10, 89, 100, 69, 13, 36, 54, 67, 91, 12, 1, 78, 51]
-    state = keyAddition(state, subkey)
-
-    # print the plaintext
-    print()
-    print(state)
-    """
-
+###################     AES MAIN FUNCTIONS    #####################
 
 def encrypt(plaintext, key):
     state = list(plaintext)
@@ -531,7 +351,6 @@ def encrypt(plaintext, key):
     state = mixcolumns(state)
     # key addition
     subkey = roundKey(subkey, rounds)
-    #print(' '.join(str("%0.2X" % i) for i in subkey))
     state = keyAddition(state, subkey)
     # update rounds
     rounds += 1
@@ -546,7 +365,6 @@ def encrypt(plaintext, key):
         state = mixcolumns(state)
         # key addition
         subkey = roundKey(subkey, rounds)
-        #print(' '.join(str("%0.2X" % i) for i in subkey))
         state = keyAddition(state, subkey)
 
         # update rounds
@@ -559,11 +377,9 @@ def encrypt(plaintext, key):
     state = shiftRow(state)
     # key addition
     subkey = roundKey(subkey, rounds)
-    #print(' '.join(str("%0.2X" % i) for i in subkey))
     state = keyAddition(state, subkey)
 
     return state
-
 
 def decrypt(ciphertext, key):
     state = list(ciphertext)
@@ -621,7 +437,6 @@ def decrypt(ciphertext, key):
 
     return state
 
-
 ###################     OPERATION MODES    #####################
 
 def ECB(plaintext, key):
@@ -634,7 +449,6 @@ def ECB(plaintext, key):
 
     # encrypt every block
     for i in range(len(blocks)):
-        print(i)
         blockInt = block2int(blocks[i])
         blockInt = encrypt(blockInt, key)
         blocks[i] = int2block(blockInt)
@@ -663,9 +477,7 @@ def ECBinv(ciphertext, key):
 
     return plaintext
 
-
 ###################     MAIN    #####################
-
 
 if __name__ == '__main__':
     #key = "00010203040506070809101112131415"
@@ -701,10 +513,10 @@ if __name__ == '__main__':
     #print(ciphertext)
     #print(ECBinv(ciphertext, "00010203040506070809101112131415"))
 
-    key = block2int("5468617473206D79204B756E67204675")
-    subkey = list(key)
-    subkey = roundKey(subkey, 1)
-    print(' '.join(str("%0.2X" % i) for i in subkey))
+    #key = block2int("5468617473206D79204B756E67204675")
+    #subkey = list(key)
+    #subkey = roundKey(subkey, 1)
+    #print(' '.join(str("%0.2X" % i) for i in subkey))
 
     ciphertext = ECB("6bc1bee22e409f96e93d7e117393172aae2d8a571e03ac9c9eb76fac45af8e5130c81c46a35ce411e5fbc1191a0a52eff69f2445df4f9b17ad2b417be66c37", "2b7e151628aed2a6abf7158809cf4f3c")
     print(ciphertext)
