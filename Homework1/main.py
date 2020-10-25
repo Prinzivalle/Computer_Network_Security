@@ -466,10 +466,66 @@ def ECBinv(ciphertext, key):
     # transform key into int
     key = block2int(key)
 
-    # encrypt every block
+    # decrypt every block
     for i in range(len(blocks)):
         blockInt = block2int(blocks[i])
         blockInt = decrypt(blockInt, key)
+        blocks[i] = int2block(blockInt)
+
+    # get ciphertext from encrypted blocks
+    plaintext = blocks2textPadding(blocks)
+
+    return plaintext
+
+def CBC(plaintext, key, IV):
+
+    # get 16 bytes blocks from text
+    blocks = text2blocksPadding(plaintext)
+
+    # transform key into int
+    key = block2int(key)
+
+    # first block encryption
+    blockInt = block2int(blocks[0])
+    for i in range(16):
+        blockInt[i] = plaintext[i] ^ IV[i]
+    blockInt = encrypt(blockInt, key)
+    blocks[0] = int2block(blockInt)
+
+    # following blocs encryption
+    for i in range(1, len(blocks)):
+        blockInt = block2int(blocks[i])
+        for j in range(16):
+            blockInt[j] = plaintext[j] ^ IV[j] #TODO
+        blockInt = encrypt(blockInt, key)
+        blocks[i] = int2block(blockInt)
+
+    # get ciphertext from encrypted blocks
+    ciphertext = blocks2text(blocks)
+
+    return ciphertext
+
+def CBCinv(ciphertext, key, IV):
+
+    # get 16 bytes blocks from text
+    blocks = text2blocks(ciphertext)
+
+    # transform key into int
+    key = block2int(key)
+
+    # decrypt first block
+    blockInt = block2int(blocks[0])
+    blockInt = decrypt(blockInt, key)
+    for j in range(16):
+        blockInt[j] = ciphertext[j] ^ IV[j] #TODO
+    blocks[0] = int2block(blockInt)
+
+    # decrypt following blocks
+    for i in range(1, len(blocks)):
+        blockInt = block2int(blocks[i])
+        blockInt = decrypt(blockInt, key)
+        for j in range(16):
+            blockInt[j] = ciphertext[j] ^ IV[j]
         blocks[i] = int2block(blockInt)
 
     # get ciphertext from encrypted blocks
@@ -522,5 +578,10 @@ if __name__ == '__main__':
     print(ciphertext)
     print(ECBinv(ciphertext, "2b7e151628aed2a6abf7158809cf4f3c"))
 
+    ciphertext = CBC(
+        "6bc1bee22e409f96e93d7e117393172aae2d8a571e03ac9c9eb76fac45af8e5130c81c46a35ce411e5fbc1191a0a52eff69f2445df4f9b17ad2b417be66c37",
+        "2b7e151628aed2a6abf7158809cf4f3c", "5468617473206D79204B756E67204675")
+    print(ciphertext)
+    print(CBCinv(ciphertext, "2b7e151628aed2a6abf7158809cf4f3c", "5468617473206D79204B756E67204675"))
 
     #print(str("%0.2X" % 72))
