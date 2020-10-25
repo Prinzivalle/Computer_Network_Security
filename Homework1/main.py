@@ -24,11 +24,13 @@ def subByteSingle(byte):
     )
     return Sbox[byte]
 
+
 # working
 def subByte(state):
     for i in range(16):
         state[i] = subByteSingle(state[i])
     return state
+
 
 # working
 def shiftRow(state):
@@ -53,6 +55,7 @@ def shiftRow(state):
 
     return state
 
+
 # working
 def xtime(element):
     if element & 0x80:
@@ -62,6 +65,7 @@ def xtime(element):
         element = element << 1
     # the & in the return is to rebuild the byte dimension
     return element & 0xFF
+
 
 # working
 def mixcolumns(state):
@@ -86,6 +90,7 @@ def mixcolumns(state):
 
     return state
 
+
 # TODO delete it since we don't need it
 def mixColumnsSingle(column):
     xorAll = column[0] ^ column[1] ^ column[2] ^ column[3]
@@ -94,12 +99,13 @@ def mixColumnsSingle(column):
     column[1] = column[1] ^ xtime(column[1] ^ column[2]) ^ xorAll
     column[2] = column[2] ^ xtime(column[2] ^ column[3]) ^ xorAll
     column[3] = column[3] ^ xtime(column[3] ^ temp) ^ xorAll
-    #print(column)
+    # print(column)
     return column
+
 
 # working
 def gFunction(word, round):
-    #define round addiction vector
+    # define round addiction vector
     rc = (0x8d, 0x01, 0x02, 0x04, 0x08, 0x10, 0x20, 0x40, 0x80, 0x1b, 0x36)
 
     # left shift of 1 byte
@@ -117,9 +123,9 @@ def gFunction(word, round):
     word[0] ^= rc[round]
     return word
 
+
 # working
 def roundKey(subkey, round):
-
     # word division
     word0 = [subkey[0], subkey[1], subkey[2], subkey[3]]
     word1 = [subkey[4], subkey[5], subkey[6], subkey[7]]
@@ -139,15 +145,17 @@ def roundKey(subkey, round):
     # rebuild key from word
     for i in range(4):
         subkey[i] = word0[i]
-        subkey[i+4] = word1[i]
-        subkey[i+8] = word2[i]
-        subkey[i+12] = word3[i]
+        subkey[i + 4] = word1[i]
+        subkey[i + 8] = word2[i]
+        subkey[i + 12] = word3[i]
     return subkey
+
 
 def keyAddition(state, subkey):
     for i in range(16):
         state[i] ^= subkey[i]
     return state
+
 
 ################    DECRYPTION     ##########################
 
@@ -182,6 +190,7 @@ def mixcolumnsInv(state):
 
     return state
 
+
 # TODO delete it since we don't need it
 def mixColumnsSingleInv(column):
     u = xtime(xtime(column[0] ^ column[2]))
@@ -198,6 +207,7 @@ def mixColumnsSingleInv(column):
     column[2] = column[2] ^ xtime(column[2] ^ column[3]) ^ xorAll
     column[3] = column[3] ^ xtime(column[3] ^ temp) ^ xorAll
     return column
+
 
 # working
 def shiftRowInv(state):
@@ -222,6 +232,7 @@ def shiftRowInv(state):
 
     return state
 
+
 def subByteSingleInv(byte):
     SboxInv = (
         0x52, 0x09, 0x6A, 0xD5, 0x30, 0x36, 0xA5, 0x38, 0xBF, 0x40, 0xA3, 0x9E, 0x81, 0xF3, 0xD7, 0xFB,
@@ -243,55 +254,98 @@ def subByteSingleInv(byte):
     )
     return SboxInv[byte]
 
+
 # working
 def subByteInv(state):
     for i in range(16):
         state[i] = subByteSingleInv(state[i])
     return state
 
+
 ###################     INPUT MANIPULATION    #####################
 
 def block2int(block):
-    return [int(block[i*2:i*2+2]) for i in range(16)]
+    return [int(block[i * 2:i * 2 + 2], 16) for i in range(16)]
+
 
 def int2block(list):
-    return ' '.join(str(i) for i in list)
+    return ' '.join(str("%0.2X" % i) for i in list)
+
 
 def text2blocks(text):
-
     # preallocate blocks as number of bytes of text
-    length = int(len(text)/32)
+    length = int(len(text) / 32)
+    blocks = ["00000000000000000000000000000000"] * (length)
+
+    # split text into blocks of 16 bytes
+    for i in range(length):
+        blocks[i] = text[i * 32:i * 32 + 32]
+
+    return blocks
+
+def text2blocksPadding(text):
+    # preallocate blocks as number of bytes of text
+    length = int(len(text) / 32)
     blocks = ["00000000000000000000000000000000"] * (length + 1)
 
     # split text into blocks of 16 bytes
     for i in range(length + 1):
-        blocks[i] = text[i*32:i*32+32]
+        blocks[i] = text[i * 32:i * 32 + 32]
 
     # add padding PKCS#7
-    count = int(len(blocks[-1])/2)
-    if count == 16:
-    	blocks.append([16161616161616161616161616161616])
+    count = int(len(blocks[-1]) / 2)
+    if count == 0:
+        blocks.pop()
+        blocks.append("10101010101010101010101010101010")
     else:
-    	for i in range(16 - count):
-    		string = list(blocks[-1])
-    		if (16 - count) < 10:
-    			string[2*count + 2*i:2*count + 2*i + 2] = "0" + str(16 - count)
-    		else:
-    			string[2*count + 2*i:2*count + 2*i + 2] = str(16 - count)
-    		blocks[-1] = "".join(string)    
+        string = list(blocks[-1])
+        for i in range(16 - count):
+            string[2 * count + 2 * i:2 * count + 2 * i + 2] = str("%0.2X" % (16 - count))
+        blocks[-1] = "".join(string)
 
     return blocks
 
 def blocks2text(blocks):
+    # preallocate list to be threated as string for text
+    length = len(blocks)
+    textList = [00000000000000000000000000000000] * length
 
+    # generate list from every block
+    for i in range(length):
+        textList[i] = blocks[i].replace(" ", "")
 
+    # generate string from textlist
+    return "".join(textList)
 
+def blocks2textPadding(blocks):
+    # preallocate list to be threated as string for text
+    length = len(blocks)
+    textList = [00000000000000000000000000000000] * length
 
-	return text
+    # remove padding PKCS#7
+    # array indexes are strange values since hex values are separated by spaces
+    last = int(blocks[-1][45:47], 16)
+    if last == 16:
+        blocks.pop()
+        textList.pop()
+    else:
+        string = list(blocks[-1])
+        for i in range(last):
+            string.pop()
+            string.pop()
+            string.pop()
+        blocks[-1] = "".join(string)
+
+    # generate list from every block
+    for i in range(len(blocks)):
+        textList[i] = blocks[i].replace(" ", "")
+
+    # generate string from textlist
+    return "".join(textList)
 
 ###################     MAIN    #####################
 
-#shorter version
+# shorter version
 """if __name__ == '__main__':
     state = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15]
     #print(shiftRow(state))
@@ -458,7 +512,6 @@ def blocks2text(blocks):
 
 
 def encrypt(plaintext, key):
-
     state = list(plaintext)
 
     #############   ENCRYPTION
@@ -508,7 +561,6 @@ def encrypt(plaintext, key):
 
 
 def decrypt(ciphertext, key):
-
     state = list(ciphertext)
 
     #############   DECRYPTION
@@ -568,39 +620,84 @@ def decrypt(ciphertext, key):
 ###################     OPERATION MODES    #####################
 
 def ECB(plaintext, key):
-    
+
+    # get 16 bytes blocks from text
+    blocks = text2blocksPadding(plaintext)
+
+    # transform key into int
+    key = block2int(key)
+
     # encrypt every block
-    for i in range(16):
-        blocks[i] = encrypt(blocks[i])
+    for i in range(len(blocks)):
+        blockInt = block2int(blocks[i])
+        blockInt = encrypt(blockInt, key)
+        blocks[i] = int2block(blockInt)
+
+    # get ciphertext from encrypted blocks
+    ciphertext = blocks2text(blocks)
 
     return ciphertext
+
+def ECBinv(ciphertext, key):
+
+    # get 16 bytes blocks from text
+    blocks = text2blocks(ciphertext)
+
+    # transform key into int
+    key = block2int(key)
+
+    # encrypt every block
+    for i in range(len(blocks)):
+        blockInt = block2int(blocks[i])
+        blockInt = decrypt(blockInt, key)
+        blocks[i] = int2block(blockInt)
+
+    # get ciphertext from encrypted blocks
+    plaintext = blocks2textPadding(blocks)
+
+    return plaintext
+
 
 ###################     MAIN    #####################
 
 
 if __name__ == '__main__':
-    key = "00010203040506070809101112131415"
-    text = "0001020304050607080910111213141516"
-    print(text2blocks(text))
-    text = "000102030405060708091011121314151617181920212223"
-    print(text2blocks(text))
-    text = "0001020304050607080910111213141516171819202122232425262728293031"
-    print(text2blocks(text))
-    #print([key[i*2:i*2+2] for i in range(16)])
-    #print([int(key[i*2:i*2+2]) for i in range(16)])
-    #print(' '.join(str(i) for i in [int(key[i*2:i*2+2]) for i in range(16)]))
-    #print(''.join(str([int(key[i*2:i*2+2]) for i in range(16)])))
+    #key = "00010203040506070809101112131415"
+    #text = "0001020304050607080910111213141516"
+    #print(text2blocks(text))
+    #print(blocks2text(text2blocks(text)))
+    #text = "000102030405060708091011121314151617181920212223"
+    #print(text2blocks(text))
+    #print(blocks2text(text2blocks(text)))
+    #text = "0001020304050607080910111213141516171819202122232425262728293031"
+    #print(text2blocks(text))
+    #print(blocks2text(text2blocks(text)))
+    # print([key[i*2:i*2+2] for i in range(16)])
+    # print([int(key[i*2:i*2+2]) for i in range(16)])
+    # print(' '.join(str(i) for i in [int(key[i*2:i*2+2]) for i in range(16)]))
+    # print(''.join(str([int(key[i*2:i*2+2]) for i in range(16)])))
 
-    state = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15]
-    #key = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15]
-    key = [16, 22, 53, 10, 89, 100, 69, 13, 36, 54, 67, 91, 12, 1, 78, 51]
-    print(state)
+    #state = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15]
+    # key = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15]
+    #key = [16, 22, 53, 10, 89, 100, 69, 13, 36, 54, 67, 91, 12, 1, 78, 51]
+    #print(state)
     # mixColumnsSingle([12,9,10,11])
 
-    state = encrypt(state,key)
+    #state = encrypt(state, key)
 
-    print(state)
+    #print(state)
 
-    state = decrypt(state,key)
+    #state = decrypt(state, key)
 
-    print(state)
+    #print(state)
+
+    #ciphertext = ECB("000102030405060708091011121314151617181920212223", "00010203040506070809101112131415")
+    #print(ciphertext)
+    #print(ECBinv(ciphertext, "00010203040506070809101112131415"))
+
+    ciphertext = ECB("6bc1bee22e409f96e93d7e117393172aae2d8a571e03ac9c9eb76fac45af8e5130c81c46a35ce411e5fbc1191a0a52eff69f2445df4f9b17ad2b417be66c37", "2b7e151628aed2a6abf7158809cf4f3c")
+    print(ciphertext)
+    print(ECBinv(ciphertext, "2b7e151628aed2a6abf7158809cf4f3c"))
+
+
+    #print(str("%0.2X" % 72))
