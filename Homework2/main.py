@@ -86,17 +86,6 @@ def mixcolumns(state):
 
     return state
 
-# TODO delete it since we don't need it
-def mixColumnsSingle(column):
-    xorAll = column[0] ^ column[1] ^ column[2] ^ column[3]
-    temp = column[0]
-    column[0] = column[0] ^ xtime(column[0] ^ column[1]) ^ xorAll
-    column[1] = column[1] ^ xtime(column[1] ^ column[2]) ^ xorAll
-    column[2] = column[2] ^ xtime(column[2] ^ column[3]) ^ xorAll
-    column[3] = column[3] ^ xtime(column[3] ^ temp) ^ xorAll
-    # print(column)
-    return column
-
 # working
 def gFunction(word, round):
     # define round addiction vector
@@ -182,23 +171,6 @@ def mixcolumnsInv(state):
             state[i * add + j] = column[j]
 
     return state
-
-# TODO delete it since we don't need it
-def mixColumnsSingleInv(column):
-    u = xtime(xtime(column[0] ^ column[2]))
-    v = xtime(xtime(column[1] ^ column[3]))
-    column[0] = column[0] ^ u
-    column[1] = column[1] ^ v
-    column[2] = column[2] ^ u
-    column[3] = column[3] ^ v
-
-    xorAll = column[0] ^ column[1] ^ column[2] ^ column[3]
-    temp = column[0]
-    column[0] = column[0] ^ xtime(column[0] ^ column[1]) ^ xorAll
-    column[1] = column[1] ^ xtime(column[1] ^ column[2]) ^ xorAll
-    column[2] = column[2] ^ xtime(column[2] ^ column[3]) ^ xorAll
-    column[3] = column[3] ^ xtime(column[3] ^ temp) ^ xorAll
-    return column
 
 # working
 def shiftRowInv(state):
@@ -725,43 +697,6 @@ def CTRinv(ciphertext, key, nonce):
 ###################     MAIN    #####################
 
 if __name__ == '__main__':
-    #key = "00010203040506070809101112131415"
-    #text = "0001020304050607080910111213141516"
-    #print(text2blocks(text))
-    #print(blocks2text(text2blocks(text)))
-    #text = "000102030405060708091011121314151617181920212223"
-    #print(text2blocks(text))
-    #print(blocks2text(text2blocks(text)))
-    #text = "0001020304050607080910111213141516171819202122232425262728293031"
-    #print(text2blocks(text))
-    #print(blocks2text(text2blocks(text)))
-    # print([key[i*2:i*2+2] for i in range(16)])
-    # print([int(key[i*2:i*2+2]) for i in range(16)])
-    # print(' '.join(str(i) for i in [int(key[i*2:i*2+2]) for i in range(16)]))
-    # print(''.join(str([int(key[i*2:i*2+2]) for i in range(16)])))
-
-    #state = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15]
-    # key = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15]
-    #key = [16, 22, 53, 10, 89, 100, 69, 13, 36, 54, 67, 91, 12, 1, 78, 51]
-    #print(state)
-    # mixColumnsSingle([12,9,10,11])
-
-    #state = encrypt(state, key)
-
-    #print(state)
-
-    #state = decrypt(state, key)
-
-    #print(state)
-
-    #ciphertext = ECB("000102030405060708091011121314151617181920212223", "5468617473206D79204B756E67204675")
-    #print(ciphertext)
-    #print(ECBinv(ciphertext, "00010203040506070809101112131415"))
-
-    #key = block2int("5468617473206D79204B756E67204675")
-    #subkey = list(key)
-    #subkey = roundKey(subkey, 1)
-    #print(' '.join(str("%0.2X" % i) for i in subkey))
 
     ciphertext = ECB("6bc1bee22e409f96e93d7e117393172aae2d8a571e03ac9c9eb76fac45af8e5130c81c46a35ce411e5fbc1191a0a52eff69f2445df4f9b17ad2b417be66c37", "2b7e151628aed2a6abf7158809cf4f3c")
     print(ciphertext)
@@ -790,5 +725,3 @@ if __name__ == '__main__':
         "2b7e151628aed2a6abf7158809cf4f3c", "5468617473206D79204B756E67204675")
     print(ciphertext)
     print(CTRinv(ciphertext, "2b7e151628aed2a6abf7158809cf4f3c", "5468617473206D79204B756E67204675"))
-
-    #print(str("%0.2X" % 72))
