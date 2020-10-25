@@ -664,6 +664,64 @@ def OFBinv(ciphertext, key, IV):
 
     return plaintext
 
+def CTR(plaintext, key, nonce):
+
+    # get 16 bytes blocks from text
+    blocks = text2blocksPadding(plaintext)
+
+    # transform key into int
+    key = block2int(key)
+
+    # transform nonce into int
+    nonce = block2int(nonce)
+
+    # encrypt every block
+    for i in range(len(blocks)):
+        crypt = encrypt(nonce, key)
+        blockInt = block2int(blocks[i])
+        for j in range(16):
+            blockInt[j] ^= crypt[j]
+        blocks[i] = int2block(blockInt)
+        nonce[15] += 1
+        for j in range(14):
+            if nonce[15 - i] > 255:
+                nonce[14 - i] += 1
+                nonce[15 - i] = nonce[15] - 255
+
+    # get ciphertext from encrypted blocks
+    ciphertext = blocks2text(blocks)
+
+    return ciphertext
+
+def CTRinv(ciphertext, key, nonce):
+
+    # get 16 bytes blocks from text
+    blocks = text2blocks(ciphertext)
+
+    # transform key into int
+    key = block2int(key)
+
+    # transform nonce into int
+    nonce = block2int(nonce)
+
+    # encrypt every block
+    for i in range(len(blocks)):
+        crypt = encrypt(nonce, key)
+        blockInt = block2int(blocks[i])
+        for j in range(16):
+            blockInt[j] ^= crypt[j]
+        blocks[i] = int2block(blockInt)
+        nonce[15] += 1
+        for j in range(14):
+            if nonce[15 - i] > 255:
+                nonce[14 - i] += 1
+                nonce[15 - i] = nonce[15] - 255
+
+    # get ciphertext from encrypted blocks
+    plaintext = blocks2textPadding(blocks)
+
+    return plaintext
+
 ###################     MAIN    #####################
 
 if __name__ == '__main__':
@@ -726,5 +784,11 @@ if __name__ == '__main__':
         "2b7e151628aed2a6abf7158809cf4f3c", "5468617473206D79204B756E67204675")
     print(ciphertext)
     print(OFBinv(ciphertext, "2b7e151628aed2a6abf7158809cf4f3c", "5468617473206D79204B756E67204675"))
+
+    ciphertext = CTR(
+        "6bc1bee22e409f96e93d7e117393172aae2d8a571e03ac9c9eb76fac45af8e5130c81c46a35ce411e5fbc1191a0a52eff69f2445df4f9b17ad2b417be66c37",
+        "2b7e151628aed2a6abf7158809cf4f3c", "5468617473206D79204B756E67204675")
+    print(ciphertext)
+    print(CTRinv(ciphertext, "2b7e151628aed2a6abf7158809cf4f3c", "5468617473206D79204B756E67204675"))
 
     #print(str("%0.2X" % 72))
