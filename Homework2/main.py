@@ -1,5 +1,5 @@
-# Press Shift+F10 to execute it or replace it with your code.
-# Press Double Shift to search everywhere for classes, files, tool windows, actions, and settings.
+from Crypto.Random import get_random_bytes
+from Crypto.Cipher import AES
 
 #################   ENCRYPTION     ###################
 
@@ -725,3 +725,17 @@ if __name__ == '__main__':
         "2b7e151628aed2a6abf7158809cf4f3c", "5468617473206D79204B756E67204675")
     print(ciphertext)
     print(CTRinv(ciphertext, "2b7e151628aed2a6abf7158809cf4f3c", "5468617473206D79204B756E67204675"))
+
+    """from Crypto.Cipher import AES
+    key = b'Sixteen byte key'
+    cipher = AES.new(key, AES.MODE_EAX)
+    nonce = cipher.nonce
+    ciphertext, tag = cipher.encrypt_and_digest(data)"""
+    
+
+    """key = get_random_bytes(32)  # 32 bytes * 8 = 256 bits (1 byte = 8 bits)
+    print(key)
+
+    cipher = AES.new("2b7e151628aed2a6abf7158809cf4f3c", AES.MODE_ECB)
+    #nonce = cipher.nonce
+    ciphertext, tag = cipher.encrypt_and_digest("6bc1bee22e409f96e93d7e117393172aae2d8a571e03ac9c9eb76fac45af8e5130c81c46a35ce411e5fbc1191a0a52eff69f2445df4f9b17ad2b417be66c37")"""
