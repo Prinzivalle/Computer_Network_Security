@@ -58,11 +58,11 @@
 
 \section{Homework Goal}
 
-This homework contains a basic python implementation of AES algorithm. Throughout the work, it has been chosen to make a compromise: the implementation is in midpoint between complete Galois Field and precomputed look-up tables for every step. Both encryption and decryption are studied and implemented, then the operatives modes are implemente and finally it will illustrate a comparison with world known AES implementations.
+This homework contains a basic python implementation of AES algorithm. Throughout the work, it has been chosen to make a compromise: the implementation is in midpoint between complete Galois Field and precomputed look-up tables for every step. Both encryption and decryption are studied and implemented, then the operation modes are implemented and finally it will illustrate a comparison with world known AES implementation.
 
 \section{Encryption}
-Before digging into the details of every operation performed, it is necessary to explain how the variables are stored in this implementation: the 4x4 state matrix is threated as single vector of 16 components, from which of course it is possible to build the matrix representation and viceversa, it was only a choice due to initial lack of knowledge of python language; every state block is a byte stored in hex values to simplify computations (as I discovered python stores hex values as int so in practice the bytes blocks are stored as int). Also the key is stored as an array of 16 bytes, and every bytes follows the same philosophy adopted for the state. \newline
-AES encryption can be decomposed into a sequence of the following four big blocks:  
+Before digging into the details of every operation performed, it is necessary to explain how the variables are stored in this implementation: the 4x4 state matrix is treated as single vector of 16 components, from which of course it is possible to build the matrix representation and vice versa, it was only a choice due to initial lack of knowledge of python language; every state block is a byte stored in hex values to simplify computations (as I discovered python stores hex values as int so in practice the bytes blocks are stored as int). Also the key is stored as an array of 16 bytes, and every bytes follows the same philosophy adopted for the state. \newline
+The encryption function is \textit{encrypt}, and it is composed by a sequence of the following four big blocks:  
 
 \begin{enumerate}
 \begin{item}
@@ -83,22 +83,22 @@ The following subsections contains implementation details and choices made to bu
 
 \subsection{Byte Substitution}
 
-The byte substitution block is build by two fuctions, one perform the single byte substitution operation (\textit {subByteSingle}), while the other one (\textit {subByte}) performs the byte substitution to all the byte of the state calling the previous function for every single byte. The basic operation of single byte substitution is performing simply by looking to a prestored table which contains all the values for the 256 combinations of 8 bit contained in one byte. This method is more efficient and more simpler to implement with respect to performing all the operations needed in GF(256).
+The byte substitution block is build by two functions, one perform the single byte substitution operation (\textit {subByteSingle}), while the other one (\textit {subByte}) performs the byte substitution to all the byte of the state calling the previous function for every single byte. The basic operation of single byte substitution is performing simply by looking to a prestored table which contains all the values for the 256 combinations of 8 bit contained in one byte. This method is more efficient and more simpler to implement with respect to performing all the operations needed in GF(256).
 
 \subsection{Shift Row}
 
-The shift row block is a simple function wich perform a left row shift for every row of the state matrix; since the state is sorted as a plain array, it s necessary first to build the row of the matrix from the array, then perform the row shift and finally substitute back in the state array the shifted value. As written in AES standard, the shift is of one byte more very time one new row is processed (first row has no shift while last row has a circular shift of 3 bytes). 
+The shift row block is a simple function which perform a left row shift for every row of the state matrix; since the state is sorted as a plain array, it s necessary first to build the row of the matrix from the array, then perform the row shift and finally substitute back in the state array the shifted value. As written in AES standard, the shift is of one byte more very time one new row is processed (first row has no shift while last row has a circular shift of 3 bytes). 
 
 \subsection{Mix Columns}
 
-The mix column block is based on an intermediate difficulty of implementation: the base idea is taken from \cite{10.5555/560131}, which is the central operation performed inside the \textit{mixcolumns} function. In order to perform it, it is necessary to construct the columns from the array state and in the end rebuild the state vector form the columns. The central operation is based on another function called \textit{xtime}, which together with the xor operations, is able to substitute all the GF operations. The xtime function implements the multiplication of the polynomial stored in the byte for x, its idea is taken from \cite{AESxtime} and since the algorithm works with a byte implementation, it is necessary to use the final end in the return of the function to truncate the byte after the left shift. \newline
-To debug this section, I used the test vetors which can be found in \cite{AESmixcolumn}.
+The mix column block is based on an intermediate difficulty of implementation: the base idea is taken from \cite{10.5555/560131}, which is the central operation performed inside the \textit{mixcolumns} function. In order to perform it, it is necessary to construct the columns from the array state and in the end rebuild the state vector form the columns. The central operation is based on another function called \textit{xtime}, which together with the xor operations, is able to substitute all the GF operations. The \textit{xtime} function implements the multiplication of the polynomial stored in the byte for x, its idea is taken from \cite{AESxtime} and since the algorithm works with a byte implementation, it is necessary to use the final and in the return of the function to truncate the byte after the left shift. \newline
+To debug this section, I used the test vectors which can be found in \cite{AESmixcolumn}.
 
 \subsection{Key Addition}
 
-The key addition layer basically uses 3 functions in this implementation: \textit{keyAddition} perform the xor operation between the state and the subkey (the for is necessary to perform the operation bytewise, since the state is an array); \textit{roundKey} generates the subkeys needed at every iteration of AES while \textit{gFuntion} is an auxiliary function needed by \textit{roundKey}. \newline
+The key addition layer basically uses 3 functions in this implementation: \textit{keyAddition} perform the xor operation between the state and the subkey (the for is necessary to perform the operation bytewise, since the state is an array); \textit{roundKey} generates the subkeys needed at every iteration of AES while \textit{gFunction} is an auxiliary function needed by \textit{roundKey}. \newline
 The \textit{gFunction} corresponds to function \textit{g} of classical AES implementation, the shift and the byte substitution are based on previous functions or parts of them, while the xor operation is performed with a precomputed vector instead of computing at every round the specific byte to xor. In this way, the implementation is more efficient and simpler.\newline
-The \textit{roundKey} function first joins 4 bytes at a time of the key in order to work with words, then it needs the auxiliary \textit{gFunction}, then it performs the four cascaded xor and finally it rebuild the byte based key from the word.\newline
+The \textit{roundKey} function first joins 4 bytes at a time of the key in order to work with words, then it needs the auxiliary \textit{gFunction}, then it performs the four cascaded xor and finally it rebuilds the byte based key from the word.\newline
 To debug this section, it has been used a step by step subkey generation that can be found in \cite{AESsteps}.   
 
 %----------------------------------------------------------------------------------------
@@ -107,11 +107,11 @@ To debug this section, it has been used a step by step subkey generation that ca
 
 \section{Decryption}
 
-The decryption part of AES is simpler than encryption since it is possible to reuse at least the key addition layer; based on implementation choices, as those mades in this homework, it is possible to reuse also the \textit{mixcolumn} idea in its inverse. The decryption is less efficient than its counterpart since it generates the subkeys at every round instead of generating it once and storing it, this has been chosen to speed up the implementation.
+The decryption part of AES is simpler than encryption since it is possible to reuse at least the key addition layer; based on implementation choices, as those made in this work, it is possible to reuse also the \textit{mixcolumn} idea in its inverse. The decryption is less efficient than its counterpart since it generates the subkeys at every round instead of generating it once and storing it, this has been chosen to speed up the implementation. The decryption function is called \textit{decrypt}.
  
 \subsection{Mix Columns Inverse}
 
-The inverse of \textit{mixcolumns} reuses part of its direct function together with a precomputation: the columns are preprocessed (fig. \ref{fig:preprocessing}) and then they are elaborated by the \textit{mixcolumns} core (fig. \ref{fig:core}). All the matematical details on this choice can be found in chapter 4 of \cite{10.5555/560131}. 
+The inverse of \textit{mixcolumns} reuses part of its direct function together with a precomputation: the columns are preprocessed (fig. \ref{fig:preprocessing}) and then they are elaborated by the \textit{mixcolumns} core (fig. \ref{fig:core}). All the mathematical details on this choice can be found in chapter 4 of \cite{10.5555/560131}. 
 
 \begin{figure}[H]
 \centering
@@ -137,7 +137,7 @@ This blocks perform the row shift to the right, in order to reverse the \textit{
 
 \subsection{Byte Substitution Inverse}
 
-This layer perform the inverse operation of Byte Substitution; it is based on two functions: \textit{subByteInv} is just a wrapper to call the base function on every byte of the state; \textit{subByteSingleInv} instead is the base funtion which performs the inverse Byte Substitution based on the inverse table seen before in the \textit{subByteSingle}.
+This layer perform the inverse operation of Byte Substitution; it is based on two functions: \textit{subByteInv} is just a wrapper to call the base function on every byte of the state; \textit{subByteSingleInv} instead is the base function which performs the inverse Byte Substitution based on the inverse table seen before in the \textit{subByteSingle}.
  
 %----------------------------------------------------------------------------------------
 %	SECTION 3
@@ -145,13 +145,46 @@ This layer perform the inverse operation of Byte Substitution; it is based on tw
 
 \section{Operation Modes}
 
+Operation modes allows to use a block cipher as AES in the case the message has length different from one block size: in this case, it is possible to encrypt multiple blocks or even deal with blocks of length different from 128 bit of AES. In order to work with different blocks, we need to manipulate the input: in this work, it is assumed to receive a string of hex numbers as input, as in table \ref{tab:AESparameter}, so it is necessary to have some input manipulation function.
+
+\begin{table}[H]
+\begin{center}
 \begin{tabular}{ll}
-Mass of empty crucible & \SI{7.28}{\gram}\\
-Mass of crucible and magnesium before heating & \SI{8.59}{\gram}\\
-Mass of crucible and magnesium oxide after heating & \SI{9.46}{\gram}\\
-Balance used & \#4\\
-Magnesium from sample bottle & \#1
+Input text &  6bc1bee22e409f96e93d7e117393172a\\
+	      &   ae2d8a571e03ac9c9eb76fac45af8e51\\
+	      &   30c81c46a35ce411e5fbc1191a0a52ef\\
+	      &   f69f2445df4f9b17ad2b417be66c37 \\
+\\
+Key & 2b7e151628aed2a6abf7158809cf4f3c\\
+\\
+IV (where needed) & 5468617473206D79204B756E67204675
 \end{tabular}
+\caption{Parameter used in testing of AES operation modes}
+\label{tab:AESparameter}
+\end{center}
+\end{table}
+
+\subsection{Text to Blocks}
+
+First it is necessary the \textit{text2blocks} function, which divides the hex string received as input into the blocks that can be encrypted by AES. In this step a problem arises: what to do with blocks whose length is different from block size? it has been chosen in this work to use the padding scheme PKCS\#7, which in this case added a number of bytes to complete the block with value equal to the number of missing bytes; in the special case when the last block has length equal to block size, the padding scheme plans to add a new block composed by bytes whose value is equal to block size in bytes (16 in this case so a block composed by 10 in hex base). The padding is added during text to block conversion by a similar function as those explained before, the only difference is that it adds padding to the last block; this function is \textit{text2blocksPadding}. To have a better understanding of why it was necessary to design two similar functions here it is their main motivation: \textit{text2blocksPadding} is used with plaintext as input, so it must add padding since text is going to be transformed; \textit{text2blocksPadding} is used in decryption with ciphertext as input, so the padding has already been added in encryption and it is necessary to just split the text into blocks whose length is exactly equal to block size.
+
+\subsection{Blocks to Text}
+
+To obtain the text from an array of blocks, some extra functions are needed: \textit{blocks2text} and \textit{blocks2textPadding}, whose aim is the inverse of that of previous section. The first is used at the end of encryption phase to obtain the ciphertext from the array of encrypted blocks. Special mention goes to the second function, which works at the end of decryption to join plain blocks into the decrypted plaintext: in this case it is necessary to reverse and remove the padding scheme used, this operation is simpler when the last byte of last block is 16 in base ten since we simply remove the last block from the the array (and the corresponding list made to host the blocks undergoing manipulation); in the case the last byte read is different from 16, it is necessary to remove a number of couples (every byte is in hex, so two cipher must be removed) equal to the last byte read and this is done by a simple iterative \textit{pop}. 
+
+\subsection{Block manipulation}
+
+Since the state is a list of 16 int representing the 16 bytes, it is necessary to transform every block (which contains a string of hex values) into the int array needed by encryption function: this operation is performed by \textit{block2int} function. The reverse function, \textit{int2block}, allows to recover the block string from the list of 16 int which was used as state.  
+
+\subsection{Implementation notes}
+
+All the operative modes have been implemented based on the slide of the course, CBC and CFB cause some problems since the following block to be encrypted needs to know the previous encrypted block, and due to the different implementation of \textit{block2int} and \textit{int2block}, it is necessary from the second block on to delete the spaces the function \textit{int2block} introduces in order to have the right input for \textit{block2int} in the following block computations.
+\newline
+Another problem is in the CTR, since for every block it is needed to increment the nonce, and a problem may arise when the increment arrives to the byte in position 0 in the block array and the current value is 255, I am not able to decide what to do in this situation, so I used a nonce which does not create this problem in the test (I know this is not the right way to do it).
+\newline
+Instead, ECB and OFB were simpler to implement due to their simpler algorithm.
+
+
 
 %----------------------------------------------------------------------------------------
 %	SECTION 4
