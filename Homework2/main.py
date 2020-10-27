@@ -1,7 +1,10 @@
-from Crypto.Random import get_random_bytes
 from Crypto.Cipher import AES
+import time
+
 
 #################   ENCRYPTION     ###################
+from Crypto.Util.Padding import pad
+
 
 def subByteSingle(byte):
     Sbox = (
@@ -783,3 +786,25 @@ if __name__ == '__main__':
         "6bc1bee22e409f96e93d7e117393172aae2d8a571e03ac9c9eb76fac45af8e5130c81c46a35ce411e5fbc1191a0a52eff69f2445df4f9b17ad2b417be66c3701"))
     print("Pycryptodome ciphertext = " + str(ciphertext))
     print()
+
+    #########   SPEED TESTS     ############
+
+    buffer_size = 65536  # 64kb
+    ciphertext = []
+
+    start_time = time.time()
+
+    for i in range(100):
+        f = open("10M.txt", "rb")
+        cipher = AES.new(bytearray.fromhex("2b7e151628aed2a6abf7158809cf4f3c"), AES.MODE_ECB)
+        buffer = f.read(buffer_size)
+        while len(buffer) > 0:
+            ciphered_bytes = cipher.encrypt(pad(buffer, 16))
+            #ciphertext.append((ciphered_bytes))
+            buffer = f.read(buffer_size)
+        #ciphertext = cipher.encrypt(f)
+        #print("Pycryptodome ciphertext last = " + str(ciphertext))
+        #print()
+        f.close()
+
+    print("--- %s seconds ---" % (time.time() - start_time))
