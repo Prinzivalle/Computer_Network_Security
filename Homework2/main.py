@@ -698,57 +698,88 @@ def CTRinv(ciphertext, key, nonce):
 
 if __name__ == '__main__':
 
-    #########   HOMEWORK IMPLEMENTATION
-    ciphertext = ECB("6bc1bee22e409f96e93d7e117393172aae2d8a571e03ac9c9eb76fac45af8e5130c81c46a35ce411e5fbc1191a0a52eff69f2445df4f9b17ad2b417be66c37", "2b7e151628aed2a6abf7158809cf4f3c")
-    print(ciphertext)
-    print(bytearray.fromhex(ciphertext))
-    print(ECBinv(ciphertext, "2b7e151628aed2a6abf7158809cf4f3c"))
+    print()
+    print("Plaintext = 6bc1bee22e409f96e93d7e117393172a  ae2d8a571e03ac9c9eb76fac45af8e51  30c81c46a35ce411e5fbc1191a0a52ef  f69f2445df4f9b17ad2b417be66c37")
+    print()
 
+    #########   ECB     ############
+
+    print("ECB mode:")
+    ciphertext = ECB("6bc1bee22e409f96e93d7e117393172aae2d8a571e03ac9c9eb76fac45af8e5130c81c46a35ce411e5fbc1191a0a52eff69f2445df4f9b17ad2b417be66c37", "2b7e151628aed2a6abf7158809cf4f3c")
+    print("Ciphertext = " + ciphertext)
+    print("Byte ciphertext = " + str(bytearray.fromhex(ciphertext)))
+    print("Decrypted plaintext = " + ECBinv(ciphertext, "2b7e151628aed2a6abf7158809cf4f3c"))
+
+    cipher = AES.new(bytearray.fromhex("2b7e151628aed2a6abf7158809cf4f3c"), AES.MODE_ECB)
+    ciphertext = cipher.encrypt(bytearray.fromhex(
+        "6bc1bee22e409f96e93d7e117393172aae2d8a571e03ac9c9eb76fac45af8e5130c81c46a35ce411e5fbc1191a0a52eff69f2445df4f9b17ad2b417be66c3701"))
+    print("Pycryptodome ciphertext = " + str(ciphertext))
+    print()
+
+    #########   CBC     ############
+
+    print("CBC mode:")
     ciphertext = CBC(
         "6bc1bee22e409f96e93d7e117393172aae2d8a571e03ac9c9eb76fac45af8e5130c81c46a35ce411e5fbc1191a0a52eff69f2445df4f9b17ad2b417be66c37",
         "2b7e151628aed2a6abf7158809cf4f3c", "5468617473206D79204B756E67204675")
-    print(ciphertext)
-    print(bytearray.fromhex(ciphertext))
-    print(CBCinv(ciphertext, "2b7e151628aed2a6abf7158809cf4f3c", "5468617473206D79204B756E67204675"))
+    print("Ciphertext = " + ciphertext)
+    print("Byte ciphertext = " + str(bytearray.fromhex(ciphertext)))
+    print("Decrypted plaintext = " + CBCinv(ciphertext, "2b7e151628aed2a6abf7158809cf4f3c", "5468617473206D79204B756E67204675"))
 
+    cipher = AES.new(bytearray.fromhex("2b7e151628aed2a6abf7158809cf4f3c"), AES.MODE_CBC,
+                     iv=bytearray.fromhex("5468617473206D79204B756E67204675"))
+    ciphertext = cipher.encrypt(bytearray.fromhex(
+        "6bc1bee22e409f96e93d7e117393172aae2d8a571e03ac9c9eb76fac45af8e5130c81c46a35ce411e5fbc1191a0a52eff69f2445df4f9b17ad2b417be66c3701"))
+    print("Pycryptodome ciphertext = " + str(ciphertext))
+    print()
+
+    #########   CFB     ############
+
+    print("CFB mode:")
     ciphertext = CFB(
         "6bc1bee22e409f96e93d7e117393172aae2d8a571e03ac9c9eb76fac45af8e5130c81c46a35ce411e5fbc1191a0a52eff69f2445df4f9b17ad2b417be66c37",
         "2b7e151628aed2a6abf7158809cf4f3c", "5468617473206D79204B756E67204675")
-    print(ciphertext)
-    print(bytearray.fromhex(ciphertext))
-    print(CFBinv(ciphertext, "2b7e151628aed2a6abf7158809cf4f3c", "5468617473206D79204B756E67204675"))
+    print("Ciphertext = " + ciphertext)
+    print("Byte ciphertext = " + str(bytearray.fromhex(ciphertext)))
+    print("Decrypted plaintext = " + CFBinv(ciphertext, "2b7e151628aed2a6abf7158809cf4f3c", "5468617473206D79204B756E67204675"))
 
+    cipher = AES.new(bytearray.fromhex("2b7e151628aed2a6abf7158809cf4f3c"), AES.MODE_CFB,
+                     iv=bytearray.fromhex("5468617473206D79204B756E67204675"), segment_size=128)
+    ciphertext = cipher.encrypt(bytearray.fromhex(
+        "6bc1bee22e409f96e93d7e117393172aae2d8a571e03ac9c9eb76fac45af8e5130c81c46a35ce411e5fbc1191a0a52eff69f2445df4f9b17ad2b417be66c3701"))
+    print("Pycryptodome ciphertext = " + str(ciphertext))
+    print()
+
+    #########   OFB     ############
+
+    print("OFB mode:")
     ciphertext = OFB(
         "6bc1bee22e409f96e93d7e117393172aae2d8a571e03ac9c9eb76fac45af8e5130c81c46a35ce411e5fbc1191a0a52eff69f2445df4f9b17ad2b417be66c37",
         "2b7e151628aed2a6abf7158809cf4f3c", "5468617473206D79204B756E67204675")
-    print(ciphertext)
-    print(bytearray.fromhex(ciphertext))
-    print(OFBinv(ciphertext, "2b7e151628aed2a6abf7158809cf4f3c", "5468617473206D79204B756E67204675"))
+    print("Ciphertext = " + ciphertext)
+    print("Byte ciphertext = " + str(bytearray.fromhex(ciphertext)))
+    print("Decrypted plaintext = " + OFBinv(ciphertext, "2b7e151628aed2a6abf7158809cf4f3c", "5468617473206D79204B756E67204675"))
 
+    cipher = AES.new(bytearray.fromhex("2b7e151628aed2a6abf7158809cf4f3c"), AES.MODE_OFB,
+                     iv=bytearray.fromhex("5468617473206D79204B756E67204675"))
+    ciphertext = cipher.encrypt(bytearray.fromhex(
+        "6bc1bee22e409f96e93d7e117393172aae2d8a571e03ac9c9eb76fac45af8e5130c81c46a35ce411e5fbc1191a0a52eff69f2445df4f9b17ad2b417be66c3701"))
+    print("Pycryptodome ciphertext = " + str(ciphertext))
+    print()
+
+    #########   CTR     ############
+
+    print("CTR mode:")
     ciphertext = CTR(
         "6bc1bee22e409f96e93d7e117393172aae2d8a571e03ac9c9eb76fac45af8e5130c81c46a35ce411e5fbc1191a0a52eff69f2445df4f9b17ad2b417be66c37",
         "2b7e151628aed2a6abf7158809cf4f3c", "5468617473206D79204B756E67204675")
-    print(ciphertext)
-    print(bytearray.fromhex(ciphertext))
-    print(CTRinv(ciphertext, "2b7e151628aed2a6abf7158809cf4f3c", "5468617473206D79204B756E67204675"))
+    print("Ciphertext = " + ciphertext)
+    print("Byte ciphertext = " + str(bytearray.fromhex(ciphertext)))
+    print("Decrypted plaintext = " + CTRinv(ciphertext, "2b7e151628aed2a6abf7158809cf4f3c", "5468617473206D79204B756E67204675"))
 
-    #########   PYCRYPTODOME IMPLEMENTATION
-    cipher = AES.new(bytearray.fromhex("2b7e151628aed2a6abf7158809cf4f3c"), AES.MODE_ECB)
-    ciphertext = cipher.encrypt(bytearray.fromhex("6bc1bee22e409f96e93d7e117393172aae2d8a571e03ac9c9eb76fac45af8e5130c81c46a35ce411e5fbc1191a0a52eff69f2445df4f9b17ad2b417be66c3701"))
-    print(ciphertext)
-
-    cipher = AES.new(bytearray.fromhex("2b7e151628aed2a6abf7158809cf4f3c"), AES.MODE_CBC, iv=bytearray.fromhex("5468617473206D79204B756E67204675"))
-    ciphertext = cipher.encrypt(bytearray.fromhex("6bc1bee22e409f96e93d7e117393172aae2d8a571e03ac9c9eb76fac45af8e5130c81c46a35ce411e5fbc1191a0a52eff69f2445df4f9b17ad2b417be66c3701"))
-    print(ciphertext)
-
-    cipher = AES.new(bytearray.fromhex("2b7e151628aed2a6abf7158809cf4f3c"), AES.MODE_CFB, iv=bytearray.fromhex("5468617473206D79204B756E67204675"),segment_size=128)
-    ciphertext = cipher.encrypt(bytearray.fromhex("6bc1bee22e409f96e93d7e117393172aae2d8a571e03ac9c9eb76fac45af8e5130c81c46a35ce411e5fbc1191a0a52eff69f2445df4f9b17ad2b417be66c3701"))
-    print(ciphertext)
-
-    cipher = AES.new(bytearray.fromhex("2b7e151628aed2a6abf7158809cf4f3c"), AES.MODE_OFB, iv=bytearray.fromhex("5468617473206D79204B756E67204675"))
-    ciphertext = cipher.encrypt(bytearray.fromhex("6bc1bee22e409f96e93d7e117393172aae2d8a571e03ac9c9eb76fac45af8e5130c81c46a35ce411e5fbc1191a0a52eff69f2445df4f9b17ad2b417be66c3701"))
-    print(ciphertext)
-
-    cipher = AES.new(bytearray.fromhex("2b7e151628aed2a6abf7158809cf4f3c"), AES.MODE_CTR, nonce=bytearray.fromhex("5468617473206D79204B756E67204675"))
-    ciphertext = cipher.encrypt(bytearray.fromhex("6bc1bee22e409f96e93d7e117393172aae2d8a571e03ac9c9eb76fac45af8e5130c81c46a35ce411e5fbc1191a0a52eff69f2445df4f9b17ad2b417be66c3701"))
-    print(ciphertext)
+    cipher = AES.new(bytearray.fromhex("2b7e151628aed2a6abf7158809cf4f3c"), AES.MODE_CTR,
+                     nonce=bytearray.fromhex("5468617473206D79"))
+    ciphertext = cipher.encrypt(bytearray.fromhex(
+        "6bc1bee22e409f96e93d7e117393172aae2d8a571e03ac9c9eb76fac45af8e5130c81c46a35ce411e5fbc1191a0a52eff69f2445df4f9b17ad2b417be66c3701"))
+    print("Pycryptodome ciphertext = " + str(ciphertext))
+    print()
