@@ -1352,7 +1352,6 @@ def testDecryption(time1, time2, time3):
     start_time = time.time()
 
     for i in range(time1):
-        print(i)
         f = open("1kCBCMine.encrypted", "r")
         buffer = f.read(buffer_size)
         while len(buffer) > 0:
@@ -1380,7 +1379,6 @@ def testDecryption(time1, time2, time3):
     start_time = time.time()
 
     for i in range(time2):
-        print(i)
         f = open("100kCBCMine.encrypted", "r")
         buffer = f.read(buffer_size)
         while len(buffer) > 0:
@@ -1394,7 +1392,7 @@ def testDecryption(time1, time2, time3):
     start_time = time.time()
 
     for i in range(time3):
-        f = open("1MCBCPycrypto.encrypted", "rb")
+        f = open("10MCBCPycrypto.encrypted", "rb")
         cipher = AES.new(bytearray.fromhex("2b7e151628aed2a6abf7158809cf4f3c"), AES.MODE_CBC,
                          iv=bytearray.fromhex("5468617473206D79204B756E67204675"))
         buffer = f.read(buffer_size)
