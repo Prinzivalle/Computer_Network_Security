@@ -63,7 +63,7 @@
 This homework contains a basic python implementation of AES algorithm. Throughout the work, it has been chosen to make a compromise: the implementation is in midpoint between complete Galois Field and precomputed look-up tables for every step. Both encryption and decryption are studied and implemented, then the operation modes are implemented and finally it will illustrate a comparison with world known AES implementation.
 
 \section{Encryption}
-Before digging into the details of every operation performed, it is necessary to explain how the variables are stored in this implementation: the 4x4 state matrix is treated as single vector of 16 components, from which of course it is possible to build the matrix representation and vice versa, it was only a choice due to initial lack of knowledge of python language; every state component is a byte stored in hex values to simplify computations (as I discovered python stores hex values as int so in practice the bytes blocks are stored as int). Also the key is stored as an array of 16 bytes, and every bytes follows the same philosophy adopted for the state. \newline
+Before digging into the details of every operation performed, it is necessary to explain how the variables are stored in this implementation: the 4x4 state matrix is treated as single vector of 16 components, from which of course it is possible to build the matrix representation and vice versa, it was only a choice due to initial lack of knowledge of python language; every state component is a byte stored in hex values to simplify computations (as I discovered python stores hex values as int so in practice the byte blocks are stored as int). Also the key is stored as an array of 16 bytes, and every byte follows the same philosophy adopted for the state. \newline
 The encryption function is \textit{encrypt}, and it is composed by a sequence of the following four big blocks:  
 
 \begin{enumerate}
@@ -81,15 +81,15 @@ Key Addition
 \end{item}
 \end{enumerate}
 
-The following subsections contains implementation details and choices made to build the single blocks.
+The following subsections contain implementation details and choices made to build the single blocks.
 
 \subsection{Byte Substitution}
 
-The byte substitution block is build by two functions, one perform the single byte substitution operation (\textit {subByteSingle}), while the other one (\textit {subByte}) performs the byte substitution for all the byte of the state calling the previous function for every single byte. The basic operation of single byte substitution is performing simply by looking to a prestored table which contains all the values for the 256 combinations of 8 bit contained in one byte. This method is more efficient and more simpler to implement with respect to performing all the operations needed in GF(256).
+The byte substitution block is build by two functions, one performs the single byte substitution operation (\textit {subByteSingle}), while the other one (\textit {subByte}) performs the byte substitution for all the bytes of the state calling the previous function for every single byte. The basic operation of single byte substitution is performed simply by looking to a prestored table which contains all the values for the 256 combinations of 8 bit contained in one byte. This method is more efficient and more simpler to implement with respect to performing all the operations needed in GF(256).
 
 \subsection{Shift Row}
 
-The shift row block is a simple function which perform a left row shift for every row of the state matrix; since the state is sorted as a plain array, it s necessary first to build the row of the matrix from the array, then perform the row shift and finally substitute back in the state array the shifted value. As written in AES standard, the shift is of one byte more every time one new row is processed (first row has no shift while last row has a circular shift of 3 bytes). 
+The shift row block is a simple function which perform a left row shift for every row of the state matrix; since the state is sorted as a plain array, it is necessary first to build the row of the matrix from the array, then performs the row shift and finally substitutes back in the state array the shifted value. As written in AES standard, the shift is of one byte more every time one new row is processed (first row has no shift while last row has a circular shift of 3 bytes). 
 
 \subsection{Mix Columns}
 
@@ -98,7 +98,7 @@ To debug this section, I used the test vectors which can be found in \cite{AESmi
 
 \subsection{Key Addition}
 
-The key addition layer basically uses 3 functions in this implementation: \textit{keyAddition} perform the xor operation between the state and the subkey (the for is necessary to perform the operation bytewise, since the state is an array); \textit{roundKey} generates the subkeys needed at every iteration of AES while \textit{gFunction} is an auxiliary function needed by \textit{roundKey}. \newline
+The key addition layer basically uses 3 functions in this implementation: \textit{keyAddition} performs the xor operation between the state and the subkey (the for is necessary to perform the operation bytewise, since the state is an array); \textit{roundKey} generates the subkeys needed at every iteration of AES while \textit{gFunction} is an auxiliary function needed by \textit{roundKey}. \newline
 The \textit{gFunction} corresponds to function \textit{g} of classical AES implementation, the shift and the byte substitution are based on previous functions or parts of them, while the xor operation is performed with a precomputed vector instead of computing at every round the specific byte to xor. In this way, the implementation is more efficient and simpler.\newline
 The \textit{roundKey} function first joins 4 bytes of the key at a time in order to work with words, then it needs the auxiliary \textit{gFunction}, then it performs the four cascaded xor and finally it rebuilds the byte based key from the words.\newline
 To debug this section, it has been used a step by step subkey generation that can be found in \cite{AESsteps}.   
@@ -135,11 +135,11 @@ The inverse of \textit{mixcolumns} reuses part of its direct function together w
 
 \subsection{Shift Row Inverse}
 
-This blocks perform the row shift to the right, in order to reverse the \textit{shiftRow} operation. As before, from state it builds the necessary rows and at the end the state is rebuilt from each rows. In order to reverse the direct operation, the first row is not shifted while the others receive successive shift till the third row which undergoes a right shift of three elements.
+This block performs the row shift to the right, in order to reverse the \textit{shiftRow} operation. As before, from state it builds the necessary rows and at the end the state is rebuilt from each rows. In order to reverse the direct operation, the first row is not shifted while the others receive successive shift till the third row which undergoes a right shift of three elements.
 
 \subsection{Byte Substitution Inverse}
 
-This layer perform the inverse operation of Byte Substitution; it is based on two functions: \textit{subByteInv} is just a wrapper to call the base function on every byte of the state; \textit{subByteSingleInv} instead is the base function which performs the inverse Byte Substitution based on the inverse table seen before in the \textit{subByteSingle}.
+This layer performs the inverse operation of Byte Substitution; it is based on two functions: \textit{subByteInv} is just a wrapper to call the base function on every byte of the state; \textit{subByteSingleInv} instead is the base function which performs the inverse Byte Substitution based on the inverse table seen before in the \textit{subByteSingle}.
  
 %----------------------------------------------------------------------------------------
 %	SECTION 3
