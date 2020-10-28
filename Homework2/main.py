@@ -1,12 +1,9 @@
-import binascii
-
+from Crypto.Util.Padding import pad
 from Crypto.Cipher import AES
 import time
-
+import binascii
 
 #################   ENCRYPTION     ###################
-from Crypto.Util.Padding import pad
-
 
 def subByteSingle(byte):
     Sbox = (
@@ -29,13 +26,11 @@ def subByteSingle(byte):
     )
     return Sbox[byte]
 
-# working
 def subByte(state):
     for i in range(16):
         state[i] = subByteSingle(state[i])
     return state
 
-# working
 def shiftRow(state):
     row = [0] * 4
     for i in range(1, 4):
@@ -58,7 +53,6 @@ def shiftRow(state):
 
     return state
 
-# working
 def xtime(element):
     if element & 0x80:
         element = element << 1
@@ -68,7 +62,6 @@ def xtime(element):
     # the & in the return is to rebuild the byte dimension
     return element & 0xFF
 
-# working
 def mixcolumns(state):
     column = [0] * 4
     for i in range(4):
@@ -91,7 +84,6 @@ def mixcolumns(state):
 
     return state
 
-# working
 def gFunction(word, round):
     # define round addiction vector
     rc = (0x8d, 0x01, 0x02, 0x04, 0x08, 0x10, 0x20, 0x40, 0x80, 0x1b, 0x36)
@@ -111,7 +103,6 @@ def gFunction(word, round):
     word[0] ^= rc[round]
     return word
 
-# working
 def roundKey(subkey, round):
     # word division
     word0 = [subkey[0], subkey[1], subkey[2], subkey[3]]
@@ -138,7 +129,6 @@ def roundKey(subkey, round):
 
     return subkey
 
-# working
 def keyAddition(state, subkey):
     for i in range(16):
         state[i] ^= subkey[i]
@@ -146,7 +136,6 @@ def keyAddition(state, subkey):
 
 ################    DECRYPTION     ##########################
 
-# working
 def mixcolumnsInv(state):
     column = [0] * 4
     for i in range(4):
@@ -177,7 +166,6 @@ def mixcolumnsInv(state):
 
     return state
 
-# working
 def shiftRowInv(state):
     row = [0] * 4
     for i in range(1, 4):
@@ -221,7 +209,6 @@ def subByteSingleInv(byte):
     )
     return SboxInv[byte]
 
-# working
 def subByteInv(state):
     for i in range(16):
         state[i] = subByteSingleInv(state[i])
