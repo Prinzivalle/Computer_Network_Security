@@ -701,34 +701,53 @@ def CTRinv(ciphertext, key, nonce):
 
 ###################     TEST    #####################
 
-def testEncryption(time1, time2):
-    # buffer_size = 65536  # 64kb
-    buffer_size = 102400
+def testEncryption(time1, time2, time3):    #respectively number of rounds for 1k, 100k, 10M
+
+    buffer_size = 102400    # 100k
 
     ######  ENCRYPTION
+    print()
+    print("######### ENCRYPTION TEST ############")
 
     ##### ECB 1K
     start_time = time.time()
 
-    for i in range(time1):
+    # In first round save the encrypted file for decrypt test
+    f = open("1K.txt", "rb")
+    output_file = open('1kECBPycrypto.encrypted', 'wb')
+    cipher = AES.new(bytearray.fromhex("2b7e151628aed2a6abf7158809cf4f3c"), AES.MODE_ECB)
+    buffer = f.read(buffer_size)
+    while len(buffer) > 0:
+        ciphered_bytes = cipher.encrypt(pad(buffer, 16))
+        output_file.write(ciphered_bytes)
+        buffer = f.read(buffer_size)
+    f.close()
+    output_file.close()
+
+    for i in range(time1 - 1):
         f = open("1K.txt", "rb")
         cipher = AES.new(bytearray.fromhex("2b7e151628aed2a6abf7158809cf4f3c"), AES.MODE_ECB)
         buffer = f.read(buffer_size)
         while len(buffer) > 0:
-            ciphered_bytes = cipher.encrypt(pad(buffer, 16))
-            # ciphertext.append((ciphered_bytes))
+            cipher.encrypt(pad(buffer, 16))
             buffer = f.read(buffer_size)
-        # ciphertext = cipher.encrypt(f)
-        # print("Pycryptodome ciphertext last = " + str(ciphertext))
-        # print()
         f.close()
 
     print("pycryptodome ECB 1k --- %s seconds ---" % (time.time() - start_time))
 
     start_time = time.time()
 
-    for i in range(time2):
-        # print(i)
+    # In first round save the encrypted file for decrypt test
+    f = open("1K.txt", "rb")
+    output_file = open('1kECBMine.encrypted', 'w')
+    buffer = binascii.hexlify(f.read(buffer_size)).decode('utf-8')
+    while len(buffer) > 0:
+        ciphered_bytes = ECB(buffer, "2b7e151628aed2a6abf7158809cf4f3c")
+        output_file.write(ciphered_bytes)
+        buffer = binascii.hexlify(f.read(buffer_size)).decode('utf-8')
+    f.close()
+
+    for i in range(time1 - 1):
         f = open("1K.txt", "rb")
         buffer = binascii.hexlify(f.read(buffer_size)).decode('utf-8')
         while len(buffer) > 0:
@@ -741,7 +760,19 @@ def testEncryption(time1, time2):
     ##### ECB 100K
     start_time = time.time()
 
-    for i in range(time1):
+    # In first round save the encrypted file for decrypt test
+    f = open("100K.txt", "rb")
+    output_file = open('100kECBPycrypto.encrypted', 'wb')
+    cipher = AES.new(bytearray.fromhex("2b7e151628aed2a6abf7158809cf4f3c"), AES.MODE_ECB)
+    buffer = f.read(buffer_size)
+    while len(buffer) > 0:
+        ciphered_bytes = cipher.encrypt(pad(buffer, 16))
+        output_file.write(ciphered_bytes)
+        buffer = f.read(buffer_size)
+    f.close()
+    output_file.close()
+
+    for i in range(time2 - 1):
         f = open("100K.txt", "rb")
         cipher = AES.new(bytearray.fromhex("2b7e151628aed2a6abf7158809cf4f3c"), AES.MODE_ECB)
         buffer = f.read(buffer_size)
@@ -750,12 +781,21 @@ def testEncryption(time1, time2):
             buffer = f.read(buffer_size)
         f.close()
 
-    print("pycryptodome ECB 1k --- %s seconds ---" % (time.time() - start_time))
+    print("pycryptodome ECB 100k --- %s seconds ---" % (time.time() - start_time))
 
     start_time = time.time()
 
-    for i in range(time2):
-        print(i)
+    # In first round save the encrypted file for decrypt test
+    f = open("100K.txt", "rb")
+    output_file = open('100kECBMine.encrypted', 'w')
+    buffer = binascii.hexlify(f.read(buffer_size)).decode('utf-8')
+    while len(buffer) > 0:
+        ciphered_bytes = ECB(buffer, "2b7e151628aed2a6abf7158809cf4f3c")
+        output_file.write(ciphered_bytes)
+        buffer = binascii.hexlify(f.read(buffer_size)).decode('utf-8')
+    f.close()
+
+    for i in range(time2 - 1):
         f = open("100K.txt", "rb")
         buffer = binascii.hexlify(f.read(buffer_size)).decode('utf-8')
         while len(buffer) > 0:
@@ -763,12 +803,24 @@ def testEncryption(time1, time2):
             buffer = binascii.hexlify(f.read(buffer_size)).decode('utf-8')
         f.close()
 
-    print("my implementation ECB 1K --- %s seconds ---" % (time.time() - start_time))
+    print("my implementation ECB 100K --- %s seconds ---" % (time.time() - start_time))
 
     ##### ECB 10M
     start_time = time.time()
 
-    for i in range(time1):
+    # In first round save the encrypted file for decrypt test
+    f = open("10M.txt", "rb")
+    output_file = open('10MECBPycrypto.encrypted', 'wb')
+    cipher = AES.new(bytearray.fromhex("2b7e151628aed2a6abf7158809cf4f3c"), AES.MODE_ECB)
+    buffer = f.read(buffer_size)
+    while len(buffer) > 0:
+        ciphered_bytes = cipher.encrypt(pad(buffer, 16))
+        output_file.write(ciphered_bytes)
+        buffer = f.read(buffer_size)
+    f.close()
+    output_file.close()
+
+    for i in range(time3 - 1):
         f = open("10M.txt", "rb")
         cipher = AES.new(bytearray.fromhex("2b7e151628aed2a6abf7158809cf4f3c"), AES.MODE_ECB)
         buffer = f.read(buffer_size)
@@ -781,8 +833,19 @@ def testEncryption(time1, time2):
 
     start_time = time.time()
 
-    for i in range(time2):
-        print(i)
+    # In first round save the encrypted file for decrypt test
+    print(0)
+    f = open("10M.txt", "rb")
+    output_file = open('10MECBMine.encrypted', 'w')
+    buffer = binascii.hexlify(f.read(buffer_size)).decode('utf-8')
+    while len(buffer) > 0:
+        ciphered_bytes = ECB(buffer, "2b7e151628aed2a6abf7158809cf4f3c")
+        output_file.write(ciphered_bytes)
+        buffer = binascii.hexlify(f.read(buffer_size)).decode('utf-8')
+    f.close()
+
+    for i in range(time3 - 1):
+        print(i + 1)
         f = open("10M.txt", "rb")
         buffer = binascii.hexlify(f.read(buffer_size)).decode('utf-8')
         while len(buffer) > 0:
@@ -795,7 +858,20 @@ def testEncryption(time1, time2):
     ##### OFB 1K
     start_time = time.time()
 
-    for i in range(time1):
+    # In first round save the encrypted file for decrypt test
+    f = open("1K.txt", "rb")
+    output_file = open('1kOFBPycrypto.encrypted', 'wb')
+    cipher = AES.new(bytearray.fromhex("2b7e151628aed2a6abf7158809cf4f3c"), AES.MODE_OFB,
+                     iv=bytearray.fromhex("5468617473206D79204B756E67204675"))
+    buffer = f.read(buffer_size)
+    while len(buffer) > 0:
+        ciphered_bytes = cipher.encrypt(pad(buffer, 16))
+        output_file.write(ciphered_bytes)
+        buffer = f.read(buffer_size)
+    f.close()
+    output_file.close()
+
+    for i in range(time1 - 1):
         f = open("1K.txt", "rb")
         cipher = AES.new(bytearray.fromhex("2b7e151628aed2a6abf7158809cf4f3c"), AES.MODE_OFB,
                          iv=bytearray.fromhex("5468617473206D79204B756E67204675"))
@@ -809,8 +885,17 @@ def testEncryption(time1, time2):
 
     start_time = time.time()
 
-    for i in range(time2):
-        print(i)
+    # In first round save the encrypted file for decrypt test
+    f = open("1K.txt", "rb")
+    output_file = open('1kOFBMine.encrypted', 'w')
+    buffer = binascii.hexlify(f.read(buffer_size)).decode('utf-8')
+    while len(buffer) > 0:
+        ciphered_bytes = OFB(buffer, "2b7e151628aed2a6abf7158809cf4f3c", "5468617473206D79204B756E67204675")
+        output_file.write(ciphered_bytes)
+        buffer = binascii.hexlify(f.read(buffer_size)).decode('utf-8')
+    f.close()
+
+    for i in range(time1 - 1):
         f = open("1K.txt", "rb")
         buffer = binascii.hexlify(f.read(buffer_size)).decode('utf-8')
         while len(buffer) > 0:
@@ -823,7 +908,20 @@ def testEncryption(time1, time2):
     ##### OFB 100K
     start_time = time.time()
 
-    for i in range(time1):
+    # In first round save the encrypted file for decrypt test
+    f = open("100K.txt", "rb")
+    output_file = open('100kOFBPycrypto.encrypted', 'w')
+    cipher = AES.new(bytearray.fromhex("2b7e151628aed2a6abf7158809cf4f3c"), AES.MODE_OFB,
+                     iv=bytearray.fromhex("5468617473206D79204B756E67204675"))
+    buffer = f.read(buffer_size)
+    while len(buffer) > 0:
+        ciphered_bytes = cipher.encrypt(pad(buffer, 16))
+        output_file.write(ciphered_bytes)
+        buffer = f.read(buffer_size)
+    f.close()
+    output_file.close()
+
+    for i in range(time2 - 1):
         f = open("100K.txt", "rb")
         cipher = AES.new(bytearray.fromhex("2b7e151628aed2a6abf7158809cf4f3c"), AES.MODE_OFB,
                          iv=bytearray.fromhex("5468617473206D79204B756E67204675"))
@@ -833,12 +931,21 @@ def testEncryption(time1, time2):
             buffer = f.read(buffer_size)
         f.close()
 
-    print("pycryptodome OFB 1k --- %s seconds ---" % (time.time() - start_time))
+    print("pycryptodome OFB 100k --- %s seconds ---" % (time.time() - start_time))
 
     start_time = time.time()
 
-    for i in range(time2):
-        print(i)
+    # In first round save the encrypted file for decrypt test
+    f = open("100K.txt", "rb")
+    output_file = open('100kOFBMine.encrypted', 'w')
+    buffer = binascii.hexlify(f.read(buffer_size)).decode('utf-8')
+    while len(buffer) > 0:
+        ciphered_bytes = OFB(buffer, "2b7e151628aed2a6abf7158809cf4f3c", "5468617473206D79204B756E67204675")
+        output_file.write(ciphered_bytes)
+        buffer = binascii.hexlify(f.read(buffer_size)).decode('utf-8')
+    f.close()
+
+    for i in range(time2 - 1):
         f = open("100K.txt", "rb")
         buffer = binascii.hexlify(f.read(buffer_size)).decode('utf-8')
         while len(buffer) > 0:
@@ -846,12 +953,25 @@ def testEncryption(time1, time2):
             buffer = binascii.hexlify(f.read(buffer_size)).decode('utf-8')
         f.close()
 
-    print("my implementation OFB 1K --- %s seconds ---" % (time.time() - start_time))
+    print("my implementation OFB 100K --- %s seconds ---" % (time.time() - start_time))
 
     ##### OFB 10M
     start_time = time.time()
 
-    for i in range(time1):
+    # In first round save the encrypted file for decrypt test
+    f = open("10M.txt", "rb")
+    output_file = open('10MOFBPycrypto.encrypted', 'wb')
+    cipher = AES.new(bytearray.fromhex("2b7e151628aed2a6abf7158809cf4f3c"), AES.MODE_OFB,
+                     iv=bytearray.fromhex("5468617473206D79204B756E67204675"))
+    buffer = f.read(buffer_size)
+    while len(buffer) > 0:
+        ciphered_bytes = cipher.encrypt(pad(buffer, 16))
+        output_file.write(ciphered_bytes)
+        buffer = f.read(buffer_size)
+    f.close()
+    output_file.close()
+
+    for i in range(time3 - 1):
         f = open("10M.txt", "rb")
         cipher = AES.new(bytearray.fromhex("2b7e151628aed2a6abf7158809cf4f3c"), AES.MODE_OFB,
                          iv=bytearray.fromhex("5468617473206D79204B756E67204675"))
@@ -865,8 +985,19 @@ def testEncryption(time1, time2):
 
     start_time = time.time()
 
-    for i in range(time2):
-        print(i)
+    # In first round save the encrypted file for decrypt test
+    print(0)
+    f = open("10M.txt", "rb")
+    output_file = open('10MOFBMine.encrypted', 'w')
+    buffer = binascii.hexlify(f.read(buffer_size)).decode('utf-8')
+    while len(buffer) > 0:
+        ciphered_bytes = OFB(buffer, "2b7e151628aed2a6abf7158809cf4f3c", "5468617473206D79204B756E67204675")
+        output_file.write(ciphered_bytes)
+        buffer = binascii.hexlify(f.read(buffer_size)).decode('utf-8')
+    f.close()
+
+    for i in range(time3 - 1):
+        print(i + 1)
         f = open("10M.txt", "rb")
         buffer = binascii.hexlify(f.read(buffer_size)).decode('utf-8')
         while len(buffer) > 0:
@@ -879,7 +1010,20 @@ def testEncryption(time1, time2):
     ##### CBC 1K
     start_time = time.time()
 
-    for i in range(time1):
+    # In first round save the encrypted file for decrypt test
+    f = open("1K.txt", "rb")
+    output_file = open('1kCBCPycrypto.encrypted', 'wb')
+    cipher = AES.new(bytearray.fromhex("2b7e151628aed2a6abf7158809cf4f3c"), AES.MODE_CBC,
+                     iv=bytearray.fromhex("5468617473206D79204B756E67204675"))
+    buffer = f.read(buffer_size)
+    while len(buffer) > 0:
+        ciphered_bytes = cipher.encrypt(pad(buffer, 16))
+        output_file.write(ciphered_bytes)
+        buffer = f.read(buffer_size)
+    f.close()
+    output_file.close()
+
+    for i in range(time1 - 1):
         f = open("1K.txt", "rb")
         cipher = AES.new(bytearray.fromhex("2b7e151628aed2a6abf7158809cf4f3c"), AES.MODE_CBC,
                          iv=bytearray.fromhex("5468617473206D79204B756E67204675"))
@@ -893,8 +1037,17 @@ def testEncryption(time1, time2):
 
     start_time = time.time()
 
-    for i in range(time2):
-        print(i)
+    # In first round save the encrypted file for decrypt test
+    f = open("1K.txt", "rb")
+    output_file = open('1kCBCMine.encrypted', 'w')
+    buffer = binascii.hexlify(f.read(buffer_size)).decode('utf-8')
+    while len(buffer) > 0:
+        ciphered_bytes = CBC(buffer, "2b7e151628aed2a6abf7158809cf4f3c", "5468617473206D79204B756E67204675")
+        output_file.write(ciphered_bytes)
+        buffer = binascii.hexlify(f.read(buffer_size)).decode('utf-8')
+    f.close()
+
+    for i in range(time1 - 1):
         f = open("1K.txt", "rb")
         buffer = binascii.hexlify(f.read(buffer_size)).decode('utf-8')
         while len(buffer) > 0:
@@ -904,10 +1057,23 @@ def testEncryption(time1, time2):
 
     print("my implementation CBC 1K --- %s seconds ---" % (time.time() - start_time))
 
-    ##### OFB 100K
+    ##### CBC 100K
     start_time = time.time()
 
-    for i in range(time1):
+    # In first round save the encrypted file for decrypt test
+    f = open("100K.txt", "rb")
+    output_file = open('100kCBCPycrypto.encrypted', 'wb')
+    cipher = AES.new(bytearray.fromhex("2b7e151628aed2a6abf7158809cf4f3c"), AES.MODE_CBC,
+                     iv=bytearray.fromhex("5468617473206D79204B756E67204675"))
+    buffer = f.read(buffer_size)
+    while len(buffer) > 0:
+        ciphered_bytes = cipher.encrypt(pad(buffer, 16))
+        output_file.write(ciphered_bytes)
+        buffer = f.read(buffer_size)
+    f.close()
+    output_file.close()
+
+    for i in range(time2 - 1):
         f = open("100K.txt", "rb")
         cipher = AES.new(bytearray.fromhex("2b7e151628aed2a6abf7158809cf4f3c"), AES.MODE_CBC,
                          iv=bytearray.fromhex("5468617473206D79204B756E67204675"))
@@ -917,12 +1083,21 @@ def testEncryption(time1, time2):
             buffer = f.read(buffer_size)
         f.close()
 
-    print("pycryptodome CBC 1k --- %s seconds ---" % (time.time() - start_time))
+    print("pycryptodome CBC 100k --- %s seconds ---" % (time.time() - start_time))
 
     start_time = time.time()
 
-    for i in range(time2):
-        print(i)
+    # In first round save the encrypted file for decrypt test
+    f = open("100K.txt", "rb")
+    output_file = open('100kCBCMine.encrypted', 'w')
+    buffer = binascii.hexlify(f.read(buffer_size)).decode('utf-8')
+    while len(buffer) > 0:
+        ciphered_bytes = CBC(buffer, "2b7e151628aed2a6abf7158809cf4f3c", "5468617473206D79204B756E67204675")
+        output_file.write(ciphered_bytes)
+        buffer = binascii.hexlify(f.read(buffer_size)).decode('utf-8')
+    f.close()
+
+    for i in range(time2 - 1):
         f = open("100K.txt", "rb")
         buffer = binascii.hexlify(f.read(buffer_size)).decode('utf-8')
         while len(buffer) > 0:
@@ -930,12 +1105,25 @@ def testEncryption(time1, time2):
             buffer = binascii.hexlify(f.read(buffer_size)).decode('utf-8')
         f.close()
 
-    print("my implementation CBC 1K --- %s seconds ---" % (time.time() - start_time))
+    print("my implementation CBC 100K --- %s seconds ---" % (time.time() - start_time))
 
-    ##### OFB 10M
+    ##### CBC 10M
     start_time = time.time()
 
-    for i in range(time1):
+    # In first round save the encrypted file for decrypt test
+    f = open("10M.txt", "rb")
+    output_file = open('10MCBCPycrypto.encrypted', 'wb')
+    cipher = AES.new(bytearray.fromhex("2b7e151628aed2a6abf7158809cf4f3c"), AES.MODE_CBC,
+                     iv=bytearray.fromhex("5468617473206D79204B756E67204675"))
+    buffer = f.read(buffer_size)
+    while len(buffer) > 0:
+        ciphered_bytes = cipher.encrypt(pad(buffer, 16))
+        output_file.write(ciphered_bytes)
+        buffer = f.read(buffer_size)
+    f.close()
+    output_file.close()
+
+    for i in range(time3 - 1):
         f = open("10M.txt", "rb")
         cipher = AES.new(bytearray.fromhex("2b7e151628aed2a6abf7158809cf4f3c"), AES.MODE_CBC,
                          iv=bytearray.fromhex("5468617473206D79204B756E67204675"))
@@ -949,13 +1137,276 @@ def testEncryption(time1, time2):
 
     start_time = time.time()
 
-    for i in range(time2):
-        print(i)
+    # In first round save the encrypted file for decrypt test
+    print(0)
+    f = open("10M.txt", "rb")
+    output_file = open('10MCBCMine.encrypted', 'w')
+    buffer = binascii.hexlify(f.read(buffer_size)).decode('utf-8')
+    while len(buffer) > 0:
+        ciphered_bytes = CBC(buffer, "2b7e151628aed2a6abf7158809cf4f3c", "5468617473206D79204B756E67204675")
+        output_file.write(ciphered_bytes)
+        buffer = binascii.hexlify(f.read(buffer_size)).decode('utf-8')
+    f.close()
+
+    for i in range(time3 - 1):
+        print(i + 1)
         f = open("10M.txt", "rb")
         buffer = binascii.hexlify(f.read(buffer_size)).decode('utf-8')
         while len(buffer) > 0:
             ciphered_bytes = CBC(buffer, "2b7e151628aed2a6abf7158809cf4f3c", "5468617473206D79204B756E67204675")
             buffer = binascii.hexlify(f.read(buffer_size)).decode('utf-8')
+        f.close()
+
+    print("my implementation CBC 10M --- %s seconds ---" % (time.time() - start_time))
+
+def testDecryption(time1, time2, time3):
+
+    buffer_size = 102400    #100k
+
+    ######  DECRYPTION
+    print()
+    print("######### DECRYPTION TEST ############")
+
+    ##### ECB 1K
+    start_time = time.time()
+
+    for i in range(time1):
+        f = open("1kECBPycrypto.encrypted", "rb")
+        cipher = AES.new(bytearray.fromhex("2b7e151628aed2a6abf7158809cf4f3c"), AES.MODE_ECB)
+        buffer = f.read(buffer_size)
+        while len(buffer) > 0:
+            cipher.decrypt(buffer)
+            buffer = f.read(buffer_size)
+        f.close()
+
+    print("pycryptodome ECB 1k --- %s seconds ---" % (time.time() - start_time))
+
+    start_time = time.time()
+
+    for i in range(time1):
+        f = open("1kECBMine.encrypted", "r")
+        buffer = f.read(buffer_size)
+        while len(buffer) > 0:
+            ECBinv(buffer, "2b7e151628aed2a6abf7158809cf4f3c")
+            buffer = f.read(buffer_size)
+        f.close()
+
+    print("my implementation ECB 1K --- %s seconds ---" % (time.time() - start_time))
+
+    ##### ECB 100K
+    start_time = time.time()
+
+    for i in range(time2):
+        f = open("100kECBPycrypto.encrypted", "rb")
+        cipher = AES.new(bytearray.fromhex("2b7e151628aed2a6abf7158809cf4f3c"), AES.MODE_ECB)
+        buffer = f.read(buffer_size)
+        while len(buffer) > 0:
+            cipher.decrypt(buffer)
+            buffer = f.read(buffer_size)
+        f.close()
+
+    print("pycryptodome ECB 100k --- %s seconds ---" % (time.time() - start_time))
+
+    start_time = time.time()
+
+    for i in range(time2):
+        f = open("100kECBMine.encrypted", "r")
+        buffer = f.read(buffer_size)
+        while len(buffer) > 0:
+            ECBinv(buffer, "2b7e151628aed2a6abf7158809cf4f3c")
+            buffer = f.read(buffer_size)
+        f.close()
+
+    print("my implementation ECB 100K --- %s seconds ---" % (time.time() - start_time))
+
+    ##### ECB 10M
+    start_time = time.time()
+
+    for i in range(time3):
+        f = open("10MECBPycrypto.encrypted", "rb")
+        cipher = AES.new(bytearray.fromhex("2b7e151628aed2a6abf7158809cf4f3c"), AES.MODE_ECB)
+        buffer = f.read(buffer_size)
+        while len(buffer) > 0:
+            cipher.decrypt(buffer)
+            buffer = f.read(buffer_size)
+        f.close()
+
+    print("pycryptodome ECB 10M --- %s seconds ---" % (time.time() - start_time))
+
+    start_time = time.time()
+
+    for i in range(time3):
+        f = open("10MECBMine.encrypted", "r")
+        buffer = f.read(buffer_size)
+        while len(buffer) > 0:
+            ECBinv(buffer, "2b7e151628aed2a6abf7158809cf4f3c")
+            buffer = f.read(buffer_size)
+        f.close()
+
+    print("my implementation ECB 10M --- %s seconds ---" % (time.time() - start_time))
+
+    ##### OFB 1K
+    start_time = time.time()
+
+    for i in range(time1):
+        f = open("1kOFBPycrypto.encrypted", "rb")
+        cipher = AES.new(bytearray.fromhex("2b7e151628aed2a6abf7158809cf4f3c"), AES.MODE_OFB,
+                         iv=bytearray.fromhex("5468617473206D79204B756E67204675"))
+        buffer = f.read(buffer_size)
+        while len(buffer) > 0:
+            cipher.decrypt(buffer)
+            buffer = f.read(buffer_size)
+        f.close()
+
+    print("pycryptodome OFB 1k --- %s seconds ---" % (time.time() - start_time))
+
+    start_time = time.time()
+
+    for i in range(time1):
+        f = open("1kOFBMine.encrypted", "r")
+        buffer = f.read(buffer_size)
+        while len(buffer) > 0:
+            OFBinv(buffer, "2b7e151628aed2a6abf7158809cf4f3c", "5468617473206D79204B756E67204675")
+            buffer = f.read(buffer_size)
+        f.close()
+
+    print("my implementation OFB 1K --- %s seconds ---" % (time.time() - start_time))
+
+    ##### OFB 100K
+    start_time = time.time()
+
+    for i in range(time2):
+        f = open("100kOFBPycrypto.encrypted", "rb")
+        cipher = AES.new(bytearray.fromhex("2b7e151628aed2a6abf7158809cf4f3c"), AES.MODE_OFB,
+                         iv=bytearray.fromhex("5468617473206D79204B756E67204675"))
+        buffer = f.read(buffer_size)
+        while len(buffer) > 0:
+            cipher.decrypt(buffer)
+            buffer = f.read(buffer_size)
+        f.close()
+
+    print("pycryptodome OFB 100k --- %s seconds ---" % (time.time() - start_time))
+
+    start_time = time.time()
+
+    for i in range(time2):
+        f = open("100kOFBMine.encrypted", "r")
+        buffer = f.read(buffer_size)
+        while len(buffer) > 0:
+            OFBinv(buffer, "2b7e151628aed2a6abf7158809cf4f3c", "5468617473206D79204B756E67204675")
+            buffer = f.read(buffer_size)
+        f.close()
+
+    print("my implementation OFB 100K --- %s seconds ---" % (time.time() - start_time))
+
+    ##### OFB 10M
+    start_time = time.time()
+
+    for i in range(time3):
+        f = open("10MOFBPycrypto.encrypted", "rb")
+        cipher = AES.new(bytearray.fromhex("2b7e151628aed2a6abf7158809cf4f3c"), AES.MODE_OFB,
+                         iv=bytearray.fromhex("5468617473206D79204B756E67204675"))
+        buffer = f.read(buffer_size)
+        while len(buffer) > 0:
+            cipher.decrypt(buffer)
+            buffer = f.read(buffer_size)
+        f.close()
+
+    print("pycryptodome OFB 10M --- %s seconds ---" % (time.time() - start_time))
+
+    start_time = time.time()
+
+    for i in range(time3):
+        print(i)
+        f = open("10MOFBMine.encrypted", "r")
+        buffer = f.read(buffer_size)
+        while len(buffer) > 0:
+            OFBinv(buffer, "2b7e151628aed2a6abf7158809cf4f3c", "5468617473206D79204B756E67204675")
+            buffer = f.read(buffer_size)
+        f.close()
+
+    print("my implementation OFB 10M --- %s seconds ---" % (time.time() - start_time))
+
+    ##### CBC 1K
+    start_time = time.time()
+
+    for i in range(time1):
+        f = open("1kCBCPycrypto.encrypted", "rb")
+        cipher = AES.new(bytearray.fromhex("2b7e151628aed2a6abf7158809cf4f3c"), AES.MODE_CBC,
+                         iv=bytearray.fromhex("5468617473206D79204B756E67204675"))
+        buffer = f.read(buffer_size)
+        while len(buffer) > 0:
+            cipher.encrypt(buffer)
+            buffer = f.read(buffer_size)
+        f.close()
+
+    print("pycryptodome CBC 1k --- %s seconds ---" % (time.time() - start_time))
+
+    start_time = time.time()
+
+    for i in range(time1):
+        print(i)
+        f = open("1kCBCMine.encrypted", "r")
+        buffer = f.read(buffer_size)
+        while len(buffer) > 0:
+            CBCinv(buffer, "2b7e151628aed2a6abf7158809cf4f3c", "5468617473206D79204B756E67204675")
+            buffer = f.read(buffer_size)
+        f.close()
+
+    print("my implementation CBC 1K --- %s seconds ---" % (time.time() - start_time))
+
+    ##### CBC 100K
+    start_time = time.time()
+
+    for i in range(time2):
+        f = open("100kCBCPycrypto.encrypted", "rb")
+        cipher = AES.new(bytearray.fromhex("2b7e151628aed2a6abf7158809cf4f3c"), AES.MODE_CBC,
+                         iv=bytearray.fromhex("5468617473206D79204B756E67204675"))
+        buffer = f.read(buffer_size)
+        while len(buffer) > 0:
+            cipher.encrypt(buffer)
+            buffer = f.read(buffer_size)
+        f.close()
+
+    print("pycryptodome CBC 100k --- %s seconds ---" % (time.time() - start_time))
+
+    start_time = time.time()
+
+    for i in range(time2):
+        print(i)
+        f = open("100kCBCMine.encrypted", "r")
+        buffer = f.read(buffer_size)
+        while len(buffer) > 0:
+            CBCinv(buffer, "2b7e151628aed2a6abf7158809cf4f3c", "5468617473206D79204B756E67204675")
+            buffer = f.read(buffer_size)
+        f.close()
+
+    print("my implementation CBC 100K --- %s seconds ---" % (time.time() - start_time))
+
+    ##### CBC 10M
+    start_time = time.time()
+
+    for i in range(time3):
+        f = open("1MCBCPycrypto.encrypted", "rb")
+        cipher = AES.new(bytearray.fromhex("2b7e151628aed2a6abf7158809cf4f3c"), AES.MODE_CBC,
+                         iv=bytearray.fromhex("5468617473206D79204B756E67204675"))
+        buffer = f.read(buffer_size)
+        while len(buffer) > 0:
+            cipher.encrypt(buffer)
+            buffer = f.read(buffer_size)
+        f.close()
+
+    print("pycryptodome CBC 10M --- %s seconds ---" % (time.time() - start_time))
+
+    start_time = time.time()
+
+    for i in range(time3):
+        print(i)
+        f = open("10MCBCMine.encrypted", "r")
+        buffer = f.read(buffer_size)
+        while len(buffer) > 0:
+            CBCinv(buffer, "2b7e151628aed2a6abf7158809cf4f3c", "5468617473206D79204B756E67204675")
+            buffer = f.read(buffer_size)
         f.close()
 
     print("my implementation CBC 10M --- %s seconds ---" % (time.time() - start_time))
@@ -1053,5 +1504,8 @@ if __name__ == '__main__':
 
     #########   SPEED TESTS     ############
 
-    # first number is pycryptodome rounds and second is my implementation rounds
-    testEncryption(100, 1)
+    # args are respectively 1k, 100k and 10M number of rounds
+    testEncryption(100, 10, 5)
+
+    # args are respectively 1k, 100k and 10M number of rounds
+    #testDecryption(100, 10, 5)
