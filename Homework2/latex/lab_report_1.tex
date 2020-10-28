@@ -195,16 +195,22 @@ A note on the implementation of CFB: it can be implemented choosing a variable n
 
 \section{Real World Standard Comparison}
 
-\begin{tabular}{ll}
-Mass of magnesium metal & = \SI{8.59}{\gram} - \SI{7.28}{\gram}\\
-& = \SI{1.31}{\gram}\\
-Mass of magnesium oxide & = \SI{9.46}{\gram} - \SI{7.28}{\gram}\\
-& = \SI{2.18}{\gram}\\
-Mass of oxygen & = \SI{2.18}{\gram} - \SI{1.31}{\gram}\\
-& = \SI{0.87}{\gram}
-\end{tabular}
+As validation and comparison of the implementation in this report, it has been chosen \textit{PyCryptoDome} as test library. 
 
-Because of this reaction, the required ratio is the atomic weight of magnesium: \SI{16.00}{\gram} of oxygen as experimental mass of Mg: experimental mass of oxygen or $\frac{x}{1.31}=\frac{16}{0.87}$ from which, $M_{\ce{Mg}} = 16.00 \times \frac{1.31}{0.87} = 24.1 = \SI{24}{\gram\per\mole}$ (to two significant figures).
+\subsection{Validation}
+
+All the operation modes asked in the homework are available in \textit{PyCryptoDome}, so as an initial validation all operational modes are implemented. To have a fair comparison, the padding scheme is added manually in the case of library test in order to obtain also the last block equal to the implementation proposed. 
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=1\linewidth]{images/output_comparison.png}
+\caption{Output comparison with  \textit{PyCryptoDome}}
+\label{fig:outputComparison}
+\end{figure}
+
+As it is possible to see in Fig. \ref{fig:outputComparison}, the first four operation modes gives the same result as the implementation proposed, while the last mode, which is CTR, gives a different result since the nonce vector in \textit{PyCryptoDome} library is only of 64 bit and the remaining 64 bits of IV are dedicated to counter, while in the implementation proposed the nonce and counter are brought together in a 28 bit vector.
+
+\subsection{Throughput Comparison}
 
 %----------------------------------------------------------------------------------------
 %	BIBLIOGRAPHY

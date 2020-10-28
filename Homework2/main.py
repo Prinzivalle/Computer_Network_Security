@@ -856,6 +856,7 @@ def testEncryption(time1, time2, time3):    #respectively number of rounds for 1
     print("my implementation ECB 10M --- %s seconds ---" % (time.time() - start_time))
 
     ##### OFB 1K
+    print()
     start_time = time.time()
 
     # In first round save the encrypted file for decrypt test
@@ -910,7 +911,7 @@ def testEncryption(time1, time2, time3):    #respectively number of rounds for 1
 
     # In first round save the encrypted file for decrypt test
     f = open("100K.txt", "rb")
-    output_file = open('100kOFBPycrypto.encrypted', 'w')
+    output_file = open('100kOFBPycrypto.encrypted', 'wb')
     cipher = AES.new(bytearray.fromhex("2b7e151628aed2a6abf7158809cf4f3c"), AES.MODE_OFB,
                      iv=bytearray.fromhex("5468617473206D79204B756E67204675"))
     buffer = f.read(buffer_size)
@@ -1008,6 +1009,7 @@ def testEncryption(time1, time2, time3):    #respectively number of rounds for 1
     print("my implementation OFB 10M --- %s seconds ---" % (time.time() - start_time))
 
     ##### CBC 1K
+    print()
     start_time = time.time()
 
     # In first round save the encrypted file for decrypt test
@@ -1168,6 +1170,7 @@ def testDecryption(time1, time2, time3):
     print("######### DECRYPTION TEST ############")
 
     ##### ECB 1K
+    print()
     start_time = time.time()
 
     for i in range(time1):
@@ -1246,6 +1249,7 @@ def testDecryption(time1, time2, time3):
     print("my implementation ECB 10M --- %s seconds ---" % (time.time() - start_time))
 
     ##### OFB 1K
+    print()
     start_time = time.time()
 
     for i in range(time1):
@@ -1328,6 +1332,7 @@ def testDecryption(time1, time2, time3):
     print("my implementation OFB 10M --- %s seconds ---" % (time.time() - start_time))
 
     ##### CBC 1K
+    print()
     start_time = time.time()
 
     for i in range(time1):
@@ -1505,7 +1510,7 @@ if __name__ == '__main__':
     #########   SPEED TESTS     ############
 
     # args are respectively 1k, 100k and 10M number of rounds
-    testEncryption(100, 10, 5)
+    #testEncryption(100, 10, 5)
 
     # args are respectively 1k, 100k and 10M number of rounds
-    #testDecryption(100, 10, 5)
+    testDecryption(100, 10, 5)
