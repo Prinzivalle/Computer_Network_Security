@@ -293,11 +293,12 @@ def blocks2textPadding(blocks):
         textList.pop()
     else:
         string = list(blocks[-1])
-        for i in range(last):
-            string.pop()
-            string.pop()
-            string.pop()
-        blocks[-1] = "".join(string)
+        if last < 16:   # to eliminate problems in case
+            for i in range(last):
+                string.pop()
+                string.pop()
+                string.pop()
+            blocks[-1] = "".join(string)
 
     # generate list from every block
     for i in range(len(blocks)):
@@ -1239,6 +1240,7 @@ def testDecryption(time1, time2, time3):
     start_time = time.time()
 
     for i in range(time3):
+        print(i)
         f = open("10MECBMine.encrypted", "r")
         buffer = f.read(buffer_size)
         while len(buffer) > 0:
