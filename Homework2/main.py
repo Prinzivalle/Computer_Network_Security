@@ -1510,7 +1510,7 @@ if __name__ == '__main__':
     #########   SPEED TESTS     ############
 
     # args are respectively 1k, 100k and 10M number of rounds
-    #testEncryption(100, 10, 5)
+    testEncryption(100, 10, 5)
 
     # args are respectively 1k, 100k and 10M number of rounds
     testDecryption(100, 10, 5)

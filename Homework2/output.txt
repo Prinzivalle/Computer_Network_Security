@@ -1,0 +1,21 @@
+######### ENCRYPTION TEST ############
+pycryptodome 		ECB 1k   --- 0.013003110885620117 seconds ---
+my implementation 	ECB 1K   --- 2.2114949226379395 seconds ---
+pycryptodome 		ECB 100k --- 0.003000974655151367 seconds ---
+my implementation 	ECB 100K --- 22.139959573745728 seconds ---
+pycryptodome 		ECB 10M  --- 0.07001590728759766 seconds ---
+my implementation 	ECB 10M  --- 1137.2460763454437 seconds ---
+
+pycryptodome 		OFB 1k   --- 0.014002323150634766 seconds ---
+my implementation 	OFB 1K   --- 2.2705092430114746 seconds ---
+pycryptodome 		OFB 100k --- 0.004000663757324219 seconds ---
+my implementation 	OFB 100K --- 22.581862688064575 seconds ---
+pycryptodome 		OFB 10M  --- 0.11522650718688965 seconds ---
+my implementation 	OFB 10M  --- 1150.382086277008 seconds ---
+
+pycryptodome 		CBC 1k   --- 0.014026165008544922 seconds ---
+my implementation 	CBC 1K   --- 2.314657211303711 seconds ---
+pycryptodome 		CBC 100k --- 0.0050008296966552734 seconds ---
+my implementation 	CBC 100K --- 23.032819747924805 seconds ---
+pycryptodome 		CBC 10M  --- 0.11299729347229004 seconds ---
+my implementation 	CBC 10M  --- 1174.7047033309937 seconds ---

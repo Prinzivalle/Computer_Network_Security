@@ -30,6 +30,8 @@
 \usepackage{hyperref}
 \usepackage{subcaption}
 \usepackage{float}
+\usepackage{array}
+
 
 
 \setlength\parindent{0pt} % Removes all indentation from paragraphs
@@ -211,6 +213,73 @@ All the operation modes asked in the homework are available in \textit{PyCryptoD
 As it is possible to see in Fig. \ref{fig:outputComparison}, the first four operation modes gives the same result as the implementation proposed, while the last mode, which is CTR, gives a different result since the nonce vector in \textit{PyCryptoDome} library is only of 64 bit and the remaining 64 bits of IV are dedicated to counter, while in the implementation proposed the nonce and counter are brought together in a 28 bit vector.
 
 \subsection{Throughput Comparison}
+
+To have a fair comparison, the implementation proposed has been tested together with the \textit{PyCryptoDome} library on 3 files of fixed dimensions: 1KB, 100KB and 10MB. The code for file processing is based on \cite{pycryptodome}. As specified on the request, only 3 operation modes are tested, in this case it has been chosen to use ECB, OFB and CBC. To optimize time, the test are run a different number of times: the 1KB file test is run 100 times, the 100KB is run 10 times and the 10MB test is run 5 times only, since the proposed implementation requires around 40 minutes to run the most intensive test.
+\newline
+The most efficient encryption implementation is ECB, which needs around 20 minutes to encrypt the 10MB files 5 times, it results in a medium time of 3.79 minutes and a throughput of 45KB/s; the other have smaller throughput: 44.5KB/s for OFB and 43.6KB/s for CBC. These values were computed in the case of 10MB file. The other encryption throughputs can be seen in table \ref{tab:enc}.
+
+\renewcommand{\arraystretch}{2}
+
+\begin{table}[H]
+\begin{center}
+\begin{tabular}{ |c || m{2cm} | m{2cm} | m{2cm}|  }
+\hline
+  Encryption & 1KB & 100KB & 10MB \\ [0.5ex] 
+ \hline\hline
+   ECB & 45,22 KB/s & 45,17 KB/s & 45 KB/s \\ 
+ \hline
+  ECB PyCryptoDome & 7,5 MB/s & 325 MB/s & 714 MB/s \\ 
+ \hline
+ OFB & 44,04 KB/s & 44,28 KB/s &  44,5 KB/s \\
+ \hline
+  OFB PyCryptoDome & 6,97 MB/s & 244,1 MB/s &  433,92 MB/s \\
+ \hline
+ CBC & 43,20 KB/s & 43,42 KB/s &  43,6 KB/s \\ 
+ \hline
+  CBC PyCryptoDome & 6,96 MB/s & 195,28 MB/s &  442,49 MB/s \\
+ \hline
+\end{tabular}
+\caption{AES encryption throughput}
+\label{tab:enc}
+\end{center}
+\end{table}
+
+As seen in table \ref{tab:enc}, the library implementation is much more faster. That is normal since the library has undergone different improvements during its development. There's a thing in \textit{PyCryptoDome} library that astonish me: growing the file dimension, also the throughput increases. Similar comparison happens in the decryption phase as shown in table \ref{tab:dec}; in this case it is expected a lower throughput since the decryption function is less optimized and it wastes computational time not storing the subkeys but computing the in every round.
+
+\begin{table}[h]
+\begin{center}
+\begin{tabular}{ | c || m{2cm} | m{2cm} | m{2cm}|  }
+\hline
+  Decryption & 1KB & 100KB & 10MB \\ [0.5ex] 
+ \hline\hline
+   ECB & 22,14 KB/s & 22,3 KB/s & 22,287 KB/s \\ 
+ \hline
+  ECB PyCryptoDome & 7,5 MB/s & 488 MB/s & 2,12 GB/s \\ 
+ \hline
+ OFB & 44,61 KB/s & 45,05 KB/s &  45,26 KB/s \\
+ \hline
+  OFB PyCryptoDome & 6,95 MB/s & 244,07 MB/s &  454,4 MB/s \\
+ \hline
+ CBC & 22,01 KB/s & 22,23 KB/s &  22,43 KB/s \\ 
+ \hline
+  CBC PyCryptoDome & 6,97 MB/s & 244,08 MB/s &  480,66 MB/s \\
+ \hline
+\end{tabular}
+\caption{Implemented AES decryption throughput}
+\label{tab:dec}
+\end{center}
+\end{table}
+
+The implementation proposed has a strange behavior in decryption: while in encryption the three modes chosen present at maximum a difference of 2 KB/s, in decryption the OFB is the only one having performances in line with encryption, while the other two modes has more or less half of the performance with respect to their counterpart in encryption.
+
+%----------------------------------------------------------------------------------------
+%	SECTION 5
+%----------------------------------------------------------------------------------------
+
+\section{Conclusion}
+
+Even if the implementation proposed is much slower than the standard library chosen as comparison, it works well and it does its dirty job. The code may not be much optimized or it can have been written in a better way but my knowledge in python is not so huge, but this was an opportunity to dust and improve my experience.
+
 
 %----------------------------------------------------------------------------------------
 %	BIBLIOGRAPHY
