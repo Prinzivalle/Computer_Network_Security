@@ -26,12 +26,14 @@
 \usepackage{graphicx} % Required for the inclusion of images
 \usepackage{natbib} % Required to change bibliography style to APA
 \usepackage{amsmath} % Required for some math elements 
-%\usepackage{url}
 \usepackage{hyperref}
 \usepackage{subcaption}
 \usepackage{float}
 \usepackage{array}
-
+\usepackage{pgfplots}
+\pgfplotsset{width=10cm,compat=1.9}
+%\usepgfplotslibrary{external}
+%\tikzexternalize
 
 
 \setlength\parindent{0pt} % Removes all indentation from paragraphs
@@ -81,9 +83,38 @@ This homework contains a basic introduction on Elliptic Curves (EC), the general
  \hline
 \end{tabular}
 \caption{Key length comparison in public key and symmetric key algorithm}
-\label{tab:enc}
+\label{tab:keyLen}
 \end{center}
 \end{table}
+
+\begin{tikzpicture}
+\begin{axis}[
+	xmin=-4,
+        xmax=4,
+        ymin=-6.6,
+        ymax=7,
+        xlabel={$x$},
+        ylabel={$y$},
+        scale only axis,
+        axis lines=middle,
+        % set the minimum value to the minimum x value
+        % which in this case is $-\sqrt[3]{7}$
+        domain=-4:3,      % <-- works for pdfLaTeX and LuaLaTeX
+	%domain=-1.91293118:3,   % <-- would also work for LuaLaTeX
+        samples=200,
+        smooth,
+        % to avoid that the "plot node" is clipped (partially)
+        clip=false,
+        % use same unit vectors on the axis
+        axis equal image=true,
+        legend pos=south east,
+    ]
+    \addplot [red] {sqrt(x^3-3*x+3)};
+    \addlegendentry{$y^2=x^3-3x+3$};
+    %node[right] {$y^2=x^3-3x+3$};
+    \addplot [red] {-sqrt(x^3-3*x+3)};
+\end{axis}
+\end{tikzpicture}
 
 %----------------------------------------------------------------------------------------
 %	SECTION 1
