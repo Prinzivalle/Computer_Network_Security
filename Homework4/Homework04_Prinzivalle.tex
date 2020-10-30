@@ -60,22 +60,28 @@
 
 \section{Homework Goal}
 
-This homework contains a basic python implementation of AES algorithm. Throughout the work, it has been chosen to make a compromise: the implementation is in midpoint between complete Galois Field and precomputed look-up tables for every step. Both encryption and decryption are studied and implemented, then the operation modes are implemented and finally it will illustrate a comparison with world known AES implementation.
+This homework contains a basic introduction on Elliptic Curves (EC), the general idea on the math basis, the Discrete Logarithm Problem with EC and the practical utilize of EC in cryptography.
+
+\renewcommand{\arraystretch}{2}
 
 \begin{table}[H]
 \begin{center}
-\begin{tabular}{ll}
-Input text &  6bc1bee22e409f96e93d7e117393172a\\
-	      &   ae2d8a571e03ac9c9eb76fac45af8e51\\
-	      &   30c81c46a35ce411e5fbc1191a0a52ef\\
-	      &   f69f2445df4f9b17ad2b417be66c37 \\
-\\
-Key & 2b7e151628aed2a6abf7158809cf4f3c\\
-\\
-IV (where needed) & 5468617473206D79204B756E67204675
+\begin{tabular}{ |c || c | c | c | c | c | c | }
+\hline
+  Algorithm Family & Cryptosystems & \multicolumn{4}{c |}{Security Level (bit)}\\
+   & & 80 & 128 & 192 & 256\\ [0.5ex] 
+ \hline\hline
+   Integer Factorization & RSA & 1024 & 3072 & 7680 & 15360  \\ 
+ 
+   Discrete Logarithm & DH, DSA, Elgamal & 1024 & 3072 & 7680 & 15360  \\ 
+ 
+  Elliptic Curves & ECDH, ECDSA & 160 & 256 & 384 & 512  \\ 
+ \hline
+   Symmetric key & AES, 3DES &  80 & 128 & 192 & 256  \\ 
+ \hline
 \end{tabular}
-\caption{Parameter used in testing of AES operation modes}
-\label{tab:AESparameter}
+\caption{Key length comparison in public key and symmetric key algorithm}
+\label{tab:enc}
 \end{center}
 \end{table}
 
