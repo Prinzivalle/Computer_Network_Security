@@ -64,36 +64,13 @@
 
 This homework contains a basic introduction on Elliptic Curves (EC), the general idea on the math basis, the Discrete Logarithm Problem with EC and the practical utilize of EC in cryptography.
 
-\begin{tikzpicture}
-\begin{axis}[
-	xmin=-4,
-        xmax=4,
-        ymin=-6.6,
-        ymax=7,
-        xlabel={$x$},
-        ylabel={$y$},
-        scale only axis,
-        axis lines=middle,
-        domain=-4:3,      
-        samples=300,
-        smooth,
-        % use same unit vectors on the axis
-        axis equal image=true,
-        legend pos=south east,
-    ]
-    \addplot [red] {sqrt(x^3-3*x+3)};
-    \addlegendentry{$y^2=x^3-3x+3$};
-    \addplot [red] {-sqrt(x^3-3*x+3)};
-\end{axis}
-\end{tikzpicture}
-
 %----------------------------------------------------------------------------------------
 %	SECTION 1
 %----------------------------------------------------------------------------------------
 
 \section{Elliptic Curves Motivation}
 
-Elliptic Curves are the main trend in asymmetric encryption today: why is their usage so spread? This question has a simple answer: it is sufficient to look at table \ref{tab:keyLen}, where there is a comparison of the key length needed to guarantee the same level of security; the bare minimum number of bits is defined by the symmetric key encryption scheme, we cannot have a smaller key with respect to the symmetric case and have the same level of security; then asymmetric schemes need, in general, a large number of bits to guarantee the same level of security, the fact is that elliptic curves cryptography needs less than $\cfrac{1}{10}$ of the bits needed for another asymmetric scheme supposed the same level of security, and this relationship become smaller as the level of security grows. Indeed, if one wants to use a public key cryptography scheme, elliptic curves are the suggested choice to guarantee security without using much computational effort.
+Elliptic Curves are the main trend in asymmetric encryption today: why is their usage so spread? This question has a simple answer: it is sufficient to look at table \ref{tab:keyLen}, where there is a comparison of the key length needed to guarantee the same level of security. 
  
 \renewcommand{\arraystretch}{2}
 
@@ -118,11 +95,78 @@ Elliptic Curves are the main trend in asymmetric encryption today: why is their 
 	\end{center}
 \end{table}
 
+The bare minimum number of bits is defined by the symmetric key encryption scheme, we cannot have a smaller key with respect to the symmetric case and have the same level of security; then asymmetric schemes need, in general, a large number of bits to guarantee the same level of security, the fact is that elliptic curves cryptography needs less than $\cfrac{1}{10}$ of the bits needed for another asymmetric scheme supposed the same level of security, and this relationship become smaller as the level of security grows. Indeed, if one wants to use a public key cryptography scheme, elliptic curves are the suggested choice to guarantee security without using much computational effort.
+
 %----------------------------------------------------------------------------------------
 %	SECTION 2
 %----------------------------------------------------------------------------------------
 
 \section{Mathematical background}
+
+The base idea besides elliptic curves lies on common calculus background: everyone knows the circumference equation, isn't it? It is $x^2 + y^2 = r^2$, but what if we add coefficients in front of the variables? We end up with an ellipse: $ax^2 + by^2 = r^2$, whose graph can be seen in Fig. \ref{fig:ellipse} 
+
+\begin{figure}[H]
+	\centering
+	\begin{subfigure}{.49\textwidth}
+		\centering
+		\begin{tikzpicture}
+			\begin{axis}[
+				xmin=-4,
+				xmax=4,
+				ymin=-6.6,
+				ymax=7,
+				xlabel={$x$},
+				ylabel={$y$},
+				scale only axis,
+				axis lines=middle,
+				domain=-4:4,      
+				samples=1000,
+				smooth,
+				% use same unit vectors on the axis
+				axis equal image=true,
+				legend pos=south east,
+				]
+				\addplot [red] {sqrt(-0.2*x^2+2)};
+				\addlegendentry{$y^2=-0.2x^2+2$};
+				\addplot [red] {-sqrt(-0.2*x^2+2)};
+			\end{axis}
+		\end{tikzpicture}
+		\caption{Ellipse}
+		\label{fig:ellipse}
+	\end{subfigure}
+	\begin{subfigure}{.49\textwidth}
+		\begin{tikzpicture}
+			\begin{axis}[
+				xmin=-4,
+				xmax=4,
+				ymin=-6.6,
+				ymax=7,
+				xlabel={$x$},
+				ylabel={$y$},
+				scale only axis,
+				axis lines=middle,
+				domain=-4:3,      
+				samples=300,
+				smooth,
+				% use same unit vectors on the axis
+				axis equal image=true,
+				legend pos=south east,
+				]
+				\addplot [red] {sqrt(x^3-3*x+3)};
+				\addlegendentry{$y^2=x^3-3x+3$};
+				\addplot [red] {-sqrt(x^3-3*x+3)};
+				\addplot [mark=none, domain=3:4, red, dashed] {sqrt(x^3-3*x+3)};
+				\addplot [mark=none, domain=3:4, red, dashed] {-sqrt(x^3-3*x+3)};
+			\end{axis}
+		\end{tikzpicture}
+		\centering
+		\caption{Elliptic Curve}
+		\label{fig:EC}
+	\end{subfigure}
+	\caption{Graphical comparison of ellipse and elliptic curve}
+	\label{fig:graph}
+\end{figure}
+ 
  
 
 %----------------------------------------------------------------------------------------
