@@ -171,7 +171,8 @@ The base idea besides elliptic curves lies on common calculus background: everyo
  
  Well, an elliptic curve is something much similar: the general equation is $y^2 = x^3 + ax + b$, and an example of it can be seen in Fig. \ref{fig:EC}. We can easily see from the plot that this family of curves has symmetry with respect to $x$ axis. \newline
  In order to perform cryptography with elliptic curves, we need to reduce their usage to a special family of them: instead of defining them over the real domain $\mathbb{R}$, we use the integer group $\mathbb{Z}_{p}$ (which is a set of integer numbers with a group operator and is closed w.r.t. this operation), with $p > 3$. In addition, the elliptic curve equation is reduced in $mod p$, and the coefficient must satisfy the following equation to remove useless or too easy to break curves: $4a^3 + 27b^2 \ne{0}$. To fulfill the group operation, we need to add an imaginary point at infinity, $\mathcal{O}$. \newline
- Now that we have defined the elliptic curves of interest, we need to define a group over them, which is the basis of cryptography: in order to fulfill this task, we need a set of elements, which are the points belonging to the elliptic curves, and then we need a group operator to fulfill the group law. It is possible to have both a geometrical analytical interpretation of this operator; here we start with the geometrical one since it is easier to understand and more explicative.
+ Now that we have defined the elliptic curves of interest, we need to define a group over them, which is the basis of cryptography: in order to fulfill this task, we need a set of elements, which are the points belonging to the elliptic curves, and then we need a group operator to fulfill the group law. It is possible to have both a geometrical analytical interpretation of this operator; here we start with the geometrical one since it is easier to understand and more explicative.\newline
+ The geometric interpretation starts by drawing the elliptic curve without modulo reduction and defined on $\mathbb{R}$, so we can easily visualize the curve in a 2D graph as those in Fig. \ref{fig:groupOp}. The group operation can be divided into 2 simpler case: the addition of two different point and the addition of the same point, called also doubling. 
  
  \begin{figure}[H]
  	\centering
@@ -249,6 +250,9 @@ The base idea besides elliptic curves lies on common calculus background: everyo
  	\caption{Graphical interpretation of group operator}
  	\label{fig:groupOp}
  \end{figure}
+
+The first situation is represented in Fig. \ref{fig:addition}: we want to sum points P and Q, we draw the secant line passing through this two points, then, due to the particular form of the elliptic curve, we are able to find a new intersection between the EC and the secant other than the two point to be summed, this new point is highlighted by a circle in the figure, finally this point is mirrored w.r.t. the x axis and the resulting point is the sum between P and Q, and it is denoted by an \textit{x} in the plot.\newline
+% TODO POINT DOUBLING 
 
 %----------------------------------------------------------------------------------------
 %	SECTION 3
