@@ -177,7 +177,7 @@ The base idea besides elliptic curves lies on common calculus background: everyo
  	\centering
  	\begin{subfigure}{.49\textwidth}
  		\centering
- 		\begin{tikzpicture}[dot/.style={circle,inner sep=1pt,fill,label={#1},name=#1}]
+ 		\begin{tikzpicture}[]
  			\begin{axis}[
  				xmin=-4,
  				xmax=4,
@@ -195,15 +195,17 @@ The base idea besides elliptic curves lies on common calculus background: everyo
  				legend pos=south east,
  				]
  				\addplot [red] {sqrt(x^3-3*x+3)};
- 				\addlegendentry{$y^2=x^3-3x+3$};
+ 				%\addlegendentry{$y^2=x^3-3x+3$};
  				\addplot [red] {-sqrt(x^3-3*x+3)};
  				\addplot [mark=none, domain=3:4, red, dashed] {sqrt(x^3-3*x+3)};
  				\addplot [mark=none, domain=3:4, red, dashed] {-sqrt(x^3-3*x+3)};
- 				%\draw[shift={(e,0)}] (0pt,2pt) -- (0pt,-2pt) node[below] {$e$};
- 				%\path[draw=red, dashed] (e,0) -- (e,1);
- 				%\path[draw=red, dashed] (0,1) -- (e,1);
- 				\node [circle, fill=red] (2,2) {P};
-				\node [dot=A] at (2,2) {};
+ 				\addplot [only marks,mark=*,color=blue] coordinates { (-1.5,{sqrt(4.125)})};
+ 				\node[label={90:{(P)}},circle,fill,inner sep=2pt] at (axis cs:-1.5,2.03) {};
+ 				\addplot [only marks,mark=*,color=blue] coordinates { (2,{-sqrt(5)})};
+ 				\node[label={0:{(Q)}},circle,fill,inner sep=2pt] at (axis cs:2,{-sqrt(5)}) {};
+ 				\addplot [blue, domain=-3:3] {-1.2*x+0.2};
+ 				\addplot [only marks,mark=+,color=blue,mark size=5] coordinates { (1,{-sqrt(1)})};
+ 				
  			\end{axis}
  		\end{tikzpicture}
  		\caption{Ellipse}
