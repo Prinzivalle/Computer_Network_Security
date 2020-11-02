@@ -30,6 +30,8 @@
 \usepackage{subcaption}
 \usepackage{float}
 \usepackage{array}
+\usepackage{amssymb}
+\usepackage{calrsfs}
 \usepackage{pgfplots}
 \pgfplotsset{width=10cm,compat=1.9}
 %\usepgfplotslibrary{external}
@@ -103,7 +105,7 @@ The bare minimum number of bits is defined by the symmetric key encryption schem
 
 \section{Mathematical background}
 
-The base idea besides elliptic curves lies on common calculus background: everyone knows the circumference equation, isn't it? It is $x^2 + y^2 = r^2$, but what if we add coefficients in front of the variables? We end up with an ellipse: $ax^2 + by^2 = r^2$, whose graph can be seen in Fig. \ref{fig:ellipse} 
+The base idea besides elliptic curves lies on common calculus background: everyone knows the circumference equation, isn't it? It is $x^2 + y^2 = r^2$, but what if we add coefficients in front of the variables? We end up with an ellipse: $ax^2 + by^2 = r^2$, whose graph can be seen in Fig. \ref{fig:ellipse}. 
 
 \begin{figure}[H]
 	\centering
@@ -160,14 +162,85 @@ The base idea besides elliptic curves lies on common calculus background: everyo
 			\end{axis}
 		\end{tikzpicture}
 		\centering
-		\caption{Elliptic Curve}
+		\caption{Elliptic Curve}	
 		\label{fig:EC}
 	\end{subfigure}
 	\caption{Graphical comparison of ellipse and elliptic curve}
 	\label{fig:graph}
 \end{figure}
  
+ Well, an elliptic curve is something much similar: the general equation is $y^2 = x^3 + ax + b$, and an example of it can be seen in Fig. \ref{fig:EC}. We can easily see from the plot that this family of curves has symmetry with respect to $x$ axis. \newline
+ In order to perform cryptography with elliptic curves, we need to reduce their usage to a special family of them: instead of defining them over the real domain $\mathbb{R}$, we use the integer group $\mathbb{Z}_{p}$ (which is a set of integer numbers with a group operator and is closed w.r.t. this operation), with $p > 3$. In addition, the elliptic curve equation is reduced in $mod p$, and the coefficient must satisfy the following equation to remove useless or too easy to break curves: $4a^3 + 27b^2 \ne{0}$. To fulfill the group operation, we need to add an imaginary point at infinity, $\mathcal{O}$. \newline
+ Now that we have defined the elliptic curves of interest, we need to define a group over them, which is the basis of cryptography: in order to fulfill this task, we need a set of elements, which are the points belonging to the elliptic curves, and then we need a group operator to fulfill the group law. It is possible to have both a geometrical analytical interpretation of this operator; here we start with the geometrical one since it is easier to understand and more explicative.
  
+ \begin{figure}[H]
+ 	\centering
+ 	\begin{subfigure}{.49\textwidth}
+ 		\centering
+ 		\begin{tikzpicture}[dot/.style={circle,inner sep=1pt,fill,label={#1},name=#1}]
+ 			\begin{axis}[
+ 				xmin=-4,
+ 				xmax=4,
+ 				ymin=-6.6,
+ 				ymax=7,
+ 				xlabel={$x$},
+ 				ylabel={$y$},
+ 				scale only axis,
+ 				axis lines=middle,
+ 				domain=-4:3,      
+ 				samples=300,
+ 				smooth,
+ 				% use same unit vectors on the axis
+ 				axis equal image=true,
+ 				legend pos=south east,
+ 				]
+ 				\addplot [red] {sqrt(x^3-3*x+3)};
+ 				\addlegendentry{$y^2=x^3-3x+3$};
+ 				\addplot [red] {-sqrt(x^3-3*x+3)};
+ 				\addplot [mark=none, domain=3:4, red, dashed] {sqrt(x^3-3*x+3)};
+ 				\addplot [mark=none, domain=3:4, red, dashed] {-sqrt(x^3-3*x+3)};
+ 				%\draw[shift={(e,0)}] (0pt,2pt) -- (0pt,-2pt) node[below] {$e$};
+ 				%\path[draw=red, dashed] (e,0) -- (e,1);
+ 				%\path[draw=red, dashed] (0,1) -- (e,1);
+ 				\node [circle, fill=red] (2,2) {P};
+				\node [dot=A] at (2,2) {};
+ 			\end{axis}
+ 		\end{tikzpicture}
+ 		\caption{Ellipse}
+ 		\label{fig:addition}
+ 	\end{subfigure}
+ 	\begin{subfigure}{.49\textwidth}
+ 		\begin{tikzpicture}
+ 			\begin{axis}[
+ 				xmin=-4,
+ 				xmax=4,
+ 				ymin=-6.6,
+ 				ymax=7,
+ 				xlabel={$x$},
+ 				ylabel={$y$},
+ 				scale only axis,
+ 				axis lines=middle,
+ 				domain=-4:3,      
+ 				samples=300,
+ 				smooth,
+ 				% use same unit vectors on the axis
+ 				axis equal image=true,
+ 				legend pos=south east,
+ 				]
+ 				\addplot [red] {sqrt(x^3-3*x+3)};
+ 				\addlegendentry{$y^2=x^3-3x+3$};
+ 				\addplot [red] {-sqrt(x^3-3*x+3)};
+ 				\addplot [mark=none, domain=3:4, red, dashed] {sqrt(x^3-3*x+3)};
+ 				\addplot [mark=none, domain=3:4, red, dashed] {-sqrt(x^3-3*x+3)};
+ 			\end{axis}
+ 		\end{tikzpicture}
+ 		\centering
+ 		\caption{Elliptic Curve}	
+ 		\label{fig:doubling}
+ 	\end{subfigure}
+ 	\caption{Graphical comparison of ellipse and elliptic curve}
+ 	\label{fig:groupOp}
+ \end{figure}
 
 %----------------------------------------------------------------------------------------
 %	SECTION 3
@@ -207,7 +280,6 @@ The base idea besides elliptic curves lies on common calculus background: everyo
 
 \section{Conclusion}
 
-Even if the implementation proposed is much slower than the standard library chosen as comparison, it works well and it does its dirty job. The code may not be much optimized or it can have been written in a better way but my knowledge in python is not so huge, but this was an opportunity to dust and improve my experience.
 
 
 %----------------------------------------------------------------------------------------
