@@ -26,6 +26,7 @@
 \usepackage{graphicx} % Required for the inclusion of images
 \usepackage{natbib} % Required to change bibliography style to APA
 \usepackage{amsmath} % Required for some math elements 
+\usepackage{amsthm}
 \usepackage{hyperref}
 \usepackage{subcaption}
 \usepackage{float}
@@ -39,6 +40,8 @@
 
 
 \setlength\parindent{0pt} % Removes all indentation from paragraphs
+
+\newtheorem*{remark}{Theorem}
 
 %\renewcommand{\labelenumi}{\alph{enumi}.} % Make numbering in the enumerate environment by letter rather than number (e.g. section 6)
 
@@ -170,7 +173,7 @@ The base idea besides elliptic curves lies on common calculus background: everyo
 \end{figure}
  
  Well, an elliptic curve is something much similar: the general equation is $y^2 = x^3 + ax + b$, and an example of it can be seen in Fig. \ref{fig:EC}. We can easily see from the plot that this family of curves has symmetry with respect to $x$ axis. \newline
- In order to perform cryptography with elliptic curves, we need to reduce their usage to a special family of them: instead of defining them over the real domain $\mathbb{R}$, we use the integer group $\mathbb{Z}_{p}$ (which is a set of integer numbers with a group operator and is closed w.r.t. this operation), with $p > 3$. In addition, the elliptic curve equation is reduced in $mod p$, and the coefficient must satisfy the following equation to remove useless or too easy to break curves: $4a^3 + 27b^2 \ne{0}$. To fulfill the group operation, we need to add an imaginary point at infinity, $\mathcal{O}$. \newline
+ In order to perform cryptography with elliptic curves, we need to reduce their usage to a special family of them: instead of defining them over the real domain $\mathbb{R}$, we use the integer group $\mathbb{Z}_{p}$ (which is a set of integer numbers with a group operator and is closed w.r.t. this operation), with $p > 3$. In addition, the elliptic curve equation is reduced in $\mod p$, and the coefficients must satisfy the following equation to remove useless or too easy to break curves: $4a^3 + 27b^2 \ne{0}$. To fulfill the group operation, we need to add an imaginary point at infinity, $\mathcal{O}$. \newline
  Now that we have defined the elliptic curves of interest, we need to define a group over them, which is the basis of cryptography: in order to fulfill this task, we need a set of elements, which are the points belonging to the elliptic curves, and then we need a group operator to fulfill the group law. It is possible to have both a geometrical analytical interpretation of this operator; here we start with the geometrical one since it is easier to understand and more explicative.\newline
  The geometric interpretation starts by drawing the elliptic curve without modulo reduction and defined on $\mathbb{R}$, so we can easily visualize the curve in a 2D graph as those in Fig. \ref{fig:groupOp}. The group operation can be divided into 2 simpler case: the addition of two different point and the addition of the same point, called also doubling. 
  
@@ -234,8 +237,6 @@ The base idea besides elliptic curves lies on common calculus background: everyo
  				\addplot [mark=none, domain=3:4, red, dashed] {sqrt(x^3-3*x+3)};
  				\addplot [mark=none, domain=3:4, red, dashed] {-sqrt(x^3-3*x+3)};
  				\node[label={90:{(V)}},circle,fill,inner sep=2pt] at (axis cs:-1.25,{sqrt(4.796875)}) {};
- 				%\node[label={90:{(P)}},circle,fill,inner sep=2pt] at (axis cs:-1.5,2.03) {};
- 				%\node[label={0:{(Q)}},circle,fill,inner sep=2pt] at (axis cs:2,{-sqrt(5)}) {};
  				\addplot [blue, domain=-3:3.5] {0.4*x+2.7};
  				\addplot [only marks,mark=o,color=blue,mark size=3, thick] coordinates { (2.7,{sqrt(14.583)})};
  				\addplot[thick, samples=50, smooth, dashed] coordinates {(2.7,-5)(2.7,5)};
@@ -253,7 +254,7 @@ The base idea besides elliptic curves lies on common calculus background: everyo
 
 The first situation is represented in Fig. \ref{fig:addition}: we want to sum points P and Q, we draw the secant line passing through this two points, then, due to the particular form of the elliptic curve, we are able to find a new intersection between the EC and the secant other than the two point to be summed, this new point is highlighted by a circle in the figure, finally this point is mirrored w.r.t. the x axis and the resulting point is the sum between P and Q, and it is denoted by an \textit{x} in the plot.\newline
 In the other case, we need to develop something different: since we are adding the same point, we cannot define a secant line, but , if we think at point Q of Fig. \ref{fig:addition} and we try to move it along the EC towards V, we easily see that the secant becomes the tangent to the EC in point P as in Fig. \ref{fig:doubling}. Given this mind set, it is easy to apply the same reasoning as in the previous case: we seek for the intersection between the tangent line and the EC, then project this point mirroring it w.r.t. the x axis and we end up with the point 2V. All this is represented in Fig. \ref{fig:doubling}. \newline
-The geometrical interpretation is fine to visualize the reasoning and the idea, but what if we want to use this mind set in practice? We need to develop an analytical formulation: take the idea in the case of addition, then with doubling it's similar. We start from the EC equation $E: y^2 = x^3 + ax +b$ and we define the secant passing through points P and Q as $\mathcal{l}: y = sx + m$, whose coefficient can be easily found once we have the values of the two points to be added. We want to find the point to be mirrored, so we solve the system between $E$ and $\mathcal{l}$, which simply is $s^2x^2 + m^2 + 2smx =  x^3 + ax +b$, whose only unknown is the variable $x$ (the other parameters are determined once we have the practical problem). This system admits 3 different solution: two of them are the points to be added and the third one is the point to be added. With some computations, we end up with the addition formula:
+The geometrical interpretation is fine to visualize the reasoning and the idea, but what if we want to use this mind set in practice? We need to develop an analytical formulation: take the idea in the case of addition, then with doubling it's similar. We start from the EC equation $EC: y^2 = x^3 + ax +b$ and we define the secant passing through points P and Q as $\mathcal{l}: y = sx + m$, whose coefficient can be easily found once we have the values of the two points to be added. We want to find the point to be mirrored, so we solve the system between $EC$ and $\mathcal{l}$, which simply is $s^2x^2 + m^2 + 2smx =  x^3 + ax +b$, whose only unknown is the variable $x$ (the other parameters are determined once we have the practical problem). This system admits 3 different solution: two of them are the points to be added and the third one is the point to be added. With some computations, we end up with the addition formula:
 
 \begin{equation}
 	s = \cfrac{y_2 - y_1}{x_2 - x_1} \mod p
@@ -266,14 +267,55 @@ Equation \ref{mat:addition} gives us the slope of the secant line. A little addi
 	s = \cfrac{3x_1^{2} + a}{2y_1} \mod p
 \end{equation}
 
-Now we are finishing our journey, but we still need one more thing: to define a group, it is necessary to have a neutral element for the group operator: something such that $P + ? = P$. If we understood correctly the addition mechanism, to end in P, we need to obtain a secant whose third intersection point with the EC is the mirror of P w.r.t. the x axis: so we need a vertical secant line, which is obtainable only by using an artificial point defined before as $\mathcal{O}$. This point is not a rel point, we just created it to be at $+\infty$ or at $-\infty$ on y axis in order to obtain a vertical secant line.
+Now we are finishing our journey, but we still need one more thing: to define a group, it is necessary to have a neutral element for the group operator: something such that $P + ? = P$. If we understood correctly the addition mechanism, to end in P, we need to obtain a secant whose third intersection point with the EC is the mirror of P w.r.t. the x axis: so we need a vertical secant line, which is obtainable only by using an artificial point defined before as $\mathcal{O}$. This point is not a real point, we just created it to be at $+\infty$ or at $-\infty$ on y axis in order to obtain a vertical secant line. This behavior can be seen in Fig. \ref{fig:neutral}.
 
 \begin{figure}[H]
 	\centering
-	% TODO ADD FIGURE OF NULL POINT OPERATION
-	\caption{TODO ADD FIGURE OF NULL POINT OPERATION}
-	\label{fig:MixColumns}
+	\begin{tikzpicture}[]
+		\begin{axis}[
+			xmin=-4,
+			xmax=4,
+			ymin=-6.6,
+			ymax=7,
+			xlabel={$x$},
+			ylabel={$y$},
+			scale only axis,
+			axis lines=middle,
+			domain=-4:3,      
+			samples=300,
+			smooth,
+			% use same unit vectors on the axis
+			axis equal image=true,
+			legend pos=south east,
+			]
+			\addplot [red] {sqrt(x^3-3*x+3)};
+			\addplot [red] {-sqrt(x^3-3*x+3)};
+			\addplot [mark=none, domain=3:4, red, dashed] {sqrt(x^3-3*x+3)};
+			\addplot [mark=none, domain=3:4, red, dashed] {-sqrt(x^3-3*x+3)};
+			\node[label={180:{(P)}},circle,fill,inner sep=2pt] at (axis cs:-1.5,{sqrt(4.125)}) {};
+			\node[label={180:{($\mathcal{O}$)}},circle,fill,inner sep=2pt] at (axis cs:-1.5,6.75) {};
+			\addplot [only marks,mark=o,color=blue,mark size=3, thick] coordinates { (-1.5,-{sqrt(4.125)})};
+			\addplot[thick, samples=50, smooth, dashed] coordinates {(-1.5,-6.5)(-1.5,6.5)};
+		\end{axis}
+	\end{tikzpicture}
+	\caption{Group operator neutral element}
+	\label{fig:neutral}
 \end{figure}
+
+The introduction of $\mathcal{O}$ allows to fulfill two different group properties:
+
+\begin{itemize}
+	\item $P + \mathcal{O} = P \hspace{1em} \forall P \in EC$
+	\item $P + (-P) = \mathcal{O}  \hspace{1em} \forall P \in EC$
+\end{itemize}
+
+The second property needs some more explanation: $-P$ is the mirror of the point $P$ w.r.t. the x axis, so $-P = (x_p, -y_p)$, where the minus in front of $P$ comes from the group operator, while the minus in front of $y_p$ is the typical minus operation used in $\mathbb{R}$. With these properties the mathematical background comes to an end, we must only add a theorem without proof, which is the following:
+
+\begin{remark}
+	The points on an $EC$, including $\mathcal{O}$, have a cyclic subgroup. Under certain conditions, all points on an $EC$ form a cyclic group.
+\end{remark} 
+
+This theorem comes in handy when dealing with cryptography, since we need a cyclic subgroup to guarantee that a computation is easy to do in one way but hard to reverse.
 
 %----------------------------------------------------------------------------------------
 %	SECTION 3
