@@ -341,12 +341,14 @@ To correctly choose an elliptic curve, it is necessary to know the cardinality o
 		\bitbox{32}{160 bits}
 		\\ 
 		\\ \bitbox[r]{15}{} & \bitbox{17}{81 bits}
-	\end{bytefield}
+	\end{bytefield}
+
 	\caption{Visualization of Hasse's theorem approximation}
 	\label{fig:Hasse}
 \end{figure}
 
-In a real implementation, it is necessary to know the exact cardinality of $E$ to avoid specific attacks, so people tends to adopt some standardized elliptic curves, such that specified from NIST or BSI, where they give the parameters $a$ and $b$ and the generator of the cyclic group.
+In a real implementation, it is necessary to know the exact cardinality of $E$ to avoid specific attacks, so people tends to adopt some standardized elliptic curves, such that specified from NIST or BSI, on these organization websites , it is possible to obtain the parameters $a$ and $b$ and the generator of the cyclic group.\newline
+To quantify the security of a well chosen elliptic curve, it is possible to say that the best known algorithm to compute the DLP on elliptic curves requires approximately $\sqrt{p}$ steps.
 
 \begin{figure}[H]
 \centering
