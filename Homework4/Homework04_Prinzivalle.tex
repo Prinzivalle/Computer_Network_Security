@@ -27,6 +27,7 @@
 \usepackage{natbib} % Required to change bibliography style to APA
 \usepackage{amsmath} % Required for some math elements 
 \usepackage{amsthm}
+\usepackage[hyphens]{url}
 \usepackage{hyperref}
 \usepackage{subcaption}
 \usepackage{float}
@@ -359,9 +360,24 @@ To quantify the security of a well chosen elliptic curve, it is possible to say 
 One of the first use of EC in cryptography is to perform Diffie-Helman (DH) key exchange, the algorithm is the same as for another cyclic group, so in this case we define it over elliptic curves but it resembles DH defined in the case of DLP on $\mathbb{Z}_p^*$.\newline
 This protocol can be divided into two major phases:
 \begin{enumerate}
-	\item The two interlocutors chose the common elliptic curve $E: y^2 = x^3 + ax+ b \mod p$ and the primitive element $P = (X_p, Y_p)$
-	\item The actual DH protocol
+	\item The two interlocutors (Alice and Bob) chose the common elliptic curve $E: y^2 = x^3 + ax+ b \mod p$ and the common primitive element $P = (X_p, Y_p)$
+	\item The actual DH protocol: 
+	\begin{itemize}
+		\item Both Alice and Bob compute randomly an integer belonging to the interval $[2; \#E-1]$, this will be the private key of the user who computes it
+		\item Both Alice and Bob compute the product between their private key and the common primitive element obtaining a point of the cyclic group, these elements will be the public keys
+		\item The public keys are exchanged on the communication channel
+		\item Both Alice and Bob computes the product between the received public key and their private key obtaining a common point which will be used as shared key to encrypt their communication with symmetric key 
+	\end{itemize}
 \end{enumerate} 
+
+This protocols can be seen in fig. \ref{fig:ECDH}: the common generator is labeled as $G$, the private keys are $a$ and $b$ respectively, the public keys are respectively $aG$ and $bG$ while the resulting shared key is $abG$
+
+\begin{figure}[H]
+	\centering
+	\includegraphics[width=1\linewidth]{ECDH.png}
+	\caption{Diffie-Helman on elliptic curve \cite{ECDH}}
+	\label{fig:ECDH}
+\end{figure}
 
 
 \begin{figure}[H]
@@ -396,7 +412,7 @@ This protocol can be divided into two major phases:
 
 \bibliographystyle{abbrv}
 
-%\bibliography{sample}
+\bibliography{sample}
 
 %----------------------------------------------------------------------------------------
 
