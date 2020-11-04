@@ -348,25 +348,7 @@ To correctly choose an elliptic curve, it is necessary to know the cardinality o
 \end{figure}
 
 In a real implementation, it is necessary to know the exact cardinality of $E$ to avoid specific attacks, so people tends to adopt some standardized elliptic curves, such that specified from NIST or BSI, on these organization websites , it is possible to obtain the parameters $a$ and $b$ and the generator of the cyclic group.\newline
-To quantify the security of a well chosen elliptic curve, it is possible to say that the best known algorithm to compute the DLP on elliptic curves requires approximately $\sqrt{p}$ steps.
-
-\begin{figure}[H]
-\centering
-\begin{subfigure}{.54\textwidth}
-  \centering
-  %\includegraphics[width=1\linewidth]{images/mixcolumn.png}
-  \caption{Core}
-  \label{fig:core}
-\end{subfigure}
-\begin{subfigure}{.35\textwidth}
-  \centering
-  %\includegraphics[width=1\linewidth]{images/preprocessing.png}
-  \caption{Preprocessing}
-  \label{fig:preprocessing}
-\end{subfigure}
-\caption{Mix columns base functions}
-\label{fig:MixColumns}
-\end{figure}
+To quantify the security of a well chosen elliptic curve, it is possible to say that the best known algorithm to compute the DLP on elliptic curves requires approximately $\sqrt{p}$ steps, so if we use 192 or 256 bits, an attacker needs $2^{96}$ or $2^{128}$ steps respectively.
  
 %----------------------------------------------------------------------------------------
 %	SECTION 4
@@ -374,6 +356,31 @@ To quantify the security of a well chosen elliptic curve, it is possible to say 
 
 \section{Use of Elliptic Curves in Cryptography}
 
+One of the first use of EC in cryptography is to perform Diffie-Helman (DH) key exchange, the algorithm is the same as for another cyclic group, so in this case we define it over elliptic curves but it resembles DH defined in the case of DLP on $\mathbb{Z}_p^*$.\newline
+This protocol can be divided into two major phases:
+\begin{enumerate}
+	\item The two interlocutors chose the common elliptic curve $E: y^2 = x^3 + ax+ b \mod p$ and the primitive element $P = (X_p, Y_p)$
+	\item The actual DH protocol
+\end{enumerate} 
+
+
+\begin{figure}[H]
+	\centering
+	\begin{subfigure}{.54\textwidth}
+		\centering
+		%\includegraphics[width=1\linewidth]{images/mixcolumn.png}
+		\caption{Core}
+		\label{fig:core}
+	\end{subfigure}
+	\begin{subfigure}{.35\textwidth}
+		\centering
+		%\includegraphics[width=1\linewidth]{images/preprocessing.png}
+		\caption{Preprocessing}
+		\label{fig:preprocessing}
+	\end{subfigure}
+	\caption{Mix columns base functions}
+	\label{fig:MixColumns}
+\end{figure}
 
 %----------------------------------------------------------------------------------------
 %	SECTION 5
