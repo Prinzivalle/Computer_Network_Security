@@ -78,8 +78,9 @@ def testRSA(rounds, keylength):
 
     # In first round save the encrypted file for decrypt test
     f = open("1K.txt", "rb")
-    # output_file = open('1kECBPycrypto.encrypted', 'wb')
+    output_file = open('1kECBPycrypto.encrypted', 'wb')
     key = RSA.generate(keylength)
+    print(key)
     #f = open('mykey.pem', 'wb')
     #f.write(key.export_key('PEM'))
     #f.close()
@@ -87,7 +88,7 @@ def testRSA(rounds, keylength):
     #key = RSA.import_key(f.read())
     """buffer = f.read(buffer_size)
     while len(buffer) > 0:
-        ciphered_bytes = cipher.encrypt(pad(buffer, 16))
+        ciphered_bytes = sam(buffer, key)
         output_file.write(ciphered_bytes)
         buffer = f.read(buffer_size)
     f.close()
@@ -158,7 +159,7 @@ def testRSA(rounds, keylength):
 
 ##################### AES COMPARISON ###########################
 
-def testEncryptionAES(rounds):
+def testAES(rounds):
 
     buffer_size = 102400    # 100k
 
@@ -265,3 +266,4 @@ if __name__ == '__main__':
 
 
     testRSA(10, 3072)
+    testAES(10)
