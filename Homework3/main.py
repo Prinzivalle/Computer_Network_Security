@@ -1,7 +1,13 @@
-# This is a sample Python script.
-
-# Press Shift+F10 to execute it or replace it with your code.
-# Press Double Shift to search everywhere for classes, files, tool windows, actions, and settings.
+# use slide implementation of square and multiply
+def sam(base, exp):
+    f = 1
+    while exp > 0:
+        lsb = 0x1 & exp
+        exp >>=1
+        if lsb:
+            f *= base
+        base *= base
+    return f
 
 
 def print_hi(name):
@@ -12,5 +18,10 @@ def print_hi(name):
 # Press the green button in the gutter to run the script.
 if __name__ == '__main__':
     print_hi('PyCharm')
+    base = 5
+    exp = 26
+    print(sam(base, exp))
+    print(base)
+    print(exp)
 
 # See PyCharm help at https://www.jetbrains.com/help/pycharm/
