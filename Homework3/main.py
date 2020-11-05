@@ -1,5 +1,6 @@
 from random import SystemRandom
 from Cryptodome.Util import number
+from Cryptodome.PublicKey import RSA
 from Cryptodome.Cipher import AES
 from Cryptodome.Util.Padding import pad
 import random
@@ -64,7 +65,101 @@ def inizialization(nbit):
 
 ##################### RSA COMPARISON ###########################
 
+def testEncryptionRSA(rounds, keylength):
 
+    buffer_size = 102400    # 100k
+
+    ######  ENCRYPTION
+    print()
+    print("######### ENCRYPTION TEST ############")
+
+    ##### ECB 1K
+    start_time = time.time()
+
+    # In first round save the encrypted file for decrypt test
+    # f = open("1K.txt", "rb")
+    # output_file = open('1kECBPycrypto.encrypted', 'wb')
+    key = RSA.generate(keylength)
+    f = open('mykey.pem', 'wb')
+    f.write(key.export_key('PEM'))
+    f.close()
+    f = open('mykey.pem', 'r')
+    key = RSA.import_key(f.read())
+    """buffer = f.read(buffer_size)
+    while len(buffer) > 0:
+        ciphered_bytes = cipher.encrypt(pad(buffer, 16))
+        output_file.write(ciphered_bytes)
+        buffer = f.read(buffer_size)
+    f.close()
+    output_file.close()
+
+    for i in range(rounds - 1):
+        f = open("1K.txt", "rb")
+        cipher = AES.new(bytearray.fromhex("2b7e151628aed2a6abf7158809cf4f3c"), AES.MODE_ECB)
+        buffer = f.read(buffer_size)
+        while len(buffer) > 0:
+            cipher.encrypt(pad(buffer, 16))
+            buffer = f.read(buffer_size)
+        f.close()
+    """
+    print("pycryptodome ECB 1k --- %s seconds ---" % (time.time() - start_time))
+
+    """start_time = time.time()
+
+    # In first round save the encrypted file for decrypt test
+    f = open("1K.txt", "rb")
+    output_file = open('1kECBMine.encrypted', 'w')
+    buffer = binascii.hexlify(f.read(buffer_size)).decode('utf-8')
+    while len(buffer) > 0:
+        ciphered_bytes = ECB(buffer, "2b7e151628aed2a6abf7158809cf4f3c")
+        output_file.write(ciphered_bytes)
+        buffer = binascii.hexlify(f.read(buffer_size)).decode('utf-8')
+    f.close()
+
+    for i in range(time1 - 1):
+        f = open("1K.txt", "rb")
+        buffer = binascii.hexlify(f.read(buffer_size)).decode('utf-8')
+        while len(buffer) > 0:
+            ciphered_bytes = ECB(buffer, "2b7e151628aed2a6abf7158809cf4f3c")
+            buffer = binascii.hexlify(f.read(buffer_size)).decode('utf-8')
+        f.close()
+
+    print("my implementation ECB 1K --- %s seconds ---" % (time.time() - start_time))"""
+
+def testDecryptionRSA(rounds):
+
+    buffer_size = 102400    #100k
+
+    ######  DECRYPTION
+    print()
+    print("######### DECRYPTION TEST ############")
+
+    ##### ECB 1K
+    print()
+    start_time = time.time()
+
+    for i in range(rounds):
+        f = open("1kECBPycrypto.encrypted", "rb")
+        cipher = AES.new(bytearray.fromhex("2b7e151628aed2a6abf7158809cf4f3c"), AES.MODE_ECB)
+        buffer = f.read(buffer_size)
+        while len(buffer) > 0:
+            cipher.decrypt(buffer)
+            buffer = f.read(buffer_size)
+        f.close()
+
+    print("pycryptodome ECB 1k --- %s seconds ---" % (time.time() - start_time))
+
+    """start_time = time.time()
+
+    for i in range(time1):
+        f = open("1kECBMine.encrypted", "r")
+        buffer = f.read(buffer_size)
+        while len(buffer) > 0:
+            ECBinv(buffer, "2b7e151628aed2a6abf7158809cf4f3c")
+            buffer = f.read(buffer_size)
+        f.close()
+
+    print("my implementation ECB 1K --- %s seconds ---" % (time.time() - start_time))"""
 
 ##################### AES COMPARISON ###########################
 
@@ -124,7 +219,7 @@ def testEncryptionAES(rounds):
 
     print("my implementation ECB 1K --- %s seconds ---" % (time.time() - start_time))"""
 
-def testDecryption(rounds):
+def testDecryptionAES(rounds):
 
     buffer_size = 102400    #100k
 
@@ -178,3 +273,6 @@ if __name__ == '__main__':
     y = encrypt(4, e, n)
     print(y)
     print(decrypt(y, d, n))
+
+
+    testEncryptionRSA(10, 3072)
