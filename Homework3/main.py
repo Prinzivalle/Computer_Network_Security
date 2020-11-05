@@ -65,26 +65,26 @@ def inizialization(nbit):
 
 ##################### RSA COMPARISON ###########################
 
-def testEncryptionRSA(rounds, keylength):
+def testRSA(rounds, keylength):
 
     buffer_size = 102400    # 100k
 
     ######  ENCRYPTION
     print()
-    print("######### ENCRYPTION TEST ############")
+    print("######### ENCRYPTION TEST RSA ############")
 
     ##### ECB 1K
     start_time = time.time()
 
     # In first round save the encrypted file for decrypt test
-    # f = open("1K.txt", "rb")
+    f = open("1K.txt", "rb")
     # output_file = open('1kECBPycrypto.encrypted', 'wb')
     key = RSA.generate(keylength)
-    f = open('mykey.pem', 'wb')
-    f.write(key.export_key('PEM'))
-    f.close()
-    f = open('mykey.pem', 'r')
-    key = RSA.import_key(f.read())
+    #f = open('mykey.pem', 'wb')
+    #f.write(key.export_key('PEM'))
+    #f.close()
+    #f = open('mykey.pem', 'r')
+    #key = RSA.import_key(f.read())
     """buffer = f.read(buffer_size)
     while len(buffer) > 0:
         ciphered_bytes = cipher.encrypt(pad(buffer, 16))
@@ -126,16 +126,11 @@ def testEncryptionRSA(rounds, keylength):
 
     print("my implementation ECB 1K --- %s seconds ---" % (time.time() - start_time))"""
 
-def testDecryptionRSA(rounds):
-
-    buffer_size = 102400    #100k
-
     ######  DECRYPTION
     print()
-    print("######### DECRYPTION TEST ############")
+    print("######### DECRYPTION TEST RSA ############")
 
-    ##### ECB 1K
-    print()
+    """print()
     start_time = time.time()
 
     for i in range(rounds):
@@ -149,7 +144,7 @@ def testDecryptionRSA(rounds):
 
     print("pycryptodome ECB 1k --- %s seconds ---" % (time.time() - start_time))
 
-    """start_time = time.time()
+    start_time = time.time()
 
     for i in range(time1):
         f = open("1kECBMine.encrypted", "r")
@@ -169,9 +164,8 @@ def testEncryptionAES(rounds):
 
     ######  ENCRYPTION
     print()
-    print("######### ENCRYPTION TEST ############")
+    print("######### ENCRYPTION TEST AES ############")
 
-    ##### ECB 1K
     start_time = time.time()
 
     # In first round save the encrypted file for decrypt test
@@ -219,15 +213,10 @@ def testEncryptionAES(rounds):
 
     print("my implementation ECB 1K --- %s seconds ---" % (time.time() - start_time))"""
 
-def testDecryptionAES(rounds):
-
-    buffer_size = 102400    #100k
-
     ######  DECRYPTION
     print()
-    print("######### DECRYPTION TEST ############")
+    print("######### DECRYPTION TEST AES ############")
 
-    ##### ECB 1K
     print()
     start_time = time.time()
 
@@ -275,4 +264,4 @@ if __name__ == '__main__':
     print(decrypt(y, d, n))
 
 
-    testEncryptionRSA(10, 3072)
+    testRSA(10, 3072)
