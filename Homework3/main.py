@@ -4,22 +4,19 @@ from Cryptodome.Util import number
 from Cryptodome.PublicKey import RSA
 from Cryptodome.Cipher import AES
 from Cryptodome.Util.Padding import pad
-from OpenSSL import SSL
-import binascii
-import random
-import math
 import time
 import os
 
+
 ##################### AUXILIARY FUNCTIONS ###########################
 
-# use slide implementation of square and multiply
+# use slide implementation of square and multiply, better implementation
+# by using modulo reduction at each step
 def sam(base, exp, n):
     f = 1
     while exp > 0:
-        #print(exp)
         lsb = 0x1 & exp
-        exp >>=1
+        exp >>= 1
         if lsb:
             f *= base
         base *= base
@@ -27,10 +24,11 @@ def sam(base, exp, n):
         f = f % n
     return f
 
+
 def selExp(phi):
     maxiter = 100
     for i in range(maxiter):
-        e = SystemRandom().randint(1, phi-1)
+        e = SystemRandom().randint(1, phi - 1)
         g, s, t = eea(e, phi)
         if g == 1:
             # s is the coefficient for the first argument
@@ -38,6 +36,7 @@ def selExp(phi):
             d = s % phi
             return e, d
     return 0, 0
+
 
 # taken from https://code.activestate.com/recipes/474129-extended-great-common-divisor-function/
 def eea(a, b):
@@ -51,29 +50,32 @@ def eea(a, b):
         g, g1 = g1, g - q * g1
     return g, s, t
 
+
 ##################### RSA MAIN FUNCTIONS ###########################
 
 # variable name are based on slides RSA schemes
 def encrypt(x, e, n):
-    y = sam(x, e, n) % n
+    y = sam(x, e, n)
     return y
 
+
 def decrypt(y, d, n):
-    x = sam(y, d, n) % n
+    x = sam(y, d, n)
     return x
 
-def inizialization(nbit):
+
+def initialization(nbit):
     p = number.getPrime(nbit, os.urandom)
     q = number.getPrime(nbit, os.urandom)
     n = p * q
     phi = (p - 1) * (q - 1)
     return n, phi
 
+
 ##################### RSA COMPARISON ###########################
 
 def testRSA(rounds, keylength):
-
-    buffer_size = 102400    # 100k
+    buffer_size = 102400  # 100k
 
     ######  ENCRYPTION
     print()
@@ -111,7 +113,7 @@ def testRSA(rounds, keylength):
 
     start_time = time.time()
 
-    n, phi = inizialization(keylength//2)
+    n, phi = initialization(keylength // 2)
     e, d = selExp(phi)
 
     print("my implementation RSA key generation --- %s seconds ---" % (time.time() - start_time))
@@ -178,11 +180,11 @@ def testRSA(rounds, keylength):
 
     print("my implementation RSA --- %s seconds ---" % (time.time() - start_time))
 
+
 ##################### AES COMPARISON ###########################
 
 def testAES(rounds, keylength):
-
-    buffer_size = 102400    # 100k
+    buffer_size = 102400  # 100k
 
     ######  ENCRYPTION
     print()
@@ -215,7 +217,7 @@ def testAES(rounds, keylength):
 
     start_time = time.time()
 
-    n, phi = inizialization(keylength//2)
+    n, phi = initialization(keylength // 2)
     e, d = selExp(phi)
 
     print("my implementation RSA key generation --- %s seconds ---" % (time.time() - start_time))
@@ -286,22 +288,6 @@ def testAES(rounds, keylength):
 ##################### MAIN FUNCTION ###########################
 
 if __name__ == '__main__':
-    """p = 3
-    q = 11
-    n = p * q
-    print(n)
-    phi = (p-1)*(q-1)
-    print(phi)
-    e, d = selExp(phi)
-    print()
-    print(e)
-    print(d)
-    print()
-
-    y = encrypt(4, e, n)
-    print(y)
-    print(decrypt(y, d, n))"""
-
-
     testRSA(10, 3072)
+
     testAES(10, 3072)
