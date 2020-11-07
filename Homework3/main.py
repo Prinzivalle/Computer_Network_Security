@@ -38,7 +38,7 @@ def selExp(phi):
     return 0, 0
 
 
-# taken from https://code.activestate.com/recipes/474129-extended-great-common-divisor-function/
+# based on slide implementation with some improvements
 def eea(a, b):
     s, s1 = 1, 0
     t, t1 = 0, 1
