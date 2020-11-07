@@ -193,8 +193,8 @@ def testAES(rounds, keylength):
     start_time = time.time()
 
     # In first round save the encrypted file for decrypt test
-    f = open("1K.txt", "rb")
-    output_file = open('1kECBPycrypto.encrypted', 'wb')
+    f = open("small.txt", "rb")
+    output_file = open('smallECBPycrypto.encrypted', 'wb')
     cipher = AES.new(bytearray.fromhex("2b7e151628aed2a6abf7158809cf4f3c"), AES.MODE_ECB)
     buffer = f.read(buffer_size)
     while len(buffer) > 0:
@@ -205,7 +205,7 @@ def testAES(rounds, keylength):
     output_file.close()
 
     for i in range(rounds - 1):
-        f = open("1K.txt", "rb")
+        f = open("small.txt", "rb")
         cipher = AES.new(bytearray.fromhex("2b7e151628aed2a6abf7158809cf4f3c"), AES.MODE_ECB)
         buffer = f.read(buffer_size)
         while len(buffer) > 0:
@@ -256,7 +256,7 @@ def testAES(rounds, keylength):
     start_time = time.time()
 
     for i in range(rounds):
-        f = open("1kECBPycrypto.encrypted", "rb")
+        f = open("smallECBPycrypto.encrypted", "rb")
         cipher = AES.new(bytearray.fromhex("2b7e151628aed2a6abf7158809cf4f3c"), AES.MODE_ECB)
         buffer = f.read(buffer_size)
         while len(buffer) > 0:
