@@ -14,15 +14,17 @@ import os
 ##################### AUXILIARY FUNCTIONS ###########################
 
 # use slide implementation of square and multiply
-def sam(base, exp):
+def sam(base, exp, n):
     f = 1
     while exp > 0:
-        print(exp)
+        #print(exp)
         lsb = 0x1 & exp
         exp >>=1
         if lsb:
             f *= base
         base *= base
+        base = base % n
+        f = f % n
     return f
 
 def selExp(phi):
@@ -53,11 +55,11 @@ def eea(a, b):
 
 # variable name are based on slides RSA schemes
 def encrypt(x, e, n):
-    y = sam(x, e) % n
+    y = sam(x, e, n) % n
     return y
 
 def decrypt(y, d, n):
-    x = sam(y, d) % n
+    x = sam(y, d, n) % n
     return x
 
 def inizialization(nbit):
@@ -81,7 +83,6 @@ def testRSA(rounds, keylength):
     start_time = time.time()
     random_generator = os.urandom
     key = RSA.generate(keylength, random_generator)  # generate pub and priv key
-    print(key)
     print("pycryptodome RSA key generation --- %s seconds ---" % (time.time() - start_time))
     start_time = time.time()
 
@@ -108,8 +109,6 @@ def testRSA(rounds, keylength):
 
     print("pycryptodome RSA --- %s seconds ---" % (time.time() - start_time))
 
-
-
     start_time = time.time()
 
     n, phi = inizialization(keylength//2)
@@ -123,15 +122,13 @@ def testRSA(rounds, keylength):
     output_file = open('small_RSAMine.encrypted', 'w')
     buffer = f.read(buffer_size)
     binarybuffer = ''.join(format(ord(x), 'b') for x in buffer)
-    print(int(binarybuffer, 2))
     while len(buffer) > 0:
-        print(1)
         ciphered_bytes = encrypt(int(binarybuffer, 2), e, n)
-        print(ciphered_bytes)
         output_file.write(str(ciphered_bytes))
         buffer = f.read(buffer_size)
         binarybuffer = ''.join(format(ord(x), 'b') for x in buffer)
     f.close()
+    output_file.close()
 
     for i in range(rounds - 1):
         f = open("small.txt", "r")
@@ -163,21 +160,27 @@ def testRSA(rounds, keylength):
 
     print("pycryptodome RSA --- %s seconds ---" % (time.time() - start_time))
 
-    """start_time = time.time()
+    start_time = time.time()
 
-    for i in range(time1):
-        f = open("1kECBMine.encrypted", "r")
+    for i in range(rounds):
+        f = open("small_RSAMine.encrypted", "r")
         buffer = f.read(buffer_size)
         while len(buffer) > 0:
-            ECBinv(buffer, "2b7e151628aed2a6abf7158809cf4f3c")
+            plain = decrypt(int(buffer), d, n)
             buffer = f.read(buffer_size)
         f.close()
+    comp = open("small.txt", "r")
+    buffer = comp.read(buffer_size)
+    binarybuffer = ''.join(format(ord(x), 'b') for x in buffer)
+    comp.close()
+    print("original text file   " + str(int(binarybuffer, 2)))
+    print("decrypted plain text " + str(plain))
 
-    print("my implementation ECB 1K --- %s seconds ---" % (time.time() - start_time))"""
+    print("my implementation RSA --- %s seconds ---" % (time.time() - start_time))
 
 ##################### AES COMPARISON ###########################
 
-def testAES(rounds):
+def testAES(rounds, keylength):
 
     buffer_size = 102400    # 100k
 
@@ -212,7 +215,7 @@ def testAES(rounds):
 
     start_time = time.time()
 
-    n, phi = inizialization(1536)
+    n, phi = inizialization(keylength//2)
     e, d = selExp(phi)
 
     print("my implementation RSA key generation --- %s seconds ---" % (time.time() - start_time))
@@ -223,15 +226,13 @@ def testAES(rounds):
     output_file = open('small_RSAMine.encrypted', 'w')
     buffer = f.read(buffer_size)
     binarybuffer = ''.join(format(ord(x), 'b') for x in buffer)
-    print(int(binarybuffer, 2))
     while len(buffer) > 0:
-        print(1)
         ciphered_bytes = encrypt(int(binarybuffer, 2), e, n)
-        print(ciphered_bytes)
         output_file.write(str(ciphered_bytes))
         buffer = f.read(buffer_size)
         binarybuffer = ''.join(format(ord(x), 'b') for x in buffer)
     f.close()
+    output_file.close()
 
     for i in range(rounds - 1):
         f = open("small.txt", "r")
@@ -263,17 +264,23 @@ def testAES(rounds):
 
     print("pycryptodome ECB 1k --- %s seconds ---" % (time.time() - start_time))
 
-    """start_time = time.time()
+    start_time = time.time()
 
-    for i in range(time1):
-        f = open("1kECBMine.encrypted", "r")
+    for i in range(rounds):
+        f = open("small_RSAMine.encrypted", "r")
         buffer = f.read(buffer_size)
         while len(buffer) > 0:
-            ECBinv(buffer, "2b7e151628aed2a6abf7158809cf4f3c")
+            plain = decrypt(int(buffer), d, n)
             buffer = f.read(buffer_size)
         f.close()
+    comp = open("small.txt", "r")
+    buffer = comp.read(buffer_size)
+    binarybuffer = ''.join(format(ord(x), 'b') for x in buffer)
+    comp.close()
+    print("original text file   " + str(int(binarybuffer, 2)))
+    print("decrypted plain text " + str(plain))
 
-    print("my implementation ECB 1K --- %s seconds ---" % (time.time() - start_time))"""
+    print("my implementation RSA --- %s seconds ---" % (time.time() - start_time))
 
 
 ##################### MAIN FUNCTION ###########################
@@ -297,4 +304,4 @@ if __name__ == '__main__':
 
 
     testRSA(10, 3072)
-    testAES(10)
+    testAES(10, 3072)
