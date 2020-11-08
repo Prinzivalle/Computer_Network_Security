@@ -26,7 +26,7 @@ def sam(base, exp, n):
 
 
 def selExp(phi):
-    maxiter = 100
+    maxiter = 200
     for i in range(maxiter):
         e = SystemRandom().randint(1, phi - 1)
         g, s, t = eea(e, phi)
