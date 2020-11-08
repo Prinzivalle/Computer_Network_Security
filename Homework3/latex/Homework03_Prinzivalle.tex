@@ -21,8 +21,6 @@
 
 \documentclass{article}
 
-\usepackage[version=3]{mhchem} % Package for chemical equation typesetting
-\usepackage{siunitx} % Provides the \SI{}{} and \si{} command for typesetting SI units
 \usepackage{graphicx} % Required for the inclusion of images
 \usepackage{natbib} % Required to change bibliography style to APA
 \usepackage{amsmath} % Required for some math elements 
@@ -33,12 +31,6 @@
 \usepackage{float}
 \usepackage{array}
 \usepackage{amssymb}
-\usepackage{calrsfs}
-\usepackage{pgfplots}
-\pgfplotsset{width=10cm,compat=1.9}
-\usepackage{bytefield}
-%\usepgfplotslibrary{external}
-%\tikzexternalize
 
 
 \setlength\parindent{0pt} % Removes all indentation from paragraphs
@@ -77,6 +69,26 @@ This homework contains an implementation of RSA algorithm based on major librari
 %----------------------------------------------------------------------------------------
 
 \section{RSA Implementation}
+
+RSA basically is divided in two part: the initialization and the encryption.\newline 
+The encryption phase is simpler than the initialization: it uses only an exponentiation and a modulo reduction. The modulo reduction is already implemented in python (used in this homework), instead what it is needed is an efficient implementation of the exponentiation. To do so, I used the proposed \textbf{Square And Multiply} in the slides of the course: at first with small values of base and exponent it worked flawlessly, but during the test with bigger messages and keys, the computation explodes, so I thought to reduce in modulo after every performed computation (since we have to do it after the exponentiation, so why don't do it at every step?) and the \textbf{SAM} computation time dropped to some seconds. The code can be seen in Fig. \ref{fig:sam}
+
+\begin{figure}[H]
+	\centering
+	\includegraphics[width=0.345\linewidth]{images/SAM.png}
+	\caption{Improved version of Square And Multiply}
+	\label{fig:sam}
+\end{figure}
+
+Now the easy task is done; the initialization is the part which requires more attention to guarantee the security of our implementation. The operation to be performed are:
+
+\begin{enumerate}
+	\item find two large prime numbers $p$ and $q$
+	\item compute $n = p \cdot q$
+	\item compute Euler Phi function as $\Phi(n) = (p-1)(q-1)$ exploiting prime properties of $p$ and $q$
+	\item select an exponent $e \in {1, 2, \dots, \Phi(n)}$ such that $gcd(e, \Phi(n) = 1$
+	\item compute $d$ such that $d \cdot e = 1 \mod \Phi(n)$
+\end{enumerate}
 
 %----------------------------------------------------------------------------------------
 %	SECTION 3
