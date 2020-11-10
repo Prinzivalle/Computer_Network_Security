@@ -213,7 +213,7 @@ def testAES(rounds, keylength):
             buffer = f.read(buffer_size)
         f.close()
 
-    print("pycryptodome ECB 1k --- %s seconds ---" % (time.time() - start_time))
+    print("pycryptodome ECB --- %s seconds ---" % (time.time() - start_time))
 
     start_time = time.time()
 
@@ -264,7 +264,7 @@ def testAES(rounds, keylength):
             buffer = f.read(buffer_size)
         f.close()
 
-    print("pycryptodome ECB 1k --- %s seconds ---" % (time.time() - start_time))
+    print("pycryptodome ECB --- %s seconds ---" % (time.time() - start_time))
 
     start_time = time.time()
 

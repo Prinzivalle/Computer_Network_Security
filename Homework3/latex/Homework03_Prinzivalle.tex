@@ -124,6 +124,44 @@ This work compares the proposed implementation of RSA with a common library impl
 	\end{center}
 \end{table}
 
+The 3072 bit key allows to encrypt a maximum of $3072 \div 8 = 384$ bytes, this is due to the characteristics of RSA itself, otherwise the modulo reduction will collapse the oversize message inside the modulo domain and it will be impossible to recover the original message after decryption. For this reason, the message to be encrypted has been chosen of dimension around 313 bytes. The proposed implementation needs to preprocess data to be sure to give to the encryption phase a integer number, this is done by the instruction \verb+binarybuffer = ''.join(format(ord(x), 'b') for x in buffer)+ which \linebreak produces an output in binary form which is then converted into base ten numbers by using the instruction \verb+int(binarybuffer, 2)+ whose output is used in the encryption phase.\newline
+For \textbf{RSA} comparison, both the key generation and message encryption are measured separately, the key generation is called once for every test since it requires more time with respect to the encryption phase, while the message encryption can be called more times by specifying the number of rounds when calling the function. Since the key generation phase requires different time depending on the test performed, I decided to perform 4 times the tests in different times of the day, and the median value are represented in tab. \ref{tab:RSA}; encryption and decryption value are much more stable in different tests (All the original tests value can be found in the output.txt file attached with this report).
+
+\renewcommand{\arraystretch}{2}
+
+\begin{table}[H]
+	\begin{center}
+		\begin{tabular}{ |c || m{2cm} | m{2cm} | m{2cm}|  }
+			\hline
+			RSA & key \linebreak generation & encryption & decryption \\ [0.5ex] 
+			\hline\hline
+			PyCryptoDome & 11.68 sec & 52,7 KB/s & 6,37 KB/s \\ 
+			\hline
+			Proposed implementation & 6.73 sec & 0,825 KB/s & 0.807 KB/s \\ 
+			\hline
+		\end{tabular}
+		\caption{RSA time and throughput comparison}
+		\label{tab:RSA}
+	\end{center}
+\end{table}
+
+To obtain a comparison with AES, I have chosen to use the ECB mode with padding; this is just for educational purposes, it is already known that symmetric ciphers are faster than public keys ones. The comparison is represented in tab. \ref{tab:RSA}.
+
+\begin{table}[h]
+	\begin{center}
+		\begin{tabular}{ | c || m{2cm} | m{2cm} | }
+			\hline
+			AES vs RSA & Encryption & Decryption \\ [0.5ex] 
+			\hline\hline
+			AES ECB mode & 1,49 MB/s & 1,49 MB/s  \\ 
+			\hline
+			Proposed RSA & 0,825 KB/s & 0.807 KB/s \\ 
+			\hline
+		\end{tabular}
+		\caption{RSA vs AES comparison}
+		\label{tab:AES}
+	\end{center}
+\end{table}
 %----------------------------------------------------------------------------------------
 %	SECTION 4
 %----------------------------------------------------------------------------------------
