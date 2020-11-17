@@ -46,11 +46,11 @@
 %	DOCUMENT INFORMATION
 %----------------------------------------------------------------------------------------
 
-\title{Homework \#4 \\Elliptic Curves \\[0.2em]\small{}CNS Course Sapienza} % Title and subtitle
+\title{Homework \#5 \\Telegram vs WhatsApp Security \\[0.2em]\small{}CNS Course Sapienza} % Title and subtitle
 
 \author{Riccardo \textsc{Prinzivalle}, 1904064} % Author name
 
-\date{November 20, 2020} % Date for the report
+\date{November 30, 2020} % Date for the report
 
 \begin{document}
 
@@ -68,7 +68,7 @@ This homework contains a basic introduction on Elliptic Curves (EC), the general
 %	SECTION 1
 %----------------------------------------------------------------------------------------
 
-\section{Elliptic Curves Motivation}
+\section{Telegram Security basics}
 
 Elliptic Curves are the main trend in asymmetric encryption today: why is their usage so spread? This question has a simple answer: it is sufficient to look at table \ref{tab:keyLen}, where there is a comparison of the key length needed to guarantee the same level of security. 
  
@@ -101,7 +101,7 @@ The bare minimum number of bits is defined by the symmetric key encryption schem
 %	SECTION 3
 %----------------------------------------------------------------------------------------
 
-\section{Mathematical background}
+\section{WhatsApp Security Basics}
 
 The base idea besides elliptic curves lies on common calculus background: everyone knows the circumference equation, isn't it? It is $x^2 + y^2 = r^2$, but what if we add coefficients in front of the variables? We end up with an ellipse: $ax^2 + by^2 = r^2$, whose graph can be seen in Fig. \ref{fig:ellipse}. 
 
@@ -109,56 +109,12 @@ The base idea besides elliptic curves lies on common calculus background: everyo
 	\centering
 	\begin{subfigure}{.49\textwidth}
 		\centering
-		\begin{tikzpicture}
-			\begin{axis}[
-				xmin=-4,
-				xmax=4,
-				ymin=-6.6,
-				ymax=7,
-				xlabel={$x$},
-				ylabel={$y$},
-				scale only axis,
-				axis lines=middle,
-				domain=-4:4,      
-				samples=1000,
-				smooth,
-				% use same unit vectors on the axis
-				axis equal image=true,
-				legend pos=south east,
-				]
-				\addplot [red] {sqrt(-0.2*x^2+2)};
-				\addlegendentry{$y^2=-0.2x^2+2$};
-				\addplot [red] {-sqrt(-0.2*x^2+2)};
-			\end{axis}
-		\end{tikzpicture}
+	
 		\caption{Ellipse}
 		\label{fig:ellipse}
 	\end{subfigure}
 	\begin{subfigure}{.49\textwidth}
-		\begin{tikzpicture}
-			\begin{axis}[
-				xmin=-4,
-				xmax=4,
-				ymin=-6.6,
-				ymax=7,
-				xlabel={$x$},
-				ylabel={$y$},
-				scale only axis,
-				axis lines=middle,
-				domain=-4:3,      
-				samples=300,
-				smooth,
-				% use same unit vectors on the axis
-				axis equal image=true,
-				legend pos=south east,
-				]
-				\addplot [red] {sqrt(x^3-3*x+3)};
-				\addlegendentry{$y^2=x^3-3x+3$};
-				\addplot [red] {-sqrt(x^3-3*x+3)};
-				\addplot [mark=none, domain=3:4, red, dashed] {sqrt(x^3-3*x+3)};
-				\addplot [mark=none, domain=3:4, red, dashed] {-sqrt(x^3-3*x+3)};
-			\end{axis}
-		\end{tikzpicture}
+		
 		\centering
 		\caption{Elliptic Curve}	
 		\label{fig:EC}
@@ -176,69 +132,12 @@ The base idea besides elliptic curves lies on common calculus background: everyo
  	\centering
  	\begin{subfigure}{.49\textwidth}
  		\centering
- 		\begin{tikzpicture}[]
- 			\begin{axis}[
- 				xmin=-4,
- 				xmax=4,
- 				ymin=-6.6,
- 				ymax=7,
- 				xlabel={$x$},
- 				ylabel={$y$},
- 				scale only axis,
- 				axis lines=middle,
- 				domain=-4:3,      
- 				samples=300,
- 				smooth,
- 				% use same unit vectors on the axis
- 				axis equal image=true,
- 				legend pos=south east,
- 				]
- 				\addplot [red] {sqrt(x^3-3*x+3)};
- 				\addplot [red] {-sqrt(x^3-3*x+3)};
- 				\addplot [mark=none, domain=3:4, red, dashed] {sqrt(x^3-3*x+3)};
- 				\addplot [mark=none, domain=3:4, red, dashed] {-sqrt(x^3-3*x+3)};
- 				\node[label={90:{(P)}},circle,fill,inner sep=2pt] at (axis cs:-1.5,{sqrt(4.125)}) {};
- 				\node[label={0:{(Q)}},circle,fill,inner sep=2pt] at (axis cs:2,{-sqrt(5)}) {};
- 				\addplot [blue, domain=-3:3] {-1.2*x+0.2};
- 				\addplot [only marks,mark=o,color=blue,mark size=3, thick] coordinates { (1,{-sqrt(1)})};
- 				\addplot[thick, samples=50, smooth, dashed] coordinates {(1,-4)(1,4)};
- 				\addplot [only marks,mark=x,color=blue,mark size=4, thick] coordinates { (1,{sqrt(1)})};
- 				\node[label={0:{(P+Q)}}] at (axis cs:1,{sqrt(1)}) {};
- 			\end{axis}
- 		\end{tikzpicture}
+ 		
  		\caption{Point addition}
  		\label{fig:addition}
  	\end{subfigure}
  	\begin{subfigure}{.49\textwidth}
- 		\begin{tikzpicture}
- 			\begin{axis}[
- 				xmin=-4,
- 				xmax=4,
- 				ymin=-6.6,
- 				ymax=7,
- 				xlabel={$x$},
- 				ylabel={$y$},
- 				scale only axis,
- 				axis lines=middle,
- 				domain=-4:3,      
- 				samples=300,
- 				smooth,
- 				% use same unit vectors on the axis
- 				axis equal image=true,
- 				legend pos=south east,
- 				]
- 				\addplot [red] {sqrt(x^3-3*x+3)};
- 				\addplot [red] {-sqrt(x^3-3*x+3)};
- 				\addplot [mark=none, domain=3:4, red, dashed] {sqrt(x^3-3*x+3)};
- 				\addplot [mark=none, domain=3:4, red, dashed] {-sqrt(x^3-3*x+3)};
- 				\node[label={90:{(V)}},circle,fill,inner sep=2pt] at (axis cs:-1.25,{sqrt(4.796875)}) {};
- 				\addplot [blue, domain=-3:3.5] {0.4*x+2.7};
- 				\addplot [only marks,mark=o,color=blue,mark size=3, thick] coordinates { (2.7,{sqrt(14.583)})};
- 				\addplot[thick, samples=50, smooth, dashed] coordinates {(2.7,-5)(2.7,5)};
- 				\addplot [only marks,mark=x,color=blue,mark size=4, thick] coordinates { (2.7,{-sqrt(14.583)})};
- 				\node[label={75:{(2V)}}] at (axis cs:2.7,{-sqrt(14.583)}) {};
- 			\end{axis}
- 		\end{tikzpicture}
+ 		
  		\centering
  		\caption{Point doubling}	
  		\label{fig:doubling}
@@ -266,33 +165,7 @@ Now we are finishing our journey, but we still need one more thing: to define a 
 
 \begin{figure}[H]
 	\centering
-	\begin{tikzpicture}[]
-		\begin{axis}[
-			xmin=-4,
-			xmax=4,
-			ymin=-6.6,
-			ymax=7,
-			xlabel={$x$},
-			ylabel={$y$},
-			scale only axis,
-			axis lines=middle,
-			domain=-4:3,      
-			samples=300,
-			smooth,
-			% use same unit vectors on the axis
-			axis equal image=true,
-			legend pos=south east,
-			]
-			\addplot [red] {sqrt(x^3-3*x+3)};
-			\addplot [red] {-sqrt(x^3-3*x+3)};
-			\addplot [mark=none, domain=3:4, red, dashed] {sqrt(x^3-3*x+3)};
-			\addplot [mark=none, domain=3:4, red, dashed] {-sqrt(x^3-3*x+3)};
-			\node[label={180:{(P)}},circle,fill,inner sep=2pt] at (axis cs:-1.5,{sqrt(4.125)}) {};
-			\node[label={180:{($\mathcal{O}$)}},circle,fill,inner sep=2pt] at (axis cs:-1.5,6.75) {};
-			\addplot [only marks,mark=o,color=blue,mark size=3, thick] coordinates { (-1.5,-{sqrt(4.125)})};
-			\addplot[thick, samples=50, smooth, dashed] coordinates {(-1.5,-6.5)(-1.5,6.5)};
-		\end{axis}
-	\end{tikzpicture}
+	
 	\caption{Group operator neutral element}
 	\label{fig:neutral}
 \end{figure}
@@ -316,7 +189,7 @@ This theorem comes in handy when dealing with cryptography, since we need a cycl
 %	SECTION 4
 %----------------------------------------------------------------------------------------
 
-\section{Discrete Logarithm Problem with EC}
+\section{Protocols comparison}
 
 Once we have a cyclic group, it is useful to use it for the Discrete Logarithm Problem (DLP). This idea is also suggested by the previous analysis of tab. \ref{tab:keyLen}.\newline
 We can synthesize the DLP problem on elliptic curve with the following definition:
@@ -347,7 +220,7 @@ To quantify the security of a well chosen elliptic curve, it is possible to say 
 %	SECTION 5
 %----------------------------------------------------------------------------------------
 
-\section{Use of Elliptic Curves in Cryptography}
+\section{Past Evolution and Fixed Vulnerabilities}
 \label{sec:use}
 
 One of the first use of EC in cryptography is to perform Diffie-Helman (DH) key exchange, the algorithm is the same as for another cyclic group, so in this case we define it over elliptic curves but it resembles DH defined in the case of DLP on $\mathbb{Z}_p^*$.\newline
@@ -397,7 +270,13 @@ Now a small note on the implementation of the operation seen in this work, the m
 \end{description}
 
 %----------------------------------------------------------------------------------------
-%	SECTION 5
+%	SECTION 6
+%----------------------------------------------------------------------------------------
+
+\section{Current Vulnerabilities and Security Threats}
+
+%----------------------------------------------------------------------------------------
+%	SECTION 7
 %----------------------------------------------------------------------------------------
 
 \section{Conclusion}
