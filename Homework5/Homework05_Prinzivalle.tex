@@ -78,11 +78,53 @@ Telegram uses a security protocol called MTProto, developed by the telegram team
 	\item  \textbf{Transport} component, which defines the method for the client and the server to transmit messages over some other existing network protocol.
 \end{itemize}
 
+Let's analyze in the details every section. The high level component sees a client and a server exchanging messages inside a session, which is identified by a user key identifier (a particularity, the session is attached to the client instead of standard protocols such as http/s or tcp). The client can instantiate different connections to the server (the practicality of Telegram stands in the fact that one can open different sessions on many devices such as browsers without having to log in many times once one have the session active), and messages can be sent from one connection to the other and everything is synchronized server side. The low level message structure can be seen in fig. \ref{fig:tel_pack}.
+
+\begin{figure}[H]
+	\centering
+	\begin{bytefield}[bitwidth=0.55em]{64}
+		\bitheader{0,4,8,12,16,20,24,28,32,36,40,44,48,52,56,60,64} \\
+		\begin{rightwordgroup}{encryption \\ header}
+			\bitbox{64}{key identifier} \\
+			\wordbox[tlr]{1}{message key} \\
+			\wordbox[blr]{1}{128 bit} \\
+		\end{rightwordgroup} \\
+		\begin{rightwordgroup}{message \\ body}
+			\bitbox{64}{message identifier} \\
+			\bitbox{32}{message sequence number} & \bitbox{32}{message length} \\
+			\wordbox[tlr]{3}{message body (32 bit multiple)} \\
+			\bitbox[blr]{32}{}
+			& \bitbox{32}{type dependent parameters}
+		\end{rightwordgroup} \\
+	\end{bytefield}
+	\caption{Telegram simplified packet structure}
+	\label{fig:tel_pack}
+\end{figure}
+
+To be mentioned, all number are saved as little endian, with the exception of large numbers, such as those needed by RSA and DH which are stored as big endian due to openSSL compatibility.\newline
+The encryption part can be identified in the upper part fig. \ref{fig:tel_pack}: the message is encrypted using a 256-bit key constituted by the message key and the user key and the encryption is performed with AES-256. The message key is defined as the hash using SHA256 on the message body, and taking the 128 middle resulting bits. The user key is generated from the authorization key: it is created once, when the client is first run on the device, and never changes, so this will expose all messages if that key is stolen (even from the device or from server side); different counter measures can be taken: 
+
+\begin{itemize}
+	\item Use session keys generated at every session using the Diffie Hellman exchange protocol
+	\item Store the keys on the device and protect them with a password
+	\item Protect all stored and cached data of the device with a password
+\end{itemize}
+
+All these measures cannot protect the user in the case where is the server that is violated or some government agency ask the keys for terrorism prevention (as example). The complete encryption scheme for every message can be seen in fig \ref{fig:Tel_enc}.
+
+\begin{figure}[H]
+	\centering
+	\includegraphics[width=0.9\textwidth]{images/mt_p1.jpg}
+	\caption{MTProto}
+	\label{fig:MTProto}
+\end{figure}
+
+
 \begin{figure}[H]
 	\centering
 	\includegraphics[width=0.9\textwidth]{images/Explanation_of_secret_chats_(Telegram)}
 	\caption{Telegram encryption scheme \cite{tel_scheme}}
-	\label{fig:LR_graph}
+	\label{fig:Tel_enc}
 \end{figure}
 
 %----------------------------------------------------------------------------------------
