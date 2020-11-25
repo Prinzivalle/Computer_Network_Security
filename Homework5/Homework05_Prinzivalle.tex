@@ -348,6 +348,7 @@ WhatsApp instead has better masked his security holes. This app uses end-to-end 
 In both cases the message key changes for every message, WhatsApp uses a more reliable message key generation, but if the session key is stolen then it is possible to rebuild every message key. If a message key is stolen, then only the associated message can be decrypted, but none of past and future message keys can be derived from another message key.\newline
 For the transport layer, Telegram uses a proprietary protocol on top of the standard ones, so transport security relies on the security of open transport layer protocols. WhatsApp instead relies completely on the Noise Protocol, which is open as in the other case of Telegram.\newline
 WhatsApp has both client and server closed source, so it has the same problem of Telegram when it comes about security verification by third party neutral entities.\newline
+The problem on both apps is that they are ruled by companies whose policies are not so secure: in one case the Telegram Messenger Inc has doubtly policies and server keys are in their hand; on the contrary WhatsApp is in the hand of Facebook, not one of the clearest companies in the world.\newline
 To recap, a small list of both protocols' problems:
 
 \begin{itemize}
