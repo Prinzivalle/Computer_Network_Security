@@ -195,7 +195,13 @@ The comparison has taken in exam only the standard one-to-one chat, another anal
 
 \section{Past Evolution and Fixed Vulnerabilities}
 
-The first app was WhatsApp, founded in 2009, at that time the app sent all the messages as plaintext, the first form of cryptography was added back in 2012
+The first app was WhatsApp, founded in 2009, at that time the app sent all the messages as plaintext, the first form of cryptography was added back in 2012, but it wasn't end-to-end-encryption and it was considered broken after few time \cite{what_threat}. Many securities and government entities demonstrated their doubts about WhatsApp security issues during the period from 2012 to 2015 \cite{what_threat}, and this pushed WhatsApp to implement some better form of security. So end-to-end encryption was introduced only in 2014 \cite{what_ete} when WhatsApp joins Open Whisper Systems; the encryption is practically implemented using Signal protocol. Some time previous of WhatsApp e-t-e encryption was introduced, Telegram was founded in Russia (2013). The problem with Telegram is that it uses a closed source encryption protocols, which ahs been  demonstrated to not be fully secure \cite{MT_insecure}, and this protocol is still use todays. One year after Telegram foundation, their creators affirm that all the source code will eventually be released, but only the client code was released, the server side is still closed source. To overcome this problem, the Telegram company organized two cryptoanalysis contests \cite{contest1} \cite{contest1} to prove that its cryptography is secure enough, but suspiciously no one was able to break any vulnerabilities of the messagging app (it is generally suspected that the results are not completely clear and misleading). \newline
+In 2016 Telegram suffers an attack on the method used to authenticate users \cite{2factor}, the attack consists on the SMS spoofing on the messages used to authorize a new session, so it is not an attack performed against Telegram itself, but since it relies on this method for the authentication, then it is not secure. Todays it is suggested to use a 2-factor authentication to overcome this problem. During the years, many more attacks like this were perpetrated against activists and government members by exploiting SMS vulnerabilities for authentication or inserting malwares inside the device of the victims \cite{brasil_leak} \cite{russia_leak} \cite{telegram_gate}. Another episode comprehend a big leak of iranian Telegram accounts, together with private information, but also in this case the leak was due to problems not directly attributable to Telegram app itself, one of the method implied the exploit of Telegram desktop, but the other relied on device hacking or phishing techniques \cite{iran_leak}. \newline
+The WhatsApp e-t-e encryption needed two years to be fully implemented, and only in 2016 every form of communication made through the app is fully encrypted, and end users can verify each other keys as seen in previous sections.\newline
+To simplify friends' contact discovery, both application send to the server a copy of the mobile entire addresses' book, it is not clear how securely this data are sent and stored on the server, but form privacy policies, it is supposed that they don't use an enough high level of security compliant with different states regulator's policies.\newline 
+
+
+For further readings see Wikipedia references for both applications \cite{tel_wiki} and \cite{what_wiki}
 
 %----------------------------------------------------------------------------------------
 %	SECTION 6
@@ -203,14 +209,23 @@ The first app was WhatsApp, founded in 2009, at that time the app sent all the m
 
 \section{Current Vulnerabilities and Security Threats}
 
+As seen in previous section, till todays, no attack perpetrated against the Telegram application itselt are known, but what is not clear is how much the Telegram organization has access to every data exchanged on their servers: many episodes of censorship has been documented \cite{china_cen}, \cite{honk_cen}, \cite{bahrain_cen}, \cite{pakistan_cen}, \cite{india_cen}, \cite{russia_cen} and \cite{iran_cen}; in different places among these, the Telegram company was pressured to disclose the server encryption key, or to loose the encryption algorithm, as happened in \cite{usa_weak}.\newline
+As of today, Telegram still has its server side source code private, this introduces doubts over thrusting the company about the effective data security, since if the server keys are accessible by the company, everyone can breach the server and obtain them or it is directly the company spying over its users, but it is not effectively documented, just hypothesis of future and current threat over our privacy.\newline
+A point in favor of WhatsApp is that both encryption protocol and messaging protocols are accessible and open source, so a technical end user or some third parties can publicly verify the security of this app, while the effectively client and server implementation are closed source, so the app is only based on these open source projects, but at the end it is a closed source application, so some vulnerabilities can be discovered slower than in open source contest.\newline
+
+
+As stated in \cite{new_EU}, a new EU directive says that in the nearest future, all the European External Action Service (EEAS) will rely on a new secret communication application, not currently released instaed of using WhatsApp and Signal: this brings up new problems, such as the open sourceness of the project (probably not), and consequently the real level of security provided by this new app (as already know, security by obfuscation is never a good idea); at least the data EU diplomacy chat will remains in the hand of a government agency and not in some extra company whose policies are not that clear.\newline
+Other threats can arise from metadata \cite{threat}: this article may seem referring to Telegram only, instead it introduces also WhatsApp, Signal and iMessage vulnerabilities caused by metadata which remains on the sender device and sometimes are sent in clear to the server as information on identification and for other purposes. This exposes another WhatsApp problem (and of many other instant messaging applications): the chat backups are clearly stored on the user device, so if it is compromised, at the end of the day an attacker can easily access all the chat present in the backup.  
+
 %----------------------------------------------------------------------------------------
 %	SECTION 7
 %----------------------------------------------------------------------------------------
 
 \section{Conclusion}
 
-After this brief introduction on elliptic curves, it is obvious why they have been widely adopted in many cases of asymmetric encryption: they use less bits for the same level of security, so are more efficient to compute and their base concepts are easier to visualize. As suggested on section , EC can be easily used in hybrid encryption scheme, in the key exchange phase.
+%TODO add send dunes meme
 
+After this brief introduction on elliptic curves, it is obvious why they have been widely adopted in many cases of asymmetric encryption: they use less bits for the same level of security, so are more efficient to compute and their base concepts are easier to visualize. As suggested on section , EC can be easily used in hybrid encryption scheme, in the key exchange phase.
 %----------------------------------------------------------------------------------------
 %	BIBLIOGRAPHY
 %----------------------------------------------------------------------------------------
