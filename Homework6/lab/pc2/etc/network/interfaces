@@ -1,0 +1,11 @@
+# subnet A
+auto eth0
+iface eth0 inet static
+	address 1.0.1.3
+	netmask 255.255.255.254
+
+# subnet C
+auto eth1
+iface eth1 inet static
+	address 1.0.1.7
+	netmask 255.255.255.254
