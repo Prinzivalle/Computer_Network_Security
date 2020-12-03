@@ -1,4 +1,4 @@
 #!/bin/bash
 
-nc -l -p 9000 > /root/keys/pc1.public &
-nc -l -p 9001 > /root/keys/pc2.public &
+nc -l -p 9000 > /root/keys/dhpubPC1.pem &
+nc -l -p 9001 > /root/keys/dhpubPC2.pem &

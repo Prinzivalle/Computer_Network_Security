@@ -4,7 +4,9 @@
 cd /root/keys
 
 #generate private key
-openssl genrsa -out pc2.private 1024
+openssl genpkey -paramfile dhp.pem -out dhkeyPC2.pem
+#openssl genrsa -out pc2.private 1024
 
 #generate public key
-openssl rsa -in pc2.private -out pc2.public -pubout -outform PEM
+openssl pkey -in dhkeyPC2.pem -pubout -out dhpubPC2.pem
+#openssl rsa -in pc2.private -out pc2.public -pubout -outform PEM
