@@ -4,6 +4,9 @@ cd /root/keys/
 
 ####### start listening for incoming files
 (while true; do nc -l -p 9000 | tar -x; done)&
+touch portA
+echo "9000" > portA
+tar -c portA | nc -q 0 1.0.1.5 9000
 
 ###### generate keys for A
 
