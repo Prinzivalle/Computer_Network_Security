@@ -1,13 +1,16 @@
 #!/bin/bash
 
+# use this directory to store all the keys
 cd /root/keys
 
-####### starting server
+######## starting server
 # user A
 (while true; do nc -l -p 9000 | tar -x; done)&
 
 # user B
 (while true; do nc -l -p 9001 | tar -x; done)&
+
+sleep 1
 
 ######## certificate autority
 # create CA key
@@ -26,16 +29,16 @@ echo -e '\n\n\n\n\n\n\n' | openssl req -x509 -new -nodes -key CA_key.private -sh
 
 ######## generate certificate of A and B and send them back
 
-pA=$(head -n 1 portA)
-echo $pA
-pB=$(head -n 1 portB)
-echo $pB
-(read A.csr; while ! [ -s A.csr ]; do sleep 1 ; done && openssl x509 -req -in A.csr -CA CA_root.pem -CAkey CA_key.private -passin pass:8%0%Zef6kbBvG0g -CAcreateserial -out A.cer -days 1 -sha256 && tar -c A.cer | nc -q 0 1.0.1.4 $pA ) &
-(read B.csr; while ! [ -s B.csr ]; do sleep 1 ; done && openssl x509 -req -in B.csr -CA CA_root.pem -CAkey CA_key.private -passin pass:8%0%Zef6kbBvG0g -CAcreateserial -out B.cer -days 1 -sha256 && tar -c B.cer | nc -q 0 1.0.1.7 $pB ) &
+#pA=$(head -n 1 portA)
+#echo $pA
+#pB=$(head -n 1 portB)
+#echo $pB
+#(read A.csr; while ! [ -s A.csr ]; do sleep 1 ; done && openssl x509 -req -in A.csr -CA CA_root.pem -CAkey CA_key.private -passin pass:8%0%Zef6kbBvG0g -CAcreateserial -out A.cer -days 1 -sha256 && tar -c A.cer | nc -q 0 1.0.1.4 $pA ) &
+#(read B.csr; while ! [ -s B.csr ]; do sleep 1 ; done && openssl x509 -req -in B.csr -CA CA_root.pem -CAkey CA_key.private -passin pass:8%0%Zef6kbBvG0g -CAcreateserial -out B.cer -days 1 -sha256 && tar -c B.cer | nc -q 0 1.0.1.7 $pB ) &
+(read A.csr; while ! [ -s A.csr ]; do sleep 1 ; done && openssl x509 -req -in A.csr -CA CA_root.pem -CAkey CA_key.private -passin pass:8%0%Zef6kbBvG0g -CAcreateserial -out A.cer -days 1 -sha256 && tar -c A.cer | nc -q 0 1.0.1.4 9000 ) &
+(read B.csr; while ! [ -s B.csr ]; do sleep 1 ; done && openssl x509 -req -in B.csr -CA CA_root.pem -CAkey CA_key.private -passin pass:8%0%Zef6kbBvG0g -CAcreateserial -out B.cer -days 1 -sha256 && tar -c B.cer | nc -q 0 1.0.1.7 9001 ) &
 
-#(read dhpubPC2.pem; while ! [ -s dhpubPC2.pem ]; do sleep 1 ; done && openssl pkeyutl -derive -inkey dhkeyPC3.pem -peerkey dhpubPC2.pem -out secret2.bin) &
+######## send public keys to whom asked it
 
-#send back certificate to respective entity
-#tar -c A.cer | nc -q 0 1.0.1.4 9000
-
-#openssl x509 -req -in dev.deliciousbrains.com.csr -CA myCA.pem -CAkey myCA.key -CAcreateserial -out dev.deliciousbrains.com.crt -days 825 -sha256 -extfile dev.deliciousbrains.com.ext
+(read B; while ! [ -s B ]; do sleep 1 ; done && (tar -c keypc2.pub | nc -q 0 1.0.1.4 9000) && (tar -c dhpubPC2.pem | nc -q 0 1.0.1.4 9000)) &
+(read A; while ! [ -s A ]; do sleep 1 ; done && (tar -c keypc1.pub | nc -q 0 1.0.1.7 9001) && (tar -c dhpubPC1.pem | nc -q 0 1.0.1.7 9001) &
