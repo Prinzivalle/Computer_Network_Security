@@ -10,7 +10,8 @@ cd /root/keys/
 #echo $port > portA
 #tar -c portA | nc -q 0 1.0.1.5 9000
 
-sleep 1
+#wait for ping, otherwise keys will not be sent
+while ! timeout 0.2 ping -c 1 -n 1.0.1.5 &> /dev/null ; do sleep 1; done
 
 ###### generate keys for A
 

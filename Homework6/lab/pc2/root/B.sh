@@ -10,7 +10,8 @@ touch portB
 echo $port > portB
 tar -c portB | nc -q 0 1.0.1.6 9001
 
-sleep 1
+#wait for ping, otherwise keys will not be sent
+while ! timeout 0.2 ping -c 1 -n 1.0.1.6 &> /dev/null; do sleep 1; done
 
 ###### generate keys for B
 

@@ -10,7 +10,9 @@ cd /root/keys
 # user B
 (while true; do nc -l -p 9001 | tar -x; done)&
 
-sleep 1
+#wait for ping, otherwise keys will not be sent
+while ! timeout 0.2 ping -c 1 -n 1.0.1.4 &> /dev/null; do sleep 1; done
+while ! timeout 0.2 ping -c 1 -n 1.0.1.7 &> /dev/null; do sleep 1; done
 
 ######## certificate autority
 # create CA key
