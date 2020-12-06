@@ -26,14 +26,13 @@ echo -e '\n\n\n\n\n\n\n' | openssl req -x509 -new -nodes -key CA_key.private -sh
 
 ######## generate certificate of A and B and send them back
 
-#portA=$(<portA)  
-(read A.csr; while ! [ -s A.csr ]; do sleep 1 ; done && portA=$(<portA))&
-
 pA=$(head -n 1 portA)
-(read A.csr; while ! [ -s A.csr ]; do sleep 1 ; done && openssl x509 -req -in A.csr -CA CA_root.pem -CAkey CA_key.private -passin pass:8%0%Zef6kbBvG0g -CAcreateserial -out A.cer -days 1 -sha256 && tar -c A.cer | nc -q 0 1.0.1.4 $pA ) &
-(read B.csr; while ! [ -s B.csr ]; do sleep 1 ; done && openssl x509 -req -in B.csr -CA CA_root.pem -CAkey CA_key.private -passin pass:8%0%Zef6kbBvG0g -CAcreateserial -out B.cer -days 1 -sha256 && tar -c B.cer | nc -q 0 1.0.1.7 9001) &
-
 echo $pA
+pB=$(head -n 1 portB)
+echo $pB
+(read A.csr; while ! [ -s A.csr ]; do sleep 1 ; done && openssl x509 -req -in A.csr -CA CA_root.pem -CAkey CA_key.private -passin pass:8%0%Zef6kbBvG0g -CAcreateserial -out A.cer -days 1 -sha256 && tar -c A.cer | nc -q 0 1.0.1.4 $pA ) &
+(read B.csr; while ! [ -s B.csr ]; do sleep 1 ; done && openssl x509 -req -in B.csr -CA CA_root.pem -CAkey CA_key.private -passin pass:8%0%Zef6kbBvG0g -CAcreateserial -out B.cer -days 1 -sha256 && tar -c B.cer | nc -q 0 1.0.1.7 $pB ) &
+
 #(read dhpubPC2.pem; while ! [ -s dhpubPC2.pem ]; do sleep 1 ; done && openssl pkeyutl -derive -inkey dhkeyPC3.pem -peerkey dhpubPC2.pem -out secret2.bin) &
 
 #send back certificate to respective entity

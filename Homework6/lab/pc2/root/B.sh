@@ -3,7 +3,11 @@
 cd /root/keys/
 
 ####### start listening for incoming files
-(while true; do nc -l -p 9001 | tar -x; done)&
+port=9001
+(while true; do nc -l -p $port | tar -x; done)&
+touch portB
+echo $port > portB
+tar -c portB | nc -q 0 1.0.1.6 9001
 
 ###### generate keys for B
 
@@ -18,3 +22,14 @@ openssl pkeyutl -derive -inkey dhkeyPC2.pem -peerkey dhpubPC3.pem -out secret3.b
 
 ####### send public key to pc3
 tar -c dhpubPC2.pem | nc -q 0 1.0.1.6 9001
+
+####### generate certificate for B
+
+#generate private key for B for certificates
+openssl genrsa -out B.key 2048
+
+#generate Certificate Signing Request
+echo -e '\n\n\n\n\n\n\n\n\n' |  openssl req -new -key B.key -out B.csr
+
+#send CSR to C
+tar -c B.csr | nc -q 0 1.0.1.6 9001
