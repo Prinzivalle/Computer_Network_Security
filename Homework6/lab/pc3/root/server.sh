@@ -13,6 +13,7 @@ cd /root/keys
 #wait for ping, otherwise keys will not be sent
 while ! timeout 0.2 ping -c 1 -n 1.0.1.4 &> /dev/null; do sleep 1; done
 while ! timeout 0.2 ping -c 1 -n 1.0.1.7 &> /dev/null; do sleep 1; done
+echo "start"
 
 ######## certificate autority
 # create CA key

@@ -12,6 +12,8 @@ cd /root/keys/
 
 #wait for ping, otherwise keys will not be sent
 while ! timeout 0.2 ping -c 1 -n 1.0.1.5 &> /dev/null ; do sleep 1; done
+while ! timeout 0.2 ping -c 1 -n 1.0.1.3 &> /dev/null ; do sleep 1; done
+echo "start"
 
 ###### generate keys for A
 
@@ -63,3 +65,23 @@ timestamp > Da
 cat B >> Da
 cat secret2.enc >> Da
 openssl dgst -sha256 -sign keypc1.pem -out signDa.sha256 Da
+
+# send files to B
+tar -c A.cer | nc -q 0 1.0.1.3 9001
+tar -c Da | nc -q 0 1.0.1.3 9001
+tar -c signDa.sha256 | nc -q 0 1.0.1.3 9001
+
+# wait for ack then send messages to B
+touch foo1
+echo "foofoo" > foo1
+touch foo2
+echo "I'm a great foo: fooooooooooo" > foo2
+openssl dgst -sha256 -out secret2.sha256 secret2.bin
+read send; while ! [ -s send ]; do sleep 1 ; done && openssl aes-256-cbc -in foo1 -out message1.enc -pass file:secret2.sha256
+openssl aes-256-cbc -in foo2 -out message2.enc -pass file:secret2.sha256 
+tar -c message1.enc | nc -q 0 1.0.1.3 9001
+tar -c message2.enc | nc -q 0 1.0.1.3 9001
+
+
+
+

@@ -12,6 +12,8 @@ tar -c portB | nc -q 0 1.0.1.6 9001
 
 #wait for ping, otherwise keys will not be sent
 while ! timeout 0.2 ping -c 1 -n 1.0.1.6 &> /dev/null; do sleep 1; done
+while ! timeout 0.2 ping -c 1 -n 1.0.1.2 &> /dev/null; do sleep 1; done
+echo "start"
 
 ###### generate keys for B
 
@@ -43,3 +45,4 @@ echo -e '\n\n\n\n\n\n\n\n\n' |  openssl req -new -key B.key -out B.csr
 
 #send CSR to C
 tar -c B.csr | nc -q 0 1.0.1.6 9001
+ 
