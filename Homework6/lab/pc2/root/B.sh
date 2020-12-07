@@ -59,21 +59,23 @@ tar -c A | nc -q 0 1.0.1.6 9001
 #verify file sent from A
 auth=1
 read B; while ! [ -s B ]; do sleep 1 ; done 
-#read secret2.enc; while ! [ -s secret2.enc ]; do sleep 1 ; done && openssl rsautl -in secret2.enc -out secret2A.bin -inkey keypc2.pem -decrypt && if ! [ cmp -s secret2.bin secret2a.bin ] ; then (echo "cannot authenticate" && auth=0) fi
+openssl pkeyutl -derive -inkey dhkeyPC2.pem -peerkey dhpubPC1.pem -out secret2.bin
+read secret2.enc; while ! [ -s secret2.enc ]; do sleep 1 ; done && openssl rsautl -in secret2.enc -out secret2A.bin -inkey keypc2.pem -decrypt && if ! [ cmp -s secret2.bin secret2A.bin ] ; then (echo "cannot authenticate" && auth=0) fi
+openssl rsautl -in secret2.enc -out secret2.bin -inkey keypc2.pem -decrypt
 verified="Verified OK"
 signature=openssl dgst -sha256 -verify keypc1.pub -signature signDa.sha256 -binary Da
 if [ "$signature" != "$verified" ] ; then (echo "cannot authenticate" && auth=0) fi 
 echo $auth
 
-####### sen clear to send to A and decrypt received messages
+####### send clear to send to A and decrypt received messages
 cd /root
 if [ "$auth" -eq "1" ] 
 then 
   	tar -c messages/send | nc -q 0 1.0.1.2 9000
-  	cd /root/keys
-  	openssl pkeyutl -derive -inkey dhkeyPC2.pem -peerkey dhpubPC1.pem -out secret2.bin
-	openssl dgst -sha256 -out secret2.sha256 secret2.bin
-	cd /root
+  	cd /root/
+  	#openssl pkeyutl -derive -inkey dhkeyPC2.pem -peerkey dhpubPC1.pem -out secret2.bin
+	openssl dgst -sha256 -out keys/secret2.sha256 keys/secret2.bin
+	#cd /root
 	read messages/message1.enc; while ! [ -s messages/message1.enc ]; do sleep 1 ; done 
 	openssl aes-256-cbc -d -in messages/message1.enc -out messages/foo1 -pass file:keys/secret2.sha256
 	read messages/message2.enc; while ! [ -s messages/message2.enc ]; do sleep 1 ; done 
