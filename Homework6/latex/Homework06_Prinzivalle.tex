@@ -32,6 +32,7 @@
 \usepackage{array}
 \usepackage{amssymb}
 
+\usepackage{listings}
 
 \setlength\parindent{0pt} % Removes all indentation from paragraphs
 
@@ -42,11 +43,11 @@
 %	DOCUMENT INFORMATION
 %----------------------------------------------------------------------------------------
 
-\title{Homework \#3 \\RSA \\[0.2em]\small{}CNS Course Sapienza} % Title and subtitle
+\title{Homework \#6 \\Message Exchange Protocol Design \\[0.2em]\small{}CNS Course Sapienza} % Title and subtitle
 
 \author{Riccardo \textsc{Prinzivalle}, 1904064} % Author name
 
-\date{November 20, 2020} % Date for the report
+\date{December 11, 2020} % Date for the report
 
 \begin{document}
 
@@ -58,45 +59,38 @@
 
 \section{Homework Goal}
 
-This homework contains an implementation of RSA algorithm based on major libraries for the mathematical functions, a comparison with the insecure \textit{PyCryptoDome} RSA and with the \textit{PyCryptoDome} AES.
+This homework contains a basic design and implementation of a message exchange \textit{secure} protocol. The idea is taken from different protocols learned from the slides and the lessons of the course. The implementation is done using the \textbf{Kathara} framework to virtualize a small network, while the protocol is written using bash scripting exploiting the \textbf{OpenSSL} library on Linux.
 
 %----------------------------------------------------------------------------------------
 %	SECTION 1
 %----------------------------------------------------------------------------------------
 
-\section{RSA Implementation}
+\section{Protocol Design}
 
-RSA algorithm is basically divided in two part: the initialization and the encryption. The encryption phase is simpler than the initialization: it uses only an exponentiation and a modulo reduction. The modulo reduction is already implemented in python (used in this homework), instead what it is needed is an efficient implementation of the exponentiation. To do so, I used the proposed \textbf{Square And Multiply} in the slides of the course: at first with small values of base and exponent it worked flawlessly, but during the test with bigger messages and keys, the computation explodes, so I thought to reduce in modulo after every performed computation (since we have to do it after the exponentiation, so why don't do it at every step?) and the \textbf{SAM} computation time dropped to some seconds. The code can be seen in Fig. \ref{fig:sam}
+The protocol can be divided into three main functionalities: \textit{confidentiality}, \textit{message authentication} and \textit{entity authentication}. Each functionality is developed as follows:
 
-\begin{figure}[H]
-	\centering
-	\includegraphics[width=0.345\linewidth]{images/SAM.png}
-	\caption{Improved version of Square And Multiply}
-	\label{fig:sam}
-\end{figure}
+\begin{itemize}
+	\item \textbf{Confidentiality} is achieved by using symmetric encryption with AES in CBC mode with key length of 256 bits, which is the standard for confidentiality for NSA \cite{AES_NSA}.
+	\item \textbf{Message Authentication} is performed with SHA-256 using public key signature (OpenSSL supports directly HMAC but the version installed on the docker image on the background of Kathara is older than the minimum version implementing HMAC).
+	\item \textbf{Entity Authentication} is based on a weaker version of the X.509 protocol, which introduces some vulnerabilities but simplifies the implementation, since this part is done by hand since OpenSSL contains only the primitives and not a complete authentication protocol. 
+\end{itemize}
 
-Now the easy task is done; the initialization is the part which requires more attention to guarantee the security of our implementation. The operations to be performed are:
+Let's analyze every part more in the details. Encryption is the simpler; it just uses the primitive from OpenSSL as follows: 
 
-\begin{enumerate}
-	\item find two large prime numbers $p$ and $q$
-	\item compute $n = p \cdot q$
-	\item compute Euler Phi function as $\Phi(n) = (p-1)(q-1)$ exploiting prime properties of $p$ and $q$
-	\item select an exponent $e \in \{1, 2, \dots, \Phi(n)\}$ such that $gcd(e, \Phi(n)) = 1$
-	\item compute $d$ such that $d \cdot e = 1 \mod \Phi(n)$
-\end{enumerate}
+\begin{lstlisting}[breaklines]
+	openssl aes-256-cbc -in message/to/encrypt -out encrypted/message   -pass file:key/file
+\end{lstlisting}
 
-Now every operation will be analyzed in more depth.\newline
-The first step is quite complicate: the machine, a deterministic entity, must find randomically two numbers in an unpredictable way, we have to use them in cryptography so no one must be able to exploit some not true random generations. As explained in \cite{primeNum}, the idea is to let the computer generate a random number of the dimension we need and then test if it is a prime or not; that is possible since the dimension of the number we need for RSA encryption still guarantees to obtain a good enough probability to generate a prime, this probability decreases as the order of the generated number increases; the same concepts can be found in chapter 7 of \cite{10.5555/1721909}. The problem is how to generate these random numbers: as stated in \cite{TRNG}, we cannot simply use a pseudo random number generator, it will generate numbers that are only apparently random, and this property can be exploited by an attacker to find a pattern in these random numbers. The most secure way to generate a random number is to have a true random number generator, which uses some environment input to have a source of true randomization, the problem is that these generators are hard to design and costly to implement. This source \cite{TRNG} explains also that it is possible to find some services on the internet that claim to have TRNG, but for this implementation it will be used the idea of \cite{pyrandom}: we can use cryptography secure random number generator, which uses some special source of randomization from outside the computer to initialize a random number generator. This is done by using a utility from \textit{PyCryptoDome} that generates random numbers (in this implementation it has been specified to use os.urandom, which is cryptographically secure, but I have a doubt if it checks to have enough entropy in the pool or has the same behavior specified in slide 8 about prime numbers) and then performs the primality test on these random numbers. \newline
-The second step performs this multiplication in order to have the number $n$ composed only by two prime factors, and this property will be exploited in the next step. \newline
-The third step computes the Totient function by exploiting the previous step property to use simpler computations. \newline
-The fourth and the fifth step are implemented together in this work: since in the fourth step we need to compute the GCD, this can be done trough the \textbf{Extended Euclidean Algorithm} needed in the fifth step. To select the exponent, it is used SystemRandom, which uses and delegates to the underlining system to compute the random number and in addition it has already implemented the possibility to add the interval from which to choose the random number, as it is needed in the fourth step. As already said, the GCD test is performed by the EEA algorithm, which is needed to compute $d$. The EEA implementation is iterative, it is based on the slide pseudocode with some improvements; on the net I was able to find also a recursive version, maybe it has more performance, but since RSA needs big numbers, the recursive version reached the limit number of recursive executions and it is not suited for this case.\newline
-To recap, the first three steps are executed by the function \verb+initialization+, while the other two are performed by the function \verb+selExp+, which uses \verb+eea+ as support function.
+
+
+
+
 
 %----------------------------------------------------------------------------------------
 %	SECTION 3
 %----------------------------------------------------------------------------------------
 
-\section{RSA Comparison}
+\section{Protocol Proof of Concept}
 
 This work compares the proposed implementation of RSA with a common library implementation of RSA itself and AES, the last one just to have an idea of how symmetric ciphers are in general more computational efficient than asymmetric ones. To have a fair comparison, AES uses 128 bit key, so as stated in table \ref{tab:keyLen}, it is necessary to have 3072 bit key for RSA. In the implementation proposed, since the key must have a length of 3072 bit, both $p$ and $q$ have a length of 1536 bit so their product has the correct length for the resulting key, as stated in section 7.6 of \cite{10.5555/1721909}.
 
@@ -168,6 +162,19 @@ Here, the time used by the key generation phase in RSA is not represented since 
 
 %----------------------------------------------------------------------------------------
 %	SECTION 4
+%----------------------------------------------------------------------------------------
+
+\section{Security Analysis}
+
+\begin{figure}[H]
+	\centering
+	%\includegraphics[width=0.345\linewidth]{images/SAM.png}
+	\caption{Improved version of Square And Multiply}
+	\label{fig:sam}
+\end{figure}
+
+%----------------------------------------------------------------------------------------
+%	SECTION 5
 %----------------------------------------------------------------------------------------
 
 \section{Conclusion}

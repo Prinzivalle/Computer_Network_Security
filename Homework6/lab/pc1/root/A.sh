@@ -112,6 +112,6 @@ fi
 openssl dgst -sha256 -out keys/secret2.sha256 keys/secret1.bin
 sleep 1
 read messages/send; while ! [ -s messages/send ]; do sleep 2 ; done && openssl aes-256-cbc -in messages/foo1 -out messages/message1.enc -pass file:keys/secret2.sha256 && openssl dgst -sha256 -sign keys/keypc1.pem -out messages/message1.sha256 messages/message1.enc  && tar -c messages/message1.enc | nc -q 0 1.0.1.3 9001 && sleep 1 && tar -c messages/message1.sha256 | nc -q 0 1.0.1.3 9001
-#read messages/send; while ! [ -s messages/send ]; do sleep 2 ; done &&
- openssl aes-256-cbc -in messages/foo2 -out messages/message2.enc -pass file:keys/secret2.sha256 && openssl dgst -sha256 -sign keys/keypc1.pem -out messages/message2.sha256 messages/message2.enc  && tar -c messages/message2.enc | nc -q 0 1.0.1.3 9001 && sleep 1 && tar -c messages/message2.sha256 | nc -q 0 1.0.1.3 9001
+#read messages/send; while ! [ -s messages/send ]; do sleep 2 ; done && 
+openssl aes-256-cbc -in messages/foo2 -out messages/message2.enc -pass file:keys/secret2.sha256 && openssl dgst -sha256 -sign keys/keypc1.pem -out messages/message2.sha256 messages/message2.enc  && tar -c messages/message2.enc | nc -q 0 1.0.1.3 9001 && sleep 1 && tar -c messages/message2.sha256 | nc -q 0 1.0.1.3 9001
 
