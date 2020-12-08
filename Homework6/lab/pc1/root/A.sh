@@ -70,7 +70,6 @@ echo "A"
 openssl pkeyutl -derive -inkey dhkeyPC1.pem -peerkey dhpubPC2.pem -out secret1.bin
 read secret1.enc; while ! [ -s secret1.enc ]; do sleep 1 ; done && openssl rsautl -in secret1.enc -out secret1B.bin -inkey keypc1.pem -decrypt && if ! [ cmp -s secret1.bin secret1B.bin ] ; then (echo "cannot authenticate" && authB=0) fi
 echo "authenticated"
-#openssl rsautl -in secret1.enc -out secret2.bin -inkey keypc2.pem -decrypt
 verified="Verified OK"
 signature=$(openssl dgst -sha256 -verify keypc2.pub -signature signDb.sha256 -binary Db)
 if [ "$signature" != "$verified" ] ; then (echo "cannot authenticate" && authB=0) fi 
@@ -101,15 +100,7 @@ then
 	# send files to B
 	cd /root/
 	tar -c keys/A.cer | nc -q 0 1.0.1.3 9001
-	#sleep 1
-	#tar -c keys/timeA | nc -q 0 1.0.1.3 9001
-	#sleep 1
-	#tar -c keys/B | nc -q 0 1.0.1.3 9001
-	#sleep 1
-	#tar -c keys/secret2.enc | nc -q 0 1.0.1.3 9001
-	#sleep 1
 	tar -c keys/Da | nc -q 0 1.0.1.3 9001
-	#sleep 1
 	tar -c keys/signDa.sha256 | nc -q 0 1.0.1.3 9001
 else
 	touch messages/authentication
@@ -119,12 +110,8 @@ fi
 
 # wait for ack then send messages to B
 openssl dgst -sha256 -out keys/secret2.sha256 keys/secret1.bin
+sleep 1
 read messages/send; while ! [ -s messages/send ]; do sleep 2 ; done && openssl aes-256-cbc -in messages/foo1 -out messages/message1.enc -pass file:keys/secret2.sha256 && openssl dgst -sha256 -sign keys/keypc1.pem -out messages/message1.sha256 messages/message1.enc  && tar -c messages/message1.enc | nc -q 0 1.0.1.3 9001 && sleep 1 && tar -c messages/message1.sha256 | nc -q 0 1.0.1.3 9001
-read messages/send; while ! [ -s messages/send ]; do sleep 2 ; done && openssl aes-256-cbc -in messages/foo2 -out messages/message2.enc -pass file:keys/secret2.sha256 && openssl dgst -sha256 -sign keys/keypc1.pem -out messages/message2.sha256 messages/message2.enc  && tar -c messages/message2.enc | nc -q 0 1.0.1.3 9001 && sleep 1 && tar -c messages/message2.sha256 | nc -q 0 1.0.1.3 9001
-#tar -c messages/message1.enc | nc -q 0 1.0.1.3 9001
-#sleep 1
-#tar -c messages/message2.enc | nc -q 0 1.0.1.3 9001
-
-
-
+#read messages/send; while ! [ -s messages/send ]; do sleep 2 ; done &&
+ openssl aes-256-cbc -in messages/foo2 -out messages/message2.enc -pass file:keys/secret2.sha256 && openssl dgst -sha256 -sign keys/keypc1.pem -out messages/message2.sha256 messages/message2.enc  && tar -c messages/message2.enc | nc -q 0 1.0.1.3 9001 && sleep 1 && tar -c messages/message2.sha256 | nc -q 0 1.0.1.3 9001
 

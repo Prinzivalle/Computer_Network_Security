@@ -79,12 +79,6 @@ timestamp > timeB
 # send files to A
 cd /root/
 tar -c keys/B.cer | nc -q 0 1.0.1.2 $pA
-#sleep 1
-#tar -c keys/timeB | nc -q 0 1.0.1.2 $pA
-#sleep 1
-#tar -c keys/A | nc -q 0 1.0.1.2 $pA
-#sleep 1
-#tar -c keys/secret1.enc | nc -q 0 1.0.1.2 $pA
 tar -c keys/Db | nc -q 0 1.0.1.2 $pA
 tar -c keys/signDb.sha256 | nc -q 0 1.0.1.2 $pA
 
@@ -95,7 +89,6 @@ cd /root/messages
 authA=0
 string="no authentication, send"
 read authentication; while ! [ -s authentication ]; do sleep 1 ; done && auth=$(head -n 1 authentication) && if [ "$auth" != "$string" ] ; then (echo "authentication of A" && authA=1) fi 
-#while ! [ -f authentication ] ; do echo "." ; done && auth=$(head -n 1 authentication) && if [ "$auth" != "$string" ] ; then (echo "authentication of A" && authA=1) fi 
 echo $authA
 
 # do authentication or send ack to A based on authA
@@ -112,7 +105,6 @@ then
 	openssl pkeyutl -derive -inkey dhkeyPC2.pem -peerkey dhpubPC1.pem -out secret2.bin
 	read secret2.enc; while ! [ -s secret2.enc ]; do sleep 1 ; done && openssl rsautl -in secret2.enc -out secret2A.bin -inkey keypc2.pem -decrypt && if ! [ cmp -s secret2.bin secret2A.bin ] ; then (echo "cannot authenticate" && auth=0) fi
 	echo "authenticated"
-	#openssl rsautl -in secret2.enc -out secret2.bin -inkey keypc2.pem -decrypt
 	verified="Verified OK"
 	signature=$(openssl dgst -sha256 -verify keypc1.pub -signature signDa.sha256 -binary Da)
 	if [ "$signature" != "$verified" ] ; then (echo "cannot authenticate" && auth=0) fi 
@@ -124,9 +116,7 @@ then
 	then 
 	  	tar -c messages/send | nc -q 0 1.0.1.2 $pA
 	  	cd /root/
-	  	#openssl pkeyutl -derive -inkey dhkeyPC2.pem -peerkey dhpubPC1.pem -out secret2.bin
 		openssl dgst -sha256 -out keys/secret2.sha256 keys/secret2.bin
-		#cd /root
 		read messages/message1.enc; while ! [ -s messages/message1.enc ]; do sleep 1 ; done 
 		openssl aes-256-cbc -d -in messages/message1.enc -out messages/foo1 -pass file:keys/secret2.sha256
 		read messages/message2.enc; while ! [ -s messages/message2.enc ]; do sleep 1 ; done 
@@ -137,9 +127,7 @@ else
 	cd /root 
 	tar -c messages/send | nc -q 0 1.0.1.2 $pA
 	cd /root/
-	#openssl pkeyutl -derive -inkey dhkeyPC2.pem -peerkey dhpubPC1.pem -out secret2.bin
 	openssl dgst -sha256 -out keys/secret2.sha256 keys/secret1.bin
-	#cd /root
 	read messages/message1.enc; while ! [ -s messages/message1.enc ]; do sleep 1 ; done
 	read messages/message1.sha256; while ! [ -s messages/message1.sha256 ]; do sleep 1 ; done 
 	verified="Verified OK"

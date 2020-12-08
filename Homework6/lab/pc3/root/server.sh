@@ -37,8 +37,6 @@ pA=$(head -n 1 keys/portA)
 echo $pA
 #pB=$(head -n 1 keys/portB)
 #echo $pB
-#(read A.csr; while ! [ -s A.csr ]; do sleep 1 ; done && openssl x509 -req -in A.csr -CA CA_root.pem -CAkey CA_key.private -passin pass:8%0%Zef6kbBvG0g -CAcreateserial -out A.cer -days 1 -sha256 && tar -c A.cer | nc -q 0 1.0.1.4 $pA ) &
-#(read B.csr; while ! [ -s B.csr ]; do sleep 1 ; done && openssl x509 -req -in B.csr -CA CA_root.pem -CAkey CA_key.private -passin pass:8%0%Zef6kbBvG0g -CAcreateserial -out B.cer -days 1 -sha256 && tar -c B.cer | nc -q 0 1.0.1.7 $pB ) &
 (read keys/A.csr; while ! [ -s keys/A.csr ]; do sleep 1 ; done && openssl x509 -req -in keys/A.csr -CA keys/CA_root.pem -CAkey keys/CA_key.private -passin pass:8%0%Zef6kbBvG0g -CAcreateserial -out keys/A.cer -days 1 -sha256 && tar -c keys/A.cer | nc -q 0 1.0.1.4 $pA ) &
 #(read keys/B.csr; while ! [ -s keys/B.csr ]; do sleep 1 ; done && openssl x509 -req -in keys/B.csr -CA keys/CA_root.pem -CAkey keys/CA_key.private -passin pass:8%0%Zef6kbBvG0g -CAcreateserial -out keys/B.cer -days 1 -sha256 && tar -c keys/B.cer | nc -q 0 1.0.1.7 $pB ) &
 
