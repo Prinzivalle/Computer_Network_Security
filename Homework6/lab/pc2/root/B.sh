@@ -102,7 +102,7 @@ echo $authA
 # do authentication or send ack to A based on authA
 if [ "$authA" -eq "1" ]
 then
-	#verify file ent from A
+	#verify file sent from A
 	cd /root/keys/
 	auth=1
 	read B; while ! [ -s B ]; do sleep 1 ; done 

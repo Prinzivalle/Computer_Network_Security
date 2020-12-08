@@ -1,6 +1,6 @@
 #!/bin/bash
 
-#choose if authenticate A to B
+#choose if authenticate A to B, put 1 if you want authentication of A
 authA=0
 
 cd /root/
