@@ -79,15 +79,13 @@ timestamp > timeB
 # send files to A
 cd /root/
 tar -c keys/B.cer | nc -q 0 1.0.1.2 $pA
-sleep 1
-tar -c keys/timeB | nc -q 0 1.0.1.2 $pA
-sleep 1
-tar -c keys/A | nc -q 0 1.0.1.2 $pA
-sleep 1
-tar -c keys/secret1.enc | nc -q 0 1.0.1.2 $pA
-sleep 1
+#sleep 1
+#tar -c keys/timeB | nc -q 0 1.0.1.2 $pA
+#sleep 1
+#tar -c keys/A | nc -q 0 1.0.1.2 $pA
+#sleep 1
+#tar -c keys/secret1.enc | nc -q 0 1.0.1.2 $pA
 tar -c keys/Db | nc -q 0 1.0.1.2 $pA
-sleep 1
 tar -c keys/signDb.sha256 | nc -q 0 1.0.1.2 $pA
 
 ######## optional authentication of A to B
@@ -97,6 +95,7 @@ cd /root/messages
 authA=0
 string="no authentication, send"
 read authentication; while ! [ -s authentication ]; do sleep 1 ; done && auth=$(head -n 1 authentication) && if [ "$auth" != "$string" ] ; then (echo "authentication of A" && authA=1) fi 
+#while ! [ -f authentication ] ; do echo "." ; done && auth=$(head -n 1 authentication) && if [ "$auth" != "$string" ] ; then (echo "authentication of A" && authA=1) fi 
 echo $authA
 
 # do authentication or send ack to A based on authA
@@ -105,7 +104,10 @@ then
 	#verify file sent from A
 	cd /root/keys/
 	auth=1
-	read B; while ! [ -s B ]; do sleep 1 ; done 
+	read Da; while ! [ -s Da ]; do sleep 1 ; done 
+	sed -n "1p;" Da > timeA
+	sed -n '2p;' Da > B
+	sed -n '3,6p;' Da > secret2.enc
 	echo "B"
 	openssl pkeyutl -derive -inkey dhkeyPC2.pem -peerkey dhpubPC1.pem -out secret2.bin
 	read secret2.enc; while ! [ -s secret2.enc ]; do sleep 1 ; done && openssl rsautl -in secret2.enc -out secret2A.bin -inkey keypc2.pem -decrypt && if ! [ cmp -s secret2.bin secret2A.bin ] ; then (echo "cannot authenticate" && auth=0) fi

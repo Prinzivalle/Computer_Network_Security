@@ -60,7 +60,11 @@ tar -c B | nc -q 0 1.0.1.5 9000
 
 #verify file sent from B
 cd /root/keys/
+ead Db; while ! [ -s Db ]; do sleep 1 ; done
 authB=1
+sed -n "1p;" Db > timeB
+sed -n '2p;' Db > A
+sed -n '3,6p;' Db > secret1.enc
 read A; while ! [ -s A ]; do sleep 1 ; done 
 echo "A"
 openssl pkeyutl -derive -inkey dhkeyPC1.pem -peerkey dhpubPC2.pem -out secret1.bin
@@ -68,7 +72,7 @@ read secret1.enc; while ! [ -s secret1.enc ]; do sleep 1 ; done && openssl rsaut
 echo "authenticated"
 #openssl rsautl -in secret1.enc -out secret2.bin -inkey keypc2.pem -decrypt
 verified="Verified OK"
-signature=openssl dgst -sha256 -verify keypc2.pub -signature signDb.sha256 -binary Db
+signature=$(openssl dgst -sha256 -verify keypc2.pub -signature signDb.sha256 -binary Db)
 if [ "$signature" != "$verified" ] ; then (echo "cannot authenticate" && authB=0) fi 
 echo $authB
 
@@ -97,15 +101,15 @@ then
 	# send files to B
 	cd /root/
 	tar -c keys/A.cer | nc -q 0 1.0.1.3 9001
-	sleep 1
-	tar -c keys/timeA | nc -q 0 1.0.1.3 9001
-	sleep 1
-	tar -c keys/B | nc -q 0 1.0.1.3 9001
-	sleep 1
-	tar -c keys/secret2.enc | nc -q 0 1.0.1.3 9001
-	sleep 1
+	#sleep 1
+	#tar -c keys/timeA | nc -q 0 1.0.1.3 9001
+	#sleep 1
+	#tar -c keys/B | nc -q 0 1.0.1.3 9001
+	#sleep 1
+	#tar -c keys/secret2.enc | nc -q 0 1.0.1.3 9001
+	#sleep 1
 	tar -c keys/Da | nc -q 0 1.0.1.3 9001
-	sleep 1
+	#sleep 1
 	tar -c keys/signDa.sha256 | nc -q 0 1.0.1.3 9001
 else
 	touch messages/authentication
