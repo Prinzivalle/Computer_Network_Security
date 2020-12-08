@@ -112,7 +112,7 @@ then
 	echo "authenticated"
 	#openssl rsautl -in secret2.enc -out secret2.bin -inkey keypc2.pem -decrypt
 	verified="Verified OK"
-	signature=openssl dgst -sha256 -verify keypc1.pub -signature signDa.sha256 -binary Da
+	signature=$(openssl dgst -sha256 -verify keypc1.pub -signature signDa.sha256 -binary Da)
 	if [ "$signature" != "$verified" ] ; then (echo "cannot authenticate" && auth=0) fi 
 	echo $auth
 
@@ -138,8 +138,13 @@ else
 	#openssl pkeyutl -derive -inkey dhkeyPC2.pem -peerkey dhpubPC1.pem -out secret2.bin
 	openssl dgst -sha256 -out keys/secret2.sha256 keys/secret1.bin
 	#cd /root
-	read messages/message1.enc; while ! [ -s messages/message1.enc ]; do sleep 1 ; done 
-	openssl aes-256-cbc -d -in messages/message1.enc -out messages/foo1 -pass file:keys/secret2.sha256
+	read messages/message1.enc; while ! [ -s messages/message1.enc ]; do sleep 1 ; done
+	read messages/message1.sha256; while ! [ -s messages/message1.sha256 ]; do sleep 1 ; done 
+	verified="Verified OK"
+	signature1=$(openssl dgst -sha256 -verify keys/keypc1.pub -signature messages/message1.sha256 messages/message1.enc)
+	if [ "$signature1" == "$verified" ] ; then (openssl aes-256-cbc -d -in messages/message1.enc -out messages/foo1 -pass file:keys/secret2.sha256) fi 
 	read messages/message2.enc; while ! [ -s messages/message2.enc ]; do sleep 1 ; done 
-	openssl aes-256-cbc -d -in messages/message2.enc -out messages/foo2 -pass file:keys/secret2.sha256
+	read messages/message2.sha256; while ! [ -s messages/message2.sha256 ]; do sleep 1 ; done 
+	signature2=$(openssl dgst -sha256 -verify keys/keypc1.pub -signature messages/message2.sha256 messages/message2.enc)
+	if [ "$signature2" == "$verified" ] ; then (openssl aes-256-cbc -d -in messages/message2.enc -out messages/foo2 -pass file:keys/secret2.sha256) fi 
 fi
