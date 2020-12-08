@@ -3,16 +3,17 @@
 cd /root/
 
 ####### start listening for incoming files
-#port=9000
-(while true; do nc -l -p 9000 | tar -x; done)&
-#touch portA
-#echo $port > portA
-#tar -c portA | nc -q 0 1.0.1.5 9000
+port=9000
+(while true; do nc -l -p $port | tar -x; done)&
+touch portA
+echo $port > portA
 
 #wait for ping, otherwise keys will not be sent
 while ! timeout 0.2 ping -c 1 -n 1.0.1.5 &> /dev/null ; do sleep 1; done
 while ! timeout 0.2 ping -c 1 -n 1.0.1.3 &> /dev/null ; do sleep 1; done
 echo "start"
+tar -c portA | nc -q 0 1.0.1.5 9000
+tar -c portA | nc -q 0 1.0.1.3 9001
 
 # use this directory to store all the keys
 cd /root/keys/
@@ -74,10 +75,15 @@ timestamp > timeA
 # send files to B
 cd /root/
 tar -c keys/A.cer | nc -q 0 1.0.1.3 9001
-tar -c keys/time | nc -q 0 1.0.1.3 9001
+sleep 1
+tar -c keys/timeA | nc -q 0 1.0.1.3 9001
+sleep 1
 tar -c keys/B | nc -q 0 1.0.1.3 9001
+sleep 1
 tar -c keys/secret2.enc | nc -q 0 1.0.1.3 9001
+sleep 1
 tar -c keys/Da | nc -q 0 1.0.1.3 9001
+sleep 1
 tar -c keys/signDa.sha256 | nc -q 0 1.0.1.3 9001
 
 # wait for ack then send messages to B

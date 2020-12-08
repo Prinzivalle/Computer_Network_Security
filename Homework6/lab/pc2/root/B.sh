@@ -5,14 +5,14 @@ cd /root/
 ####### start listening for incoming files
 port=9001
 (while true; do nc -l -p $port | tar -x; done)&
-touch portB
-echo $port > portB
-tar -c portB | nc -q 0 1.0.1.6 9001
+#touch portB
+#echo $port > portB
 
 #wait for ping, otherwise keys will not be sent
 while ! timeout 0.2 ping -c 1 -n 1.0.1.6 &> /dev/null; do sleep 1; done
 while ! timeout 0.2 ping -c 1 -n 1.0.1.2 &> /dev/null; do sleep 1; done
 echo "start"
+#tar -c portB | nc -q 0 1.0.1.6 9001
 
 # use this directory to store all the keys
 cd /root/keys
@@ -56,11 +56,19 @@ echo "A\nA\n" > A
 sleep 1
 tar -c A | nc -q 0 1.0.1.6 9001
 
+#find A key
+cd /root/
+pA=$(head -n 1 portA)
+echo $pA
+
 #verify file sent from A
+cd /root/keys/
 auth=1
 read B; while ! [ -s B ]; do sleep 1 ; done 
+echo "B"
 openssl pkeyutl -derive -inkey dhkeyPC2.pem -peerkey dhpubPC1.pem -out secret2.bin
 read secret2.enc; while ! [ -s secret2.enc ]; do sleep 1 ; done && openssl rsautl -in secret2.enc -out secret2A.bin -inkey keypc2.pem -decrypt && if ! [ cmp -s secret2.bin secret2A.bin ] ; then (echo "cannot authenticate" && auth=0) fi
+echo "authenticated"
 openssl rsautl -in secret2.enc -out secret2.bin -inkey keypc2.pem -decrypt
 verified="Verified OK"
 signature=openssl dgst -sha256 -verify keypc1.pub -signature signDa.sha256 -binary Da
