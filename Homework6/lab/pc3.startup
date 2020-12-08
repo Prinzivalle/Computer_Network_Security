@@ -1,6 +1,3 @@
 /etc/init.d/networking restart
 
-#(bash /root/certificates.sh && bash /root/receivePK.sh)
-#bash /root/certificates.sh
-#bash /root/receivePK.sh
 bash /root/server.sh

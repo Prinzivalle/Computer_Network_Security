@@ -1,4 +1,3 @@
 /etc/init.d/networking restart
 
-#(bash /root/generate_keys.sh && bash /root/sendPK.sh)
 bash /root/A.sh
