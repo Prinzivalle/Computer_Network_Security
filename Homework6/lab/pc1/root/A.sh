@@ -1,5 +1,8 @@
 #!/bin/bash
 
+#choose if authenticate A to B
+authA=0
+
 cd /root/
 
 ####### start listening for incoming files
@@ -55,44 +58,68 @@ echo "B\nB\n" > B
 sleep 1
 tar -c B | nc -q 0 1.0.1.5 9000
 
+#verify file sent from B
+cd /root/keys/
+authB=1
+read A; while ! [ -s A ]; do sleep 1 ; done 
+echo "A"
+openssl pkeyutl -derive -inkey dhkeyPC1.pem -peerkey dhpubPC2.pem -out secret1.bin
+read secret1.enc; while ! [ -s secret1.enc ]; do sleep 1 ; done && openssl rsautl -in secret1.enc -out secret1B.bin -inkey keypc1.pem -decrypt && if ! [ cmp -s secret1.bin secret1B.bin ] ; then (echo "cannot authenticate" && authB=0) fi
+echo "authenticated"
+#openssl rsautl -in secret1.enc -out secret2.bin -inkey keypc2.pem -decrypt
+verified="Verified OK"
+signature=openssl dgst -sha256 -verify keypc2.pub -signature signDb.sha256 -binary Db
+if [ "$signature" != "$verified" ] ; then (echo "cannot authenticate" && authB=0) fi 
+echo $authB
+
 ####### authenticate A to B
-
-timestamp() {
-  date +"%T" # current time
-}
-read dhpubPC2.pem; while ! [ -s dhpubPC2.pem ]; do sleep 1 ; done && openssl pkeyutl -derive -inkey dhkeyPC1.pem -peerkey dhpubPC2.pem -out secret2.bin 
-openssl rsautl -in secret2.bin -out secret2.enc -pubin -inkey keypc2.pub -encrypt
-Da=(timestamp B secret2.enc)
-touch Da
-timestamp > Da
-cat B >> Da
-cat secret2.enc >> Da
-openssl dgst -sha256 -sign keypc1.pem -out signDa.sha256 Da
-
-touch timeA
-timestamp > timeA
-
-# send files to B
 cd /root/
-tar -c keys/A.cer | nc -q 0 1.0.1.3 9001
-sleep 1
-tar -c keys/timeA | nc -q 0 1.0.1.3 9001
-sleep 1
-tar -c keys/B | nc -q 0 1.0.1.3 9001
-sleep 1
-tar -c keys/secret2.enc | nc -q 0 1.0.1.3 9001
-sleep 1
-tar -c keys/Da | nc -q 0 1.0.1.3 9001
-sleep 1
-tar -c keys/signDa.sha256 | nc -q 0 1.0.1.3 9001
+if [ "$authA" -eq "1" ]
+then
+	touch messages/authentication
+	echo "authenticate me" > messages/authentication
+	tar -c messages/authentication | nc -q 0 1.0.1.3 9001
+	cd /root/keys
+	timestamp() {
+	  date +"%T" # current time
+	}
+	read dhpubPC2.pem; while ! [ -s dhpubPC2.pem ]; do sleep 1 ; done && openssl pkeyutl -derive -inkey dhkeyPC1.pem -peerkey dhpubPC2.pem -out secret2.bin 
+	openssl rsautl -in secret2.bin -out secret2.enc -pubin -inkey keypc2.pub -encrypt
+	touch Da
+	timestamp > Da
+	cat B >> Da
+	cat secret2.enc >> Da
+	openssl dgst -sha256 -sign keypc1.pem -out signDa.sha256 Da
+
+	touch timeA
+	timestamp > timeA
+
+	# send files to B
+	cd /root/
+	tar -c keys/A.cer | nc -q 0 1.0.1.3 9001
+	sleep 1
+	tar -c keys/timeA | nc -q 0 1.0.1.3 9001
+	sleep 1
+	tar -c keys/B | nc -q 0 1.0.1.3 9001
+	sleep 1
+	tar -c keys/secret2.enc | nc -q 0 1.0.1.3 9001
+	sleep 1
+	tar -c keys/Da | nc -q 0 1.0.1.3 9001
+	sleep 1
+	tar -c keys/signDa.sha256 | nc -q 0 1.0.1.3 9001
+else
+	touch messages/authentication
+	echo "no authentication, send" > messages/authentication
+	tar -c messages/authentication | nc -q 0 1.0.1.3 9001
+fi
 
 # wait for ack then send messages to B
-openssl dgst -sha256 -out keys/secret2.sha256 keys/secret2.bin
-read messages/send; while ! [ -s messages/send ]; do sleep 1 ; done && openssl aes-256-cbc -in messages/foo1 -out messages/message1.enc -pass file:keys/secret2.sha256
-openssl aes-256-cbc -in messages/foo2 -out messages/message2.enc -pass file:keys/secret2.sha256 
-tar -c messages/message1.enc | nc -q 0 1.0.1.3 9001
-sleep 1
-tar -c messages/message2.enc | nc -q 0 1.0.1.3 9001
+openssl dgst -sha256 -out keys/secret2.sha256 keys/secret1.bin
+read messages/send; while ! [ -s messages/send ]; do sleep 2 ; done && openssl aes-256-cbc -in messages/foo1 -out messages/message1.enc -pass file:keys/secret2.sha256 && tar -c messages/message1.enc | nc -q 0 1.0.1.3 9001
+read messages/send; while ! [ -s messages/send ]; do sleep 2 ; done && openssl aes-256-cbc -in messages/foo2 -out messages/message2.enc -pass file:keys/secret2.sha256 && tar -c messages/message2.enc | nc -q 0 1.0.1.3 9001
+#tar -c messages/message1.enc | nc -q 0 1.0.1.3 9001
+#sleep 1
+#tar -c messages/message2.enc | nc -q 0 1.0.1.3 9001
 
 
 
