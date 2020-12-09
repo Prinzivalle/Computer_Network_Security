@@ -70,17 +70,37 @@ This homework contains a basic design and implementation of a message exchange \
 The protocol can be divided into three main functionalities: \textit{confidentiality}, \textit{message authentication} and \textit{entity authentication}. Each functionality is developed as follows:
 
 \begin{itemize}
-	\item \textbf{Confidentiality} is achieved by using symmetric encryption with AES in CBC mode with key length of 256 bits, which is the standard for confidentiality for NSA \cite{AES_NSA}.
+	\item \textbf{Confidentiality} is achieved by using symmetric encryption with AES in CBC mode with key length of 256 bits, which is the standard for confidentiality for NSA \cite{AES_NSA}, similar hint was found also here \cite{AES_stack}.
 	\item \textbf{Message Authentication} is performed with SHA-256 using public key signature (OpenSSL supports directly HMAC but the version installed on the docker image on the background of Kathara is older than the minimum version implementing HMAC).
 	\item \textbf{Entity Authentication} is based on a weaker version of the X.509 protocol, which introduces some vulnerabilities but simplifies the implementation, since this part is done by hand since OpenSSL contains only the primitives and not a complete authentication protocol. 
 \end{itemize}
 
-Let's analyze every part more in the details. Encryption is the simpler; it just uses the primitive from OpenSSL as follows: 
+Let's analyze every part more in the details; weaknesses will be analyzed in section \ref{sec:secAn}.\newline
+Encryption is the simpler; it is just based upon the primitive from OpenSSL, and it uses the primitive as follows: 
 
 \begin{lstlisting}[breaklines]
-	openssl aes-256-cbc -in message/to/encrypt -out encrypted/message   -pass file:key/file
+	openssl aes-256-cbc -in message/to/encrypt -out encrypted/message.enc -pass file:key/file
 \end{lstlisting}
 
+The key used is based on a shared secret from a DH key exchange phase performed previously, and the secret is hashed in order to obtain the desired length of 256 bits for the encryption key. The instruction used is:
+
+\begin{lstlisting}[breaklines]
+	openssl dgst -sha256 -out hashed/key.sha256 shared/secret.bin
+\end{lstlisting}
+
+To decrypt the message, it is easy as the encryption, it is just necessary to have the shared secret, derive the key by using hashing (as seen upside) and then decrypt with the following command:
+
+\begin{lstlisting}[breaklines]
+	openssl aes-256-cbc -d -in encrypted/message.enc -out decrypted/message -pass file:key/file
+\end{lstlisting}
+
+As already said, OpenSSL implements different primitives for authenticating messages, the problem resides in the version shipped with the docker image used in the practical experiment: it is older, so it does not support these new addition to the library. Due to this inconvenience, I found \cite{signatures} that it is possible to use message digest with SHA256 with a public key pair for digital signature of a message using OpenSSL, the command is the following:
+
+\begin{lstlisting}[breaklines]
+	openssl dgst -sha256 -sign private/key.pem -out message/signature.sha256 encrypted/message.enc
+\end{lstlisting}
+
+Then both the encrypted message and its signature are sent to the recipient of the message.
 
 
 
@@ -165,6 +185,7 @@ Here, the time used by the key generation phase in RSA is not represented since 
 %----------------------------------------------------------------------------------------
 
 \section{Security Analysis}
+\label{sec:secAn}
 
 \begin{figure}[H]
 	\centering
