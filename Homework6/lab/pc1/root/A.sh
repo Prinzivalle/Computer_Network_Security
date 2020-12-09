@@ -60,7 +60,7 @@ tar -c B | nc -q 0 1.0.1.5 9000
 
 #verify file sent from B
 cd /root/keys/
-ead Db; while ! [ -s Db ]; do sleep 1 ; done
+read Db; while ! [ -s Db ]; do sleep 1 ; done
 authB=1
 sed -n "1p;" Db > timeB
 sed -n '2p;' Db > A

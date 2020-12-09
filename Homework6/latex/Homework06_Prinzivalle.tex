@@ -83,7 +83,7 @@ Encryption is the simpler; it is just based upon the primitive from OpenSSL, and
 	openssl aes-256-cbc -in message/to/encrypt -out encrypted/message.enc -pass file:key/file
 \end{lstlisting}
 
-The key used is based on a shared secret from a DH key exchange phase performed previously, and the secret is hashed in order to obtain the desired length of 256 bits for the encryption key. The instruction used is:
+The key used is based on a shared secret from a DH key exchange phase performed previously, and the instructions needed and used in this work can be found in \cite{DHKE}. The secret is then hashed in order to obtain the desired length of 256 bits for the encryption key. The instruction used is:
 
 \begin{lstlisting}[breaklines]
 	openssl dgst -sha256 -out hashed/key.sha256 shared/secret.bin
@@ -136,7 +136,84 @@ A entity on the net can generate a CSR by executing the following command:
 	openssl req -new -key user.key -out user.csr
 \end{lstlisting}
 
-So the user needs only a private key to generate a CSR, no more than that.
+So the user needs only a private key to generate a CSR, no more than that. Once a user has obtained a certificate, the entity authentication can be performed: the initiator asks the recipient to send him its certificate, a special data structure \textit{$D_r$} and the signature of \textit{$D_r$}. The data structure \textit{$D_r$} contains a timestamp, the identity of the sender and a publicly encrypted shared secret between the two entities (the shared secret is computed with a public key retrieved from the certificate authority).
+
+\begin{figure}
+	\centering
+	\def\nodeTextWidth{4.5cm}
+	\def\levelOne{2cm}
+	\begin{tikzpicture}[
+		node distance=7mm and 5mm,
+		every node/.append style={very thick},
+		entity/.style={draw, rectangle, minimum width=\nodeTextWidth},
+		hiddenentity/.style={,rectangle, minimum width=\nodeTextWidth},
+		operation/.style={draw=black,thick,fill=white,rounded corners=0mm,text width=\nodeTextWidth,font=\scriptsize, inner sep=2pt, text centered},
+		myarrow/.style={line width=2pt,black,-latex},
+		textAboveArrow/.style={inner sep=2pt,outer sep=4pt, fill=white,font=\footnotesize}
+		]
+		
+		\node[entity] (CA) {CA};
+		\node[entity, right of = CA, node distance=4.6cm] (A)  {A};
+		\node[entity, right of = A, node distance=4.6cm] (B)  {B};
+		
+		%\node[operation, below of = CA] (accountDescription) { $xxxxxxx$};
+		
+		%VERTICAL LINES
+		\draw [very thick] (CA)--++(0,-15);
+		\node[mark size=3pt,color=black] at (0,-15) {\pgfuseplotmark{*}};
+		\draw [very thick] (A)--++(0,-15);
+		\node[mark size=3pt,color=black] at (\nodeTextWidth+1mm,-15) {\pgfuseplotmark{*}};
+		\draw [very thick] (B)--++(0,-15);
+		\node[mark size=3pt,color=black] at (\nodeTextWidth*2+2mm,-15) {\pgfuseplotmark{*}};
+		
+		%=============================== A initilization PHASE =======================
+		\coordinate[below of = A, node distance=1.5cm] (A1);
+		\draw[myarrow] (A1)--(A1-|CA) node[textAboveArrow,above,midway] {A DH public key};
+		\coordinate[below of = A, node distance=2.1cm] (A2);
+		\draw[myarrow] (A2)--(A2-|CA) coordinate node[textAboveArrow,above,midway] {A RSA public key};
+		\coordinate[below of = A, node distance=2.7cm] (A3);
+		\draw[myarrow] (A3)--(A3-|CA) coordinate node[textAboveArrow,above,midway] {A CSR};
+		\coordinate[below of = CA, node distance=3.3cm] (CA1);
+		\draw[myarrow] (CA1)--(CA1-|A) coordinate node[textAboveArrow,above,midway] {A CER};
+		\draw[thick] ($(CA.south west)+(-0.15,-0.35)$) rectangle ($(CA1.south east)+(11.6,-0.25)$) node[below of = A,fill=white, draw, rectangle, node distance=0.6cm]{\textit{A initialization and certificate}} ;
+		
+		%=============================== B initilization PHASE ========================
+		\coordinate[below of = B, node distance=4.9cm] (B1);
+		\draw[myarrow] (B1)--(B1-|CA) node[textAboveArrow,above,midway] {B DH public key};
+		\coordinate[below of = B, node distance=5.3cm] (B2);
+		\draw[myarrow] (B2)--(B2-|CA) coordinate node[textAboveArrow,above,midway] {B RSA public key};
+		\coordinate[below of = B, node distance=6.1cm] (B3);
+		\draw[myarrow] (B3)--(B3-|CA) coordinate node[textAboveArrow,above,midway] {B CSR};
+		\coordinate[below of = CA, node distance=6.7cm] (CA2);
+		\draw[myarrow] (CA2)--(CA2-|B) coordinate node[textAboveArrow,above,midway] {B CER};
+		\draw[thick] ($(B1.north west)+(-11.6,0.9)$) rectangle ($(CA2.south east)+(11.6,-0.25)$) node[below of = A,fill=white, draw, rectangle, node distance=4cm]{\textit{B initialization and certificate}} ;
+
+		%=============================== B authentication to A ========================
+		\coordinate[below of = A, node distance=8.5cm] (A4);
+		\draw[myarrow] (A4)--(A4-|CA) node[textAboveArrow,above,midway] {Req B public keys (DH,RSA)};
+		\coordinate[below of = CA, node distance=9.2cm] (CA3);
+		\draw[myarrow] (CA3)--(CA3-|A) coordinate node[textAboveArrow,above,midway] {B public keys (DH,RSA)};
+		
+		\coordinate[below of = B, node distance=10cm] (B4);
+		\draw[myarrow] (B4)--(B4-|CA) node[textAboveArrow,above,midway] {Req A public keys (DH,RSA)};
+		\coordinate[below of = CA, node distance=10.7cm] (CA4);
+		\draw[myarrow] (CA4)--(CA4-|B) coordinate node[textAboveArrow,above,midway] {A public keys (DH,RSA)};
+		
+		
+		
+		
+		
+		
+		%    \node[hiddenentity,left=of SML9](BL9){};
+		%    \draw [myarrow] (UPL9.center)--(BL9.center) node[textAboveArrow,above,midway] {xxxxxxx};
+		
+		%\node[(BL8) (UPL9aux) (text8), draw, thick, label={[font=\itshape, fill=white, draw, anchor=center]90:Third Phase}] {};
+		
+		%    \draw[thick] ($(BL8.north west)+(-0.15,0.5)$) rectangle ($(UPL9.south east)+(0.15,-0.1)$) node[below=16mm of BL7,fill=white, draw, rectangle]{\textit{Third Phase}} ;       
+	\end{tikzpicture}
+	\caption{TODO}
+	\label{fig:comm_diagram}
+\end{figure}
 
 %----------------------------------------------------------------------------------------
 %	SECTION 3
@@ -247,7 +324,8 @@ So the user needs only a private key to generate a CSR, no more than that.
 		\node[right of = server 3,align=left]{Pc3-C};
 		
 	\end{tikzpicture}
-	\caption{Proof of Concept Network Topology}
+	\caption{Proof of Concept Network Topology, based on\cite{tikz_rete}}
+	\label{fig:topology}
 \end{figure}
 
 
