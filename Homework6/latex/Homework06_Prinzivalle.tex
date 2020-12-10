@@ -76,7 +76,7 @@ The protocol can be divided into three main functionalities: \textit{confidentia
 	\item \textbf{Entity Authentication} is based on a weaker version of the X.509 protocol, which introduces some vulnerabilities but simplifies the implementation, since this part is done by hand since OpenSSL contains only the primitives and not a complete authentication protocol. 
 \end{itemize}
 
-Let's analyze every part more in the details; weaknesses will be analyzed in section \ref{sec:secAn}.\newline
+Let's analyze every part more in the details; weaknesses and security concerns will be analyzed in section \ref{sec:secAn}.\newline
 Encryption is the simpler; it is just based upon the primitive from OpenSSL, and it uses the primitive as follows: 
 
 \begin{lstlisting}[breaklines]
@@ -136,7 +136,8 @@ A entity on the net can generate a CSR by executing the following command:
 	openssl req -new -key user.key -out user.csr
 \end{lstlisting}
 
-So the user needs only a private key to generate a CSR, no more than that. Once a user has obtained a certificate, the entity authentication can be performed: the initiator asks the recipient to send him its certificate, a special data structure \textit{$D_r$} and the signature of \textit{$D_r$}. The data structure \textit{$D_r$} contains a timestamp, the identity of the sender and a publicly encrypted shared secret between the two entities (the shared secret is computed with a public key retrieved from the certificate authority).
+So the user needs only a private key to generate a CSR, no more than that. Once a user has obtained a certificate, the entity authentication can be performed: the initiator asks the recipient to send him its certificate, a special data structure \textit{$D_r$} and the signature of \textit{$D_r$}. The data structure \textit{$D_r$} contains a timestamp, the identity of the sender and a publicly encrypted shared secret between the two entities (the shared secret is computed with a public key retrieved from the certificate authority).\newline
+The complete protocol diagram can be seen on figure \ref{fig:comm_diagram}; the different phases are represented separately contained into rectangles, the only part to pay particular attention is in the red arrow: that part is sent to B only if A decides to authenticate itself to B, otherwise the previous message "Authenticate A" will contain "No" and B will send a clear to send to A and the message exchange can start.
 
 \begin{figure}
 	\centering
@@ -156,8 +157,6 @@ So the user needs only a private key to generate a CSR, no more than that. Once 
 		\node[entity] (CA) {CA};
 		\node[entity, right of = CA, node distance=4.6cm] (A)  {A};
 		\node[entity, right of = A, node distance=4.6cm] (B)  {B};
-		
-		%\node[operation, below of = CA] (accountDescription) { $xxxxxxx$};
 		
 		%VERTICAL LINES
 		\draw [very thick] (CA)--++(0,-18);
@@ -238,6 +237,7 @@ So the user needs only a private key to generate a CSR, no more than that. Once 
 
 \section{Protocol Proof of Concept}
 
+This work contains also a small implementation of a proof of concept of the algorithm: it uses a basic topology of a network; it can be visualized in fig. \ref{fig:topology}.
 
 
 \begin{figure}[H]
@@ -345,74 +345,20 @@ So the user needs only a private key to generate a CSR, no more than that. Once 
 	\label{fig:topology}
 \end{figure}
 
+The example implementation uses Katharà \cite{kathara}, a virtualization tool developed by Università Roma Tre to simulate, through Docker containers, the behavior of networks of various entity. To install this tool follow the instructions on \cite{kathara_install} (a curious thing is that now they support other OS than Ubuntu, which is a great thing for a Linux users that has other distros than Ubuntu installed). Once installed you need to go to ~/.config/kathara.conf and modify the line about the docker image with:
 
-This work compares the proposed implementation of RSA with a common library implementation of RSA itself and AES, the last one just to have an idea of how symmetric ciphers are in general more computational efficient than asymmetric ones. To have a fair comparison, AES uses 128 bit key, so as stated in table \ref{tab:keyLen}, it is necessary to have 3072 bit key for RSA. In the implementation proposed, since the key must have a length of 3072 bit, both $p$ and $q$ have a length of 1536 bit so their product has the correct length for the resulting key, as stated in section 7.6 of \cite{10.5555/1721909}.
+\begin{lstlisting}[breaklines]
+	"image": "marcospazianibrunella/network_infrastructures"
+\end{lstlisting}
 
-\renewcommand{\arraystretch}{2}
+This allows the machine to have netcat command preinstalled, which will come in handy in this simulation. Once Katharà is working, go into the lab folder provided with this homework and execute the following command:  
 
-\begin{table}[H]
-	\begin{center}
-		\begin{tabular}{ |c || c | c | c | c | c | c | }
-			\hline
-			Algorithm Family & Cryptosystems & \multicolumn{4}{c |}{Security Level (bit)}\\
-			& & 80 & 128 & 192 & 256\\ [0.5ex] 
-			\hline\hline
-			Integer Factorization & RSA & 1024 & 3072 & 7680 & 15360  \\ 
-			
-			Discrete Logarithm & DH, DSA, Elgamal & 1024 & 3072 & 7680 & 15360  \\ 
-			
-			Elliptic Curves & ECDH, ECDSA & 160 & 256 & 384 & 512  \\ 
-			\hline
-			Symmetric key & AES, 3DES &  80 & 128 & 192 & 256  \\ 
-			\hline
-		\end{tabular}
-		\caption{Key length comparison in public key and symmetric key algorithm}
-		\label{tab:keyLen}
-	\end{center}
-\end{table}
+\begin{lstlisting}[breaklines]
+	kathara lstart
+\end{lstlisting}
 
-The 3072 bit key allows to encrypt a maximum of $3072 \div 8 = 384$ bytes, this is due to the characteristics of RSA itself, otherwise the modulo reduction will collapse the oversize message inside the modulo domain and it will be impossible to recover the original message after decryption. To overcome this limit, an idea could be to implement operation mode on asymmetric ciphers, but it is not feasible due to the fact that these ciphers are so much slower with respect to symmetric ones, and it is better to use the latter to encrypt larger messages. For these reasons, the message to be encrypted has been chosen of dimension around 313 bytes. The proposed implementation needs to preprocess data to be sure to give to the encryption phase a integer number, this is done by the instruction \verb+binarybuffer = ''.join(format(ord(x), 'b') for x in buffer)+ which \linebreak produces an output in binary form, which is then converted into base ten numbers by using the instruction \verb+int(binarybuffer, 2)+ whose output is used in the encryption phase.\newline
-For \textbf{RSA} comparison, both the key generation and message encryption are measured separately; the key generation is called once for every test since it requires more time with respect to the encryption phase, while the message encryption can be called more times by specifying the number of rounds when calling the function. Since the key generation phase requires different time depending on the test performed, I decided to perform 4 times the tests in different times of the day, and the median value are represented in tab. \ref{tab:RSA}; encryption and decryption value are much more stable in different tests (All the original tests value can be found in the output.txt file attached with this report).
+To close the simulation environment it is necessary to perform a \textbf{kathara lclean}.
 
-\renewcommand{\arraystretch}{2}
-
-\begin{table}[H]
-	\begin{center}
-		\begin{tabular}{ |c || m{2cm} | m{2cm} | m{2cm}|  }
-			\hline
-			RSA & key \linebreak generation & encryption \linebreak throughput & decryption \linebreak throughput \\ [0.5ex] 
-			\hline\hline
-			PyCryptoDome & 11.68 sec & 52,7 KB/s & 6,37 KB/s \\ 
-			\hline
-			Proposed implementation & 6.73 sec & 0,825 KB/s & 0.807 KB/s \\ 
-			\hline
-		\end{tabular}
-		\caption{RSA time and throughput comparison}
-		\label{tab:RSA}
-	\end{center}
-\end{table}
-
-It is necessary to add that \textit{PyCryptoDome} RSA implements a padding scheme, while the proposed implementation does not, which offer less security and maybe requires less computation effort. The strange thing is that the proposed key generation algorithm needs less time on average with respect to the \textit{PyCryptoDome} one: as stated in \cite{pyrandom}, os.urandom, which is used here to generate the prime random numbers, uses on windows (on which I performed the tests) the function CryptGenRandom \cite{winRandom}, which I was not able to understand if it waits effectively for the entropy pool to be full enough, but since os.urandom uses /dev/urandom on Linux machines, which does not check if the entropy pool is filled up, probably neither the windows function does it, so here the reason for which the proposed implementation needs less time on average.\newline  
-Instead, as it was easily predictable, the library implementation has much more throughput, both in encryption and decryption, with slower decryption, while the proposed implementation has much more similar time for both phases (it uses the same function for both), probably the library implementation has some tricks to speed up the process which are possible only on one way in encryption.\newline
-To obtain a comparison with AES, I have chosen to use the ECB mode with padding; this is just for educational purposes, it is already known that symmetric ciphers are faster than public keys ones. The comparison is represented in tab. \ref{tab:RSA}.
-
-\begin{table}[h]
-	\begin{center}
-		\begin{tabular}{ | c || m{2cm} | m{2cm} | }
-			\hline
-			AES vs RSA & Encryption & Decryption \\ [0.5ex] 
-			\hline\hline
-			AES ECB mode & 1,49 MB/s & 1,49 MB/s  \\ 
-			\hline
-			Proposed RSA & 0,825 KB/s & 0.807 KB/s \\ 
-			\hline
-		\end{tabular}
-		\caption{RSA vs AES comparison}
-		\label{tab:AES}
-	\end{center}
-\end{table}
-
-Here, the time used by the key generation phase in RSA is not represented since the comparison this time is just on the pure encryption and decryption phase assuming we already have the keys for both algorithms.
 
 %----------------------------------------------------------------------------------------
 %	SECTION 4
