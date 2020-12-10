@@ -67,6 +67,7 @@ This homework contains a basic design and implementation of a message exchange \
 %----------------------------------------------------------------------------------------
 
 \section{Protocol Design}
+\label{sec:design}
 
 The protocol can be divided into three main functionalities: \textit{confidentiality}, \textit{message authentication} and \textit{entity authentication}. Each functionality is developed as follows:
 
@@ -345,7 +346,7 @@ This work contains also a small implementation of a proof of concept of the algo
 	\label{fig:topology}
 \end{figure}
 
-The example implementation uses Katharà \cite{kathara}, a virtualization tool developed by Università Roma Tre to simulate, through Docker containers, the behavior of networks of various entity. To install this tool follow the instructions on \cite{kathara_install} (a curious thing is that now they support other OS than Ubuntu, which is a great thing for a Linux users that has other distros than Ubuntu installed). Once installed you need to go to ~/.config/kathara.conf and modify the line about the docker image with:
+The example implementation uses Katharà \cite{kathara}, a virtualization tool developed by Università Roma Tre to simulate, through Docker containers, the behavior of networks of various entity. To install this tool follow the instructions on \cite{kathara_install}, various OSes are supported. Once installed you need to go to $\sim$/.config/kathara.conf and modify the line about the docker image with:
 
 \begin{lstlisting}[breaklines]
 	"image": "marcospazianibrunella/network_infrastructures"
@@ -357,8 +358,10 @@ This allows the machine to have netcat command preinstalled, which will come in 
 	kathara lstart
 \end{lstlisting}
 
-To close the simulation environment it is necessary to perform a \textbf{kathara lclean}.
-
+To close the simulation environment it is necessary to perform a \textbf{kathara lclean}. We need a basic intro to how Katharà lab works to better understand the simulation: everything inside the pc* folder will be put inside the root of the correspondent pc when the machine is created and everything contained inside the pc*.startup will be executed during the startup of the machine. PC1 is the entity A, PC2 is the entity B and PC3 is the Certificate Authority. \textbf{A} will execute the script "A.sh", \textbf{B} the "B.sh" and \textbf{CA} the "server.sh", these scripts are located in /root/ of the corresponding machines. The programs are written using bash to exploit the power of OpenSSL (I know, maybe bash wasn't the best possible idea, I have over complicated my task probably). After some seconds of simulations, there must compare the messages foo1 and foo2 inside the folder /root/messages/ of PC2, and some text must be contained in them; if the messages don't appear after maximum ten second then restart the simulation with \textbf{kathara lrestart}, since sometimes the scripts get hanged in the startup of the machines due to different spawning times of the machines: this issue must have been mitigated by introducing the initial ping control but sometimes the script remains stuck in some point due to kathara problem with startup.\newline
+Basically the scripts contains the instructions previously explained in section \ref{sec:design} with the addition of extra instruction to synchronize the communication or wait for some action from other entities to occur. An issue I have experienced is on the command used to communicate, which is \textit{netcat}: basically all messages, even the text and control ones, are stored as files: this was chosen since all security related stuff, such as keys and certificates, are stored as files, so to level out everything and have a unique instruction to create the waiting part of the TCP communication (this is an implementation choice born after some days of googling the net). The problem is that, my idea was to use a single TCP connection for every channel (so one between A and CA, one between A and B and so on) and use it as a bidirectional channel, but the problem is that netcat (and all its variant) closes the connection when and EOF is sent over the channel, even when using the option -k, which is meant to keep the communication open when the client closes it to reopen it later, netcat raises some error, such as broken pipe or connection refused or similar, so I needed to change approach. The final idea is to put a netcat server on every machine which reopens the communication whenever an EOF closes it, and when a machine has to send something to another one then starts a new TCP session for every file. To manage file through netcat, I used a pipe with tar which takes care about file positioning on receiving machine \cite{nc_multiple}.\newline
+To recap, all files are saved into /root/ of the machines, then the folder keys contains all security related files like keys and certificates while the folder messages contains the messages and the control communication like the CTS. Special mention goes to the file $D_*$ which is created as a unique file with the three data seen in previous section, signed, sent and then disassembled at destination to get the three parts separated and ready to be used.\newline
+Probably the implementation has some error inside, so let me know if it does not work, I may record my screen and share the video as a proof (it's something like "it works on my machine", but the simulator is not that clear about the startup procedure and sometimes it doesn't work, the last runs on both my machines produce always a working example so I hope it works also during this evaluation).
 
 %----------------------------------------------------------------------------------------
 %	SECTION 4
