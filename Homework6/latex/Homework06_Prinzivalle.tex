@@ -149,6 +149,7 @@ So the user needs only a private key to generate a CSR, no more than that. Once 
 		hiddenentity/.style={,rectangle, minimum width=\nodeTextWidth},
 		operation/.style={draw=black,thick,fill=white,rounded corners=0mm,text width=\nodeTextWidth,font=\scriptsize, inner sep=2pt, text centered},
 		myarrow/.style={line width=2pt,black,-latex},
+		myarrowRed/.style={line width=2pt,red,-latex},
 		textAboveArrow/.style={inner sep=2pt,outer sep=4pt, fill=white,font=\footnotesize}
 		]
 		
@@ -159,12 +160,12 @@ So the user needs only a private key to generate a CSR, no more than that. Once 
 		%\node[operation, below of = CA] (accountDescription) { $xxxxxxx$};
 		
 		%VERTICAL LINES
-		\draw [very thick] (CA)--++(0,-15);
-		\node[mark size=3pt,color=black] at (0,-15) {\pgfuseplotmark{*}};
-		\draw [very thick] (A)--++(0,-15);
-		\node[mark size=3pt,color=black] at (\nodeTextWidth+1mm,-15) {\pgfuseplotmark{*}};
-		\draw [very thick] (B)--++(0,-15);
-		\node[mark size=3pt,color=black] at (\nodeTextWidth*2+2mm,-15) {\pgfuseplotmark{*}};
+		\draw [very thick] (CA)--++(0,-18);
+		\node[mark size=3pt,color=black] at (0,-18) {\pgfuseplotmark{*}};
+		\draw [very thick] (A)--++(0,-18);
+		\node[mark size=3pt,color=black] at (\nodeTextWidth+1mm,-18) {\pgfuseplotmark{*}};
+		\draw [very thick] (B)--++(0,-18);
+		\node[mark size=3pt,color=black] at (\nodeTextWidth*2+2mm,-18) {\pgfuseplotmark{*}};
 		
 		%=============================== A initilization PHASE =======================
 		\coordinate[below of = A, node distance=1.5cm] (A1);
@@ -189,29 +190,45 @@ So the user needs only a private key to generate a CSR, no more than that. Once 
 		\draw[thick] ($(B1.north west)+(-11.6,0.9)$) rectangle ($(CA2.south east)+(11.6,-0.25)$) node[below of = A,fill=white, draw, rectangle, node distance=4cm]{\textit{B initialization and certificate}} ;
 
 		%=============================== B authentication to A ========================
-		\coordinate[below of = A, node distance=8.5cm] (A4);
+		\coordinate[below of = A, node distance=8.3cm] (A4);
 		\draw[myarrow] (A4)--(A4-|CA) node[textAboveArrow,above,midway] {Req B public keys (DH,RSA)};
-		\coordinate[below of = CA, node distance=9.2cm] (CA3);
+		\coordinate[below of = CA, node distance=9cm] (CA3);
 		\draw[myarrow] (CA3)--(CA3-|A) coordinate node[textAboveArrow,above,midway] {B public keys (DH,RSA)};
 		
-		\coordinate[below of = B, node distance=10cm] (B4);
+		\coordinate[below of = B, node distance=9.8cm] (B4);
 		\draw[myarrow] (B4)--(B4-|CA) node[textAboveArrow,above,midway] {Req A public keys (DH,RSA)};
-		\coordinate[below of = CA, node distance=10.7cm] (CA4);
+		\coordinate[below of = CA, node distance=10.5cm] (CA4);
 		\draw[myarrow] (CA4)--(CA4-|B) coordinate node[textAboveArrow,above,midway] {A public keys (DH,RSA)};
 		
+		\coordinate[below of = A, node distance=11.2cm] (A5);
+		\draw[myarrow] (A5)--(A5-|B) node[textAboveArrow,above,midway] {Req to communicate with B};
+		\coordinate[below of = B, node distance=11.9cm] (B5);
+		\draw[myarrow] (B5)--(B5-|A) node[textAboveArrow,above,midway] {B, $D_B$, signature($D_B$)};
 		
+		\draw[thick] ($(A4.north west)+(-7,0.9)$) rectangle ($(B5.south east)+(+2.4,-0.25)$) node[below of = A,fill=white, draw, rectangle, node distance=7.4cm]{\textit{B authentication to A}} ;
 		
+		%=============================== A authentication to B ========================
+		\coordinate[below of = A, node distance=13.5cm] (A6);
+		\draw[myarrow] (A6)--(A6-|B) node[textAboveArrow,above,midway] {Authenticate A (Yes/No)};
+		\coordinate[below of = A, node distance=14.2cm] (A7);
+		\draw[myarrowRed] (A7)--(A7-|B) node[textAboveArrow,above,midway] {A, $D_A$, signature($D_A$)};
+		\coordinate[below of = B, node distance=14.9cm] (B6);
+		\draw[myarrow] (B6)--(B6-|A) node[textAboveArrow,above,midway] {Clear to Send};
 		
+		\coordinate[below of = B, node distance=13.9cm] (prova);
+		\draw[thick] ($(A6.north west)+(-7,0.9)$) rectangle ($(B6.south east)+(+2.4,-0.25)$) node[below of = A,fill=white, draw, rectangle, node distance=12.6cm]{\textit{A authentication to B (red part is optional)}} ;
+
+		%=============================== Message excahnge ==============================
+		\coordinate[below of = A, node distance=16.5cm] (A8);
+		\draw[myarrow] (A8)--(A8-|B) node[textAboveArrow,above,midway] {Message 1};
+		\coordinate[below of = A, node distance=17.2cm] (A9);
+		\draw[myarrow] (A9)--(A9-|B) node[textAboveArrow,above,midway] {Message 2};
 		
-		
-		%    \node[hiddenentity,left=of SML9](BL9){};
-		%    \draw [myarrow] (UPL9.center)--(BL9.center) node[textAboveArrow,above,midway] {xxxxxxx};
-		
-		%\node[(BL8) (UPL9aux) (text8), draw, thick, label={[font=\itshape, fill=white, draw, anchor=center]90:Third Phase}] {};
-		
-		%    \draw[thick] ($(BL8.north west)+(-0.15,0.5)$) rectangle ($(UPL9.south east)+(0.15,-0.1)$) node[below=16mm of BL7,fill=white, draw, rectangle]{\textit{Third Phase}} ;       
+		\coordinate[below of = B, node distance=17.9cm] (prova);
+		\draw[thick] ($(A8.north west)+(-7,0.9)$) rectangle ($(A9.south east)+(+7,-0.25)$) node[below of = A,fill=white, draw, rectangle, node distance=15.6cm]{\textit{Message exchange}} ;
+		  
 	\end{tikzpicture}
-	\caption{TODO}
+	\caption{Communication Protocol Diagram, based on \cite{tikz_diagram}}
 	\label{fig:comm_diagram}
 \end{figure}
 
